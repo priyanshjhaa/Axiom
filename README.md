@@ -1,2 +1,20 @@
-# Axiom
-A functional, deployable web application that allows a user to type a simple description of a job, and in return, it generates:  1. A professional, well-formatted proposal. 2. A corresponding invoice with a clear payment link.
+ Axiom
+
+
+Axiom is an AI-powered web application that transforms job descriptions into professional proposals and invoices with payment links.
+
+ Features
+- AI-generated proposals
+- Invoice generation
+- Authentication
+- Modern Next.js stack
+
+Tech Stack
+- Next.js
+- TypeScript
+- Groq AI
+- NextAuth
+
+ Status
+Work in progress 
+
