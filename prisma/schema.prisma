@@ -1,0 +1,47 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  firstName     String?
+  lastName      String?
+  password      String
+  picture       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  proposals     Proposal[]
+}
+
+model Proposal {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientName         String
+  clientEmail        String
+  clientCompany      String?
+  projectTitle       String
+  projectDescription String
+  budget             String
+  timeline           String
+  startDate          String?
+  deliverables       String?
+  status             String   @default("draft")
+  createdAt          DateTime @default(now())
+
+  // AI-generated content fields
+  executiveSummary    String
+  scopeOfWork         String
+  pricingBreakdown    String
+  timelineDetails     String
+  termsAndConditions  String
+}
