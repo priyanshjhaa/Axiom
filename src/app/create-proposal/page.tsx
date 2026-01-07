@@ -144,8 +144,8 @@ export default function CreateProposal() {
               {/* Client Information Section */}
               <div>
                 <h2 className="text-2xl text-white mb-6 font-light flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
-                  <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
-                    <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
@@ -165,7 +165,7 @@ export default function CreateProposal() {
                         required
                         value={formData.clientName}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 ${
+                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                           errors.clientName ? 'border-red-500' : 'border-white/20'
                         }`}
                         style={{ fontFamily: 'var(--font-inter)' }}
@@ -189,7 +189,7 @@ export default function CreateProposal() {
                         required
                         value={formData.clientEmail}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 ${
+                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                           errors.clientEmail ? 'border-red-500' : 'border-white/20'
                         }`}
                         style={{ fontFamily: 'var(--font-inter)' }}
@@ -213,7 +213,7 @@ export default function CreateProposal() {
                       type="text"
                       value={formData.clientCompany}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300"
                       style={{ fontFamily: 'var(--font-inter)' }}
                       placeholder="Enter company name (optional)"
                     />
@@ -224,8 +224,8 @@ export default function CreateProposal() {
               {/* Project Details Section */}
               <div>
                 <h2 className="text-2xl text-white mb-6 font-light flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
-                  <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
@@ -244,7 +244,7 @@ export default function CreateProposal() {
                       required
                       value={formData.projectTitle}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 ${
+                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                         errors.projectTitle ? 'border-red-500' : 'border-white/20'
                       }`}
                       style={{ fontFamily: 'var(--font-inter)' }}
@@ -268,7 +268,7 @@ export default function CreateProposal() {
                       value={formData.projectDescription}
                       onChange={handleChange}
                       rows={6}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 ${
+                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                         errors.projectDescription ? 'border-red-500' : 'border-white/20'
                       }`}
                       style={{ fontFamily: 'var(--font-inter)' }}
@@ -291,7 +291,7 @@ export default function CreateProposal() {
                       value={formData.deliverables}
                       onChange={handleChange}
                       rows={4}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300"
                       style={{ fontFamily: 'var(--font-inter)' }}
                       placeholder="List the main deliverables (one per line)&#10;- Website design&#10;- Mobile responsive layout&#10;- CMS integration"
                     />
@@ -302,8 +302,8 @@ export default function CreateProposal() {
               {/* Pricing & Timeline Section */}
               <div>
                 <h2 className="text-2xl text-white mb-6 font-light flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
-                  <div className="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
-                    <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
@@ -322,7 +322,7 @@ export default function CreateProposal() {
                       required
                       value={formData.budget}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300 ${
+                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                         errors.budget ? 'border-red-500' : 'border-white/20'
                       }`}
                       style={{ fontFamily: 'var(--font-inter)' }}
@@ -346,7 +346,7 @@ export default function CreateProposal() {
                       required
                       value={formData.timeline}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300 ${
+                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300 ${
                         errors.timeline ? 'border-red-500' : 'border-white/20'
                       }`}
                       style={{ fontFamily: 'var(--font-inter)' }}
@@ -369,7 +369,7 @@ export default function CreateProposal() {
                       type="date"
                       value={formData.startDate}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     />
                   </div>
@@ -381,7 +381,7 @@ export default function CreateProposal() {
                 <button
                   type="submit"
                   disabled={isGenerating}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-light rounded-lg hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  className="w-full py-4 px-6 bg-white text-black font-light rounded-lg hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                   style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   {isGenerating ? (

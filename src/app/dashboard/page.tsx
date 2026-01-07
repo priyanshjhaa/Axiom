@@ -40,7 +40,6 @@ export default function Dashboard() {
   // Calculate stats
   const totalProposals = proposals.length;
   const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
-  const pendingProposals = proposals.filter((p: any) => p.status === 'draft').length;
 
   // Calculate total earnings (just from sent proposals for now)
   const totalEarnings = proposals
@@ -64,267 +63,226 @@ export default function Dashboard() {
     return null;
   }
 
-  const initials = `${session.user?.firstName?.[0] || ''}${session.user?.lastName?.[0] || ''}`.toUpperCase();
-  const displayName = `${session.user?.firstName || ''} ${session.user?.lastName || ''}`.trim() || session.user?.email || 'User';
+  // Determine if user is new (less than 3 proposals)
+  const isNewUser = totalProposals < 3;
+  const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
   return (
     <Layout currentPage="dashboard">
       <div className="min-h-screen px-4 py-20 pb-32">
-        <div className="max-w-7xl mx-auto">
-          {/* Header Section */}
-          <div className="mb-8 sm:mb-12">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="max-w-5xl mx-auto">
+          {/* Header - Personalized & Contextual */}
+          <div className="mb-12">
+            <p className="text-white/60 text-sm uppercase tracking-widest mb-4 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+              Dashboard
+            </p>
+            <h1 className="text-4xl sm:text-5xl text-white font-light mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+              {isNewUser ? `Welcome, ${(session.user as any)?.firstName || 'there'}` : `${(session.user as any)?.firstName || 'Welcome'}`}
+            </h1>
+            <p className="text-white/70 text-lg max-w-2xl" style={{ fontFamily: 'var(--font-inter)' }}>
+              {isNewUser
+                ? "Let's create your first proposal and get you started on winning clients."
+                : "Here's what's happening with your proposals and business."
+              }
+            </p>
+          </div>
+
+          {/* Contextual: New User Onboarding vs Active User Dashboard */}
+          {isNewUser ? (
+            // NEW USER EXPERIENCE - Focus on getting started
+            <div className="space-y-6">
+              {/* Primary Goal - Get Started */}
+              <Link
+                href="/create-proposal"
+                className="block bg-white text-black p-8 rounded-2xl hover:scale-[1.01] transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-3xl font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      Create Your First Proposal
+                    </p>
+                    <p className="text-base opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
+                      AI-powered generation takes 2 minutes
+                    </p>
+                  </div>
+                  <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
+              </Link>
+
+              {/* Value Proposition - ROI Preview */}
+              <div className="grid sm:grid-cols-3 gap-6">
+                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
+                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Save Time
+                  </p>
+                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    2 hrs
+                  </p>
+                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                    per proposal
+                  </p>
+                </div>
+                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
+                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Win Rate
+                  </p>
+                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    +40%
+                  </p>
+                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                    with AI
+                  </p>
+                </div>
+                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
+                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Get Paid
+                  </p>
+                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    3x
+                  </p>
+                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                    faster
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // ACTIVE USER EXPERIENCE - Focus on outcomes & metrics
+            <div className="space-y-8">
+              {/* Key Metrics - What matters most */}
+              <div className="grid grid-cols-3 gap-6">
+                <div className="text-center">
+                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    ${totalEarnings.toLocaleString()}
+                  </p>
+                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Total Revenue
+                  </p>
+                </div>
+                <div className="text-center border-x border-white/10">
+                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {sentProposals}
+                  </p>
+                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Proposals Sent
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {conversionRate}%
+                  </p>
+                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Win Rate
+                  </p>
+                </div>
+              </div>
+
+              {/* ROI Reinforcement - Time & Money Saved */}
+              <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white/70 text-xs uppercase tracking-widest mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Your Savings with AXIOM
+                    </p>
+                    <p className="text-white text-lg" style={{ fontFamily: 'var(--font-inter)' }}>
+                      ~{sentProposals * 2} hours saved • ${sentProposals * 500} potential value created
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      {sentProposals}x
+                    </p>
+                    <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                      more proposals
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Goal-Based Navigation - What do they want to do? */}
               <div>
-                <h1 className="text-4xl sm:text-5xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                  Welcome back, {session.user?.firstName || 'User'}! 👋
-                </h1>
-                <p className="text-white/80 text-lg" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Ready to create amazing proposals and invoices?
+                <p className="text-white/70 text-xs uppercase tracking-widest mb-5 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                  What would you like to do?
                 </p>
-              </div>
-
-              {/* User Profile Card */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 flex items-center gap-4">
-                {session.user?.picture ? (
-                  <img
-                    src={session.user.picture}
-                    alt="Profile"
-                    className="w-14 h-14 rounded-full border-2 border-white/30"
-                  />
-                ) : (
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-xl border-2 border-white/30">
-                    {initials}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium truncate" style={{ fontFamily: 'var(--font-inter)' }}>
-                    {displayName}
-                  </p>
-                  <p className="text-white/60 text-sm truncate" style={{ fontFamily: 'var(--font-inter)' }}>
-                    {session.user?.email}
-                  </p>
-                </div>
-                <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" title="Online"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-            <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/30 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <span className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>{isLoading ? '...' : totalProposals}</span>
-              </div>
-              <h3 className="text-lg text-white mb-1 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                Total Proposals
-              </h3>
-              <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                Documents created
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/30 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <span className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>${isLoading ? '...' : totalEarnings.toLocaleString()}</span>
-              </div>
-              <h3 className="text-lg text-white mb-1 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                Total Earnings
-              </h3>
-              <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                Revenue generated
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl p-6 border border-green-500/30">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/30 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>{isLoading ? '...' : sentProposals}</span>
-              </div>
-              <h3 className="text-lg text-white mb-1 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                Paid Invoices
-              </h3>
-              <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                Successfully collected
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-orange-500/20 to-amber-500/20 backdrop-blur-sm rounded-2xl p-6 border border-orange-500/30">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-orange-500/30 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>{isLoading ? '...' : pendingProposals}</span>
-              </div>
-              <h3 className="text-lg text-white mb-1 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                Pending
-              </h3>
-              <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                Awaiting payment
-              </p>
-            </div>
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
-            {/* Quick Actions - Takes 2 columns */}
-            <div className="lg:col-span-2 space-y-6">
-              <h2 className="text-2xl text-white font-light mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-                Quick Actions
-              </h2>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                {/* Create Proposal Card */}
-                <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 group">
-                  <div className="w-14 h-14 bg-purple-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-7 h-7 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2h2.828l-5.586-5.586z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl text-white mb-3 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    Create Proposal
-                  </h3>
-                  <p className="text-white/80 mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Transform your project description into a professional proposal in seconds.
-                  </p>
+                <div className="grid sm:grid-cols-2 gap-4">
                   <Link
                     href="/create-proposal"
-                    className="px-6 py-3 bg-white text-black font-light rounded-full hover:bg-white/90 transition-all duration-300 group-hover:scale-105 inline-block text-center"
-                    style={{ fontFamily: 'var(--font-inter)' }}
+                    className="bg-white text-black p-6 rounded-xl hover:scale-[1.01] transition-all duration-300"
                   >
-                    Create Proposal
+                    <p className="text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      Create New Proposal
+                    </p>
+                    <p className="text-sm opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Win more clients
+                    </p>
                   </Link>
-                </div>
 
-                {/* Generate Invoice Card */}
-                <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500/50 transition-all duration-300 group">
-                  <div className="w-14 h-14 bg-blue-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-7 h-7 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl text-white mb-3 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    Generate Invoice
-                  </h3>
-                  <p className="text-white/80 mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Create professional invoices with integrated payment links.
-                  </p>
-                  <button className="px-6 py-3 bg-white text-black font-light rounded-full hover:bg-white/90 transition-all duration-300 group-hover:scale-105" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Generate Invoice
-                  </button>
-                </div>
-
-                {/* View Templates Card */}
-                <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl p-8 border border-green-500/30 hover:border-green-500/50 transition-all duration-300 group">
-                  <div className="w-14 h-14 bg-green-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-7 h-7 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl text-white mb-3 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    Browse Templates
-                  </h3>
-                  <p className="text-white/80 mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Choose from professionally designed templates.
-                  </p>
-                  <button className="px-6 py-3 bg-white text-black font-light rounded-full hover:bg-white/90 transition-all duration-300 group-hover:scale-105" style={{ fontFamily: 'var(--font-inter)' }}>
-                    View Templates
-                  </button>
-                </div>
-
-                {/* Settings Card */}
-                <div className="bg-gradient-to-br from-orange-500/20 to-amber-500/20 backdrop-blur-sm rounded-2xl p-8 border border-orange-500/30 hover:border-orange-500/50 transition-all duration-300 group">
-                  <div className="w-14 h-14 bg-orange-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-7 h-7 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl text-white mb-3 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    Account Settings
-                  </h3>
-                  <p className="text-white/80 mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Manage your profile and preferences.
-                  </p>
-                  <button className="px-6 py-3 bg-white text-black font-light rounded-full hover:bg-white/90 transition-all duration-300 group-hover:scale-105" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Settings
+                  <button className="bg-white/5 border border-white/10 text-white p-6 rounded-xl hover:bg-white/10 transition-all duration-300 text-left">
+                    <p className="text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      Send Invoice
+                    </p>
+                    <p className="text-sm opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Get paid faster
+                    </p>
                   </button>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Recent Activity - Takes 1 column */}
-            <div className="space-y-6">
-              <h2 className="text-2xl text-white font-light mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-                Recent Activity
-              </h2>
-
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <p className="text-white/60 text-center" style={{ fontFamily: 'var(--font-inter)' }}>
-                    No recent activity
-                  </p>
-                  <p className="text-white/40 text-sm text-center mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Start creating proposals to see your history here
-                  </p>
-                </div>
+          {/* Recent Proposals - Contextual based on state */}
+          {proposals.length > 0 && (
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                  Recent Proposals
+                </p>
+                <Link href="/proposals" className="text-white/70 text-sm hover:text-white/90 transition-colors" style={{ fontFamily: 'var(--font-inter)' }}>
+                  View all
+                </Link>
               </div>
-
-              {/* Tips Section */}
-              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg text-white mb-3 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                  💡 Getting Started Tips
-                </h3>
-                <ul className="space-y-2 text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span>Describe your project in simple terms</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span>Include budget and timeline details</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span>Generate PDF for professional sharing</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span>Share payment links for quick collection</span>
-                  </li>
-                </ul>
+              <div className="space-y-3">
+                {proposals.slice(0, 3).map((proposal: any) => (
+                  <Link
+                    key={proposal.id}
+                    href={`/proposals/${proposal.id}`}
+                    className="block px-6 py-4 border border-white/10 rounded-xl hover:bg-white/5 transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                          {proposal.projectName}
+                        </p>
+                        <p className="text-white/40 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                          {proposal.clientName} • {proposal.budget}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-xs px-3 py-1 rounded-full ${
+                          proposal.status === 'sent'
+                            ? 'bg-green-500/20 text-green-300'
+                            : 'bg-white/10 text-white/60'
+                        }`} style={{ fontFamily: 'var(--font-inter)' }}>
+                          {proposal.status || 'Draft'}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Sign Out Button */}
-          <div className="text-center">
+          {/* Simple Sign Out */}
+          <div className="mt-16 text-center">
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="px-8 py-3 border border-white text-white font-light rounded-full hover:bg-white/10 transition-all duration-300"
+              className="text-white/30 text-sm hover:text-white/50 transition-colors duration-300"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
-              Sign Out
+              Sign out
             </button>
           </div>
         </div>

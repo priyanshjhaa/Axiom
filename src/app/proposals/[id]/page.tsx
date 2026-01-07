@@ -78,7 +78,7 @@ export default function ProposalPage() {
 
     setIsSending(true);
     try {
-      const response = await fetch(`/api/proposals/${params.id}/send`, {
+      const response = await fetch(`/api/proposals/${params.id}/send-email`, {
         method: 'POST',
       });
 
@@ -86,19 +86,218 @@ export default function ProposalPage() {
 
       if (response.ok) {
         setProposal(prev => prev ? { ...prev, status: 'sent' } : null);
-        alert('Proposal sent successfully to client!');
+        alert(`✅ Proposal sent successfully to ${proposal.clientEmail}!\n\nThe proposal PDF has been attached to the email.`);
       } else {
-        alert(data.error || 'Failed to send proposal');
+        alert(`❌ Failed to send proposal: ${data.error || 'Unknown error'}`);
       }
     } catch (err) {
-      alert('Network error. Please try again.');
+      console.error('Send error:', err);
+      alert('❌ Network error. Please check your connection and try again.');
     } finally {
       setIsSending(false);
     }
   };
 
-  const handleDownloadPDF = () => {
-    alert('PDF download feature coming soon! For now, you can print the page using Ctrl/Cmd + P');
+  const handleDownloadPDF = async () => {
+    if (!proposal) return;
+
+    // Find and update the PDF button
+    const pdfButton = document.querySelector('button[onClick*="handleDownloadPDF"]') as HTMLButtonElement;
+
+    try {
+      const { default: jsPDF } = await import('jspdf');
+
+      // Show loading state
+      if (pdfButton) {
+        pdfButton.disabled = true;
+        pdfButton.textContent = 'Generating...';
+      }
+
+      // Create PDF
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const maxWidth = pageWidth - (margin * 2);
+      let yPosition = margin;
+
+      // Helper function to add text with word wrap
+      const addText = (text: string, fontSize: number, isBold: boolean = false, marginTop: number = 0) => {
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+
+        const lines = doc.splitTextToSize(text, maxWidth);
+        lines.forEach((line: string) => {
+          if (yPosition > pageHeight - margin) {
+            doc.addPage();
+            // Add white background to new page
+            doc.setFillColor(255, 255, 255);
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+            doc.setTextColor(0, 0, 0);
+            yPosition = margin;
+          }
+          doc.text(line, margin, yPosition);
+          yPosition += fontSize * 0.5;
+        });
+
+        yPosition += marginTop;
+      };
+
+      // Helper function to check if we need a new page
+      const checkPageBreak = (requiredSpace: number) => {
+        if (yPosition + requiredSpace > pageHeight - margin) {
+          doc.addPage();
+          // Add white background to new page
+          doc.setFillColor(255, 255, 255);
+          doc.rect(0, 0, pageWidth, pageHeight, 'F');
+          doc.setTextColor(0, 0, 0);
+          yPosition = margin;
+        }
+      };
+
+      // Title - White background with black text
+      doc.setFillColor(255, 255, 255);
+      doc.rect(0, 0, pageWidth, pageHeight, 'F');
+      doc.setTextColor(0, 0, 0);
+
+      doc.setFontSize(28);
+      doc.setFont('times', 'normal');
+      doc.text('Project Proposal', margin, yPosition);
+      yPosition += 15;
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Prepared for ${proposal.clientName}${proposal.clientCompany ? ` at ${proposal.clientCompany}` : ''}`, margin, yPosition);
+      yPosition += 20;
+
+      // Draw line
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 15;
+
+      // Client Information
+      checkPageBreak(40);
+      doc.setFontSize(16);
+      doc.setFont('times', 'bold');
+      doc.text('Client Information', margin, yPosition);
+      yPosition += 10;
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Name: ${proposal.clientName}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Email: ${proposal.clientEmail}`, margin + 5, yPosition);
+      yPosition += 7;
+      if (proposal.clientCompany) {
+        doc.text(`Company: ${proposal.clientCompany}`, margin + 5, yPosition);
+        yPosition += 7;
+      }
+
+      // Project Information
+      yPosition += 8;
+      checkPageBreak(30);
+      doc.setFontSize(16);
+      doc.setFont('times', 'bold');
+      doc.text('Project Information', margin, yPosition);
+      yPosition += 10;
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Title: ${proposal.projectTitle}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Budget: $${proposal.budget}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Timeline: ${proposal.timeline}`, margin + 5, yPosition);
+      yPosition += 15;
+
+      // Draw line
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 15;
+
+      // Executive Summary
+      checkPageBreak(20);
+      doc.setFontSize(18);
+      doc.setFont('times', 'bold');
+      doc.text('Executive Summary', margin, yPosition);
+      yPosition += 10;
+
+      addText(proposal.content.executiveSummary, 11, false, 15);
+
+      // Scope of Work
+      checkPageBreak(20);
+      doc.setFontSize(18);
+      doc.setFont('times', 'bold');
+      doc.text('Scope of Work', margin, yPosition);
+      yPosition += 10;
+
+      addText(proposal.content.scopeOfWork, 11, false, 15);
+
+      // Project Timeline
+      checkPageBreak(20);
+      doc.setFontSize(18);
+      doc.setFont('times', 'bold');
+      doc.text('Project Timeline', margin, yPosition);
+      yPosition += 10;
+
+      addText(proposal.content.timeline, 11, false, 15);
+
+      // Pricing
+      checkPageBreak(20);
+      doc.setFontSize(18);
+      doc.setFont('times', 'bold');
+      doc.text('Pricing & Payment Terms', margin, yPosition);
+      yPosition += 10;
+
+      addText(proposal.content.pricingBreakdown, 11, false, 15);
+
+      // Terms
+      checkPageBreak(20);
+      doc.setFontSize(18);
+      doc.setFont('times', 'bold');
+      doc.text('Terms and Conditions', margin, yPosition);
+      yPosition += 10;
+
+      addText(proposal.content.termsAndConditions, 10, false, 15);
+
+      // Footer
+      yPosition = pageHeight - 20;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+
+      const createdDate = new Date(proposal.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      doc.text(`Created on ${createdDate}`, margin, yPosition);
+      doc.text('Powered by AXIOM', pageWidth - margin - 30, yPosition);
+
+      // Save PDF
+      const filename = `${proposal.projectTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_proposal.pdf`;
+      doc.save(filename);
+
+      // Reset button
+      if (pdfButton) {
+        pdfButton.disabled = false;
+        pdfButton.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Export PDF';
+      }
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      alert('Failed to generate PDF. Please try again.');
+      // Reset button on error
+      if (pdfButton) {
+        pdfButton.disabled = false;
+        pdfButton.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Export PDF';
+      }
+    }
   };
 
   if (status === 'loading' || isLoading) {
@@ -201,7 +400,7 @@ export default function ProposalPage() {
           </div>
 
           {/* Proposal Document - Space Themed */}
-          <div className="bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
+          <div id="proposal-document" className="bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
             {/* Document Header */}
             <div className="bg-white/5 backdrop-blur-sm p-8 border-b border-white/10">
               <h2 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
