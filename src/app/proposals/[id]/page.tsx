@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
+import SignatureModal from '@/components/SignatureModal';
 
 interface ProposalContent {
   executiveSummary: string;
@@ -28,6 +29,13 @@ interface Proposal {
   status: 'draft' | 'sent' | 'accepted' | 'rejected';
   createdAt: string;
   content: ProposalContent;
+  signatureStatus?: string;
+  freelancerSignedAt?: string;
+  clientSignedAt?: string;
+  freelancerSignatureData?: string;
+  freelancerSignatureType?: string;
+  clientSignatureData?: string;
+  clientSignatureType?: string;
 }
 
 export default function ProposalPage() {
@@ -38,6 +46,8 @@ export default function ProposalPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -300,9 +310,74 @@ export default function ProposalPage() {
     }
   };
 
+  const handleSignProposal = async (signatureData: { type: 'drawn' | 'typed'; data: string }) => {
+    if (!proposal) return;
+
+    setIsSigning(true);
+    try {
+      const response = await fetch(`/api/proposals/${params.id}/sign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          signatureType: signatureData.type,
+          signatureData: signatureData.data,
+          role: 'freelancer',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update proposal with new signature status
+        setProposal(prev => prev ? {
+          ...prev,
+          signatureStatus: data.proposal.signatureStatus,
+          freelancerSignedAt: data.proposal.freelancerSignedAt,
+          freelancerSignatureData: data.proposal.freelancerSignatureData,
+          freelancerSignatureType: data.proposal.freelancerSignatureType,
+        } : null);
+
+        alert('✅ Proposal signed successfully! You can now send it to your client for their signature.');
+        setShowSignatureModal(false);
+      } else {
+        alert(`❌ Failed to sign proposal: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Signature error:', err);
+      alert('❌ Failed to sign proposal. Please try again.');
+    } finally {
+      setIsSigning(false);
+    }
+  };
+
+  const renderSignature = (signatureData: string, signatureType: string) => {
+    if (signatureType === 'drawn') {
+      return (
+        <img
+          src={signatureData}
+          alt="Signature"
+          className="h-16 max-w-xs"
+        />
+      );
+    } else {
+      const [name, font] = signatureData.split('|');
+      const fontVar = font === 'Dancing Script' ? 'var(--font-dancing-script)' :
+                      font === 'Great Vibes' ? 'var(--font-great-vibes)' :
+                      'var(--font-herr-von-muellerhoff)';
+      return (
+        <p
+          className="text-3xl"
+          style={{ fontFamily: fontVar }}
+        >
+          {name}
+        </p>
+      );
+    }
+  };
+
   if (status === 'loading' || isLoading) {
     return (
-      <Layout currentPage="proposals">
+      <Layout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-white text-xl">Loading proposal...</div>
         </div>
@@ -316,7 +391,7 @@ export default function ProposalPage() {
 
   if (error || !proposal) {
     return (
-      <Layout currentPage="proposals">
+      <Layout>
         <div className="min-h-screen px-4 py-20">
           <div className="max-w-4xl mx-auto">
             <div className="bg-red-500/20 backdrop-blur-sm rounded-2xl p-8 border border-red-500/50">
@@ -337,7 +412,7 @@ export default function ProposalPage() {
   }
 
   return (
-    <Layout currentPage="proposals">
+    <Layout>
       {/* Solid black background overlay for proposal page */}
       <div className="fixed inset-0 bg-black -z-10" />
       <div className="min-h-screen px-4 py-20 pb-32">
@@ -400,13 +475,13 @@ export default function ProposalPage() {
           </div>
 
           {/* Proposal Document - Space Themed */}
-          <div id="proposal-document" className="bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
+          <div id="proposal-document" className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
             {/* Document Header */}
-            <div className="bg-white/5 backdrop-blur-sm p-8 border-b border-white/10">
+            <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
               <h2 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                 Project Proposal
               </h2>
-              <p className="text-white/80" style={{ fontFamily: 'var(--font-inter)' }}>
+              <p className="text-white/90" style={{ fontFamily: 'var(--font-inter)' }}>
                 Prepared for {proposal.clientName}
                 {proposal.clientCompany && ` at ${proposal.clientCompany}`}
               </p>
@@ -415,29 +490,29 @@ export default function ProposalPage() {
             {/* Document Body */}
             <div className="p-8 text-white">
               {/* Client & Project Info */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/10">
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                  <h3 className="text-lg font-light mb-4 text-white/80" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Client Information
                   </h3>
-                  <p className="text-sm text-white/90 mb-2"><strong className="text-white">Name:</strong> {proposal.clientName}</p>
-                  <p className="text-sm text-white/90 mb-2"><strong className="text-white">Email:</strong> {proposal.clientEmail}</p>
+                  <p className="text-sm text-white mb-2"><strong className="text-white">Name:</strong> {proposal.clientName}</p>
+                  <p className="text-sm text-white mb-2"><strong className="text-white">Email:</strong> {proposal.clientEmail}</p>
                   {proposal.clientCompany && (
-                    <p className="text-sm text-white/90"><strong className="text-white">Company:</strong> {proposal.clientCompany}</p>
+                    <p className="text-sm text-white"><strong className="text-white">Company:</strong> {proposal.clientCompany}</p>
                   )}
                 </div>
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                  <h3 className="text-lg font-light mb-4 text-white/80" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Project Information
                   </h3>
-                  <p className="text-sm text-white/90 mb-2"><strong className="text-white">Title:</strong> {proposal.projectTitle}</p>
-                  <p className="text-sm text-white/90 mb-2"><strong className="text-white">Budget:</strong> ${proposal.budget}</p>
-                  <p className="text-sm text-white/90"><strong className="text-white">Timeline:</strong> {proposal.timeline}</p>
+                  <p className="text-sm text-white mb-2"><strong className="text-white">Title:</strong> {proposal.projectTitle}</p>
+                  <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> ${proposal.budget}</p>
+                  <p className="text-sm text-white"><strong className="text-white">Timeline:</strong> {proposal.timeline}</p>
                 </div>
               </div>
 
               {/* Executive Summary */}
-              <section className="mb-8 pb-8 border-b border-white/10">
+              <section className="mb-8 pb-8 border-b border-white/20">
                 <h3 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
                   <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -446,13 +521,13 @@ export default function ProposalPage() {
                   </div>
                   Executive Summary
                 </h3>
-                <div className="text-white/90 whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="text-white whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
                   {proposal.content.executiveSummary}
                 </div>
               </section>
 
               {/* Scope of Work */}
-              <section className="mb-8 pb-8 border-b border-white/10">
+              <section className="mb-8 pb-8 border-b border-white/20">
                 <h3 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
                   <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -461,13 +536,13 @@ export default function ProposalPage() {
                   </div>
                   Scope of Work
                 </h3>
-                <div className="text-white/90 whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="text-white whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
                   {proposal.content.scopeOfWork}
                 </div>
               </section>
 
               {/* Timeline */}
-              <section className="mb-8 pb-8 border-b border-white/10">
+              <section className="mb-8 pb-8 border-b border-white/20">
                 <h3 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
                   <div className="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,13 +551,13 @@ export default function ProposalPage() {
                   </div>
                   Project Timeline
                 </h3>
-                <div className="text-white/90 whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="text-white whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
                   {proposal.content.timeline}
                 </div>
               </section>
 
               {/* Pricing */}
-              <section className="mb-8 pb-8 border-b border-white/10">
+              <section className="mb-8 pb-8 border-b border-white/20">
                 <h3 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
                   <div className="w-10 h-10 bg-amber-500/30 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -491,7 +566,7 @@ export default function ProposalPage() {
                   </div>
                   Pricing & Payment Terms
                 </h3>
-                <div className="text-white/90 whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="text-white whitespace-pre-line leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
                   {proposal.content.pricingBreakdown}
                 </div>
               </section>
@@ -528,8 +603,136 @@ export default function ProposalPage() {
               </div>
             </div>
           </div>
+
+          {/* Signature Section */}
+          <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+            <h3 className="text-2xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+              Digital Signatures
+            </h3>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Freelancer Signature */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg text-white font-light" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Your Signature
+                  </h4>
+                  {proposal.freelancerSignedAt ? (
+                    <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Signed
+                    </span>
+                  ) : (
+                    <span className="text-white/50 text-xs">Not signed</span>
+                  )}
+                </div>
+
+                {proposal.freelancerSignatureData ? (
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-4">
+                      {renderSignature(proposal.freelancerSignatureData, proposal.freelancerSignatureType || 'drawn')}
+                    </div>
+                    <p className="text-white/60 text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Signed on {new Date(proposal.freelancerSignedAt || '').toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-white/50 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Sign this proposal to request client signature
+                    </p>
+                    <button
+                      onClick={() => setShowSignatureModal(true)}
+                      disabled={isSigning}
+                      className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all disabled:opacity-50 text-sm font-light"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      {isSigning ? 'Signing...' : 'Sign Proposal'}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Client Signature */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg text-white font-light" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Client Signature
+                  </h4>
+                  {proposal.clientSignedAt ? (
+                    <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Signed
+                    </span>
+                  ) : proposal.signatureStatus === 'pending_client' ? (
+                    <span className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Pending
+                    </span>
+                  ) : (
+                    <span className="text-white/50 text-xs">Waiting for you</span>
+                  )}
+                </div>
+
+                {proposal.clientSignatureData ? (
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-4">
+                      {renderSignature(proposal.clientSignatureData, proposal.clientSignatureType || 'drawn')}
+                    </div>
+                    <p className="text-white/60 text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Signed on {new Date(proposal.clientSignedAt || '').toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-white/50 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
+                      {proposal.signatureStatus === 'not_started'
+                        ? 'Sign the proposal first to send it to your client'
+                        : proposal.signatureStatus === 'pending_client'
+                        ? 'Waiting for client to sign'
+                        : 'Waiting for signatures'}
+                    </p>
+                    {proposal.signatureStatus === 'signed' && (
+                      <div className="flex items-center justify-center gap-2 text-green-400">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm font-light">Both parties have signed</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Signature Modal */}
+      <SignatureModal
+        isOpen={showSignatureModal}
+        onClose={() => setShowSignatureModal(false)}
+        onSubmit={handleSignProposal}
+        title="Sign Proposal"
+      />
     </Layout>
   );
 }

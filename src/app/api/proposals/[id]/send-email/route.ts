@@ -6,20 +6,47 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const proposalId = params.id;
+    // Await params (Next.js 15+ requires this)
+    const { id: proposalId } = await params;
+
+    // Check if API key is configured
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 'paste_your_resend_api_key_here') {
+      console.error('RESEND_API_KEY is not configured');
+      return NextResponse.json(
+        { error: 'Email service not configured. Please add your Resend API key to .env file.' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Sending proposal email for ID:', proposalId);
 
     // Fetch proposal from database
-    const prisma = (await import('@/lib/db')).default;
+    const { prisma } = await import('@/lib/db');
     const proposal = await prisma.proposal.findUnique({
       where: { id: proposalId },
     });
 
     if (!proposal) {
+      console.error('Proposal not found:', proposalId);
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }
+
+    console.log('Proposal found, sending to:', proposal.clientEmail);
+
+    // Fetch user information to personalize the email
+    const user = await prisma.user.findUnique({
+      where: { id: proposal.userId },
+    });
+
+    if (!user) {
+      console.error('User not found:', proposal.userId);
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    console.log('Sending email on behalf of:', user.email);
 
     // Generate PDF
     const doc = new jsPDF({
@@ -127,7 +154,7 @@ export async function POST(
     doc.text('Executive Summary', margin, yPosition);
     yPosition += 10;
 
-    addText(proposal.content!.executiveSummary, 11, false, 15);
+    addText(proposal.executiveSummary, 11, false, 15);
 
     checkPageBreak(20);
     doc.setFontSize(18);
@@ -135,7 +162,7 @@ export async function POST(
     doc.text('Scope of Work', margin, yPosition);
     yPosition += 10;
 
-    addText(proposal.content!.scopeOfWork, 11, false, 15);
+    addText(proposal.scopeOfWork, 11, false, 15);
 
     checkPageBreak(20);
     doc.setFontSize(18);
@@ -143,7 +170,7 @@ export async function POST(
     doc.text('Project Timeline', margin, yPosition);
     yPosition += 10;
 
-    addText(proposal.content!.timeline, 11, false, 15);
+    addText(proposal.timelineDetails, 11, false, 15);
 
     checkPageBreak(20);
     doc.setFontSize(18);
@@ -151,7 +178,7 @@ export async function POST(
     doc.text('Pricing & Payment Terms', margin, yPosition);
     yPosition += 10;
 
-    addText(proposal.content!.pricingBreakdown, 11, false, 15);
+    addText(proposal.pricingBreakdown, 11, false, 15);
 
     checkPageBreak(20);
     doc.setFontSize(18);
@@ -159,7 +186,7 @@ export async function POST(
     doc.text('Terms and Conditions', margin, yPosition);
     yPosition += 10;
 
-    addText(proposal.content!.termsAndConditions, 10, false, 15);
+    addText(proposal.termsAndConditions, 10, false, 15);
 
     // Footer
     yPosition = pageHeight - 20;
@@ -180,6 +207,10 @@ export async function POST(
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
 
     // Create email HTML
+    const senderName = user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.email.split('@')[0];
+
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -201,8 +232,12 @@ export async function POST(
                 Hi <strong>${proposal.clientName}</strong>,
               </p>
 
+              <p style="margin: 0 0 10px; font-size: 15px; line-height: 1.6; color: #555;">
+                I'm excited to share the project proposal for <strong>${proposal.projectTitle}</strong> with you!
+              </p>
+
               <p style="margin: 0 0 30px; font-size: 15px; line-height: 1.6; color: #555;">
-                Thank you for your interest! Please find attached the detailed project proposal for <strong>${proposal.projectTitle}</strong>.
+                I've carefully reviewed your requirements and prepared a detailed proposal that outlines the scope, timeline, and investment needed. Please find the complete proposal attached to this email.
               </p>
 
               <div style="background: #f9f9f9; border-left: 4px solid #667eea; padding: 20px; margin: 30px 0; border-radius: 4px;">
@@ -226,17 +261,18 @@ export async function POST(
               </ul>
 
               <p style="margin: 30px 0 10px; font-size: 15px; line-height: 1.6; color: #555;">
-                Please review the proposal and let me know if you have any questions or would like to discuss further.
+                Please review the proposal and feel free to reach out if you have any questions or would like to schedule a call to discuss further.
               </p>
 
               <p style="margin: 30px 0 0; font-size: 15px; line-height: 1.6; color: #555;">
-                Looking forward to working together!
+                Looking forward to the possibility of working together!
               </p>
 
               <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
                 <p style="margin: 0; font-size: 14px; color: #888;">
                   Best regards,<br>
-                  <span style="color: #333; font-weight: 500;">Your Team</span>
+                  <span style="color: #333; font-weight: 500;">${senderName}</span><br>
+                  <span style="color: #666; font-size: 13px;">${user.email}</span>
                 </p>
               </div>
             </div>
@@ -244,7 +280,10 @@ export async function POST(
             <!-- Footer -->
             <div style="background: #f9f9f9; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
               <p style="margin: 0; font-size: 12px; color: #999;">
-                This proposal was sent via <strong style="color: #667eea;">AXIOM</strong> - Proposal Management Platform
+                This proposal was sent by <strong style="color: #667eea;">${senderName}</strong> via <strong style="color: #667eea;">AXIOM</strong>
+              </p>
+              <p style="margin: 8px 0 0; font-size: 11px; color: #aaa;">
+                Direct all inquiries to <a href="mailto:${user.email}" style="color: #667eea; text-decoration: none;">${user.email}</a>
               </p>
             </div>
           </div>
@@ -253,8 +292,10 @@ export async function POST(
     `;
 
     // Send email
+    console.log('Sending email via Resend...');
     const data = await resend.emails.send({
-      from: 'AXIOM Proposals <onboarding@resend.dev>', // You can customize this
+      from: `${senderName} <onboarding@resend.dev>`,
+      replyTo: user.email, // Replies go directly to the freelancer
       to: proposal.clientEmail,
       subject: `Project Proposal: ${proposal.projectTitle}`,
       html: emailHtml,
@@ -266,6 +307,8 @@ export async function POST(
       ],
     });
 
+    console.log('Email sent successfully:', data);
+
     // Update proposal status
     await prisma.proposal.update({
       where: { id: proposalId },
@@ -274,7 +317,6 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      messageId: data.id,
       message: 'Proposal sent successfully!'
     });
 

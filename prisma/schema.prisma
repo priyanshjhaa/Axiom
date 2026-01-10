@@ -44,4 +44,25 @@ model Proposal {
   pricingBreakdown    String
   timelineDetails     String
   termsAndConditions  String
+
+  // Digital signature fields
+  freelancerSignatureType String?  // 'drawn' | 'typed'
+  freelancerSignatureData String? // Base64 image (drawn) or text (typed)
+  freelancerSignedAt     DateTime?
+
+  clientSignatureType String?
+  clientSignatureData String?
+  clientSignedAt     DateTime?
+
+  signatureStatus String  @default("not_started") // 'not_started' | 'pending_client' | 'signed'
+  signatureToken String? // Unique token for client verification
+
+  // Security fields
+  verificationCode      String?  // 6-digit code for email verification
+  verificationCodeExpiry DateTime? // Code expires after 1 hour
+  clientEmailVerified   Boolean  @default(false) // Has client verified email?
+  contentHash           String?  // SHA-256 hash of proposal content
+  termsAccepted         Boolean  @default(false) // Client accepted terms?
+  ipAddress             String?  // Client IP for audit trail
+  userAgent             String?  // Client browser/device info
 }

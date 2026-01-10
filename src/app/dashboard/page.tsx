@@ -113,36 +113,36 @@ export default function Dashboard() {
 
               {/* Value Proposition - ROI Preview */}
               <div className="grid sm:grid-cols-3 gap-6">
-                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
-                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
+                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
                     Save Time
                   </p>
                   <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                     2 hrs
                   </p>
-                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
                     per proposal
                   </p>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
-                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
+                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
                     Win Rate
                   </p>
                   <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                     +40%
                   </p>
-                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
                     with AI
                   </p>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
-                  <p className="text-white/60 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
+                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
                     Get Paid
                   </p>
                   <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                     3x
                   </p>
-                  <p className="text-white/60 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
                     faster
                   </p>
                 </div>
@@ -180,10 +180,10 @@ export default function Dashboard() {
               </div>
 
               {/* ROI Reinforcement - Time & Money Saved */}
-              <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
+              <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/70 text-xs uppercase tracking-widest mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-white/80 text-xs uppercase tracking-widest mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
                       Your Savings with AXIOM
                     </p>
                     <p className="text-white text-lg" style={{ fontFamily: 'var(--font-inter)' }}>
@@ -194,7 +194,7 @@ export default function Dashboard() {
                     <p className="text-2xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                       {sentProposals}x
                     </p>
-                    <p className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                       more proposals
                     </p>
                   </div>
@@ -219,11 +219,11 @@ export default function Dashboard() {
                     </p>
                   </Link>
 
-                  <button className="bg-white/5 border border-white/10 text-white p-6 rounded-xl hover:bg-white/10 transition-all duration-300 text-left">
+                  <button className="bg-white/15 border border-white/20 text-white p-6 rounded-xl hover:bg-white/20 transition-all duration-300 text-left backdrop-blur-xl">
                     <p className="text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
                       Send Invoice
                     </p>
-                    <p className="text-sm opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-sm text-white/70" style={{ fontFamily: 'var(--font-inter)' }}>
                       Get paid faster
                     </p>
                   </button>
@@ -248,14 +248,14 @@ export default function Dashboard() {
                   <Link
                     key={proposal.id}
                     href={`/proposals/${proposal.id}`}
-                    className="block px-6 py-4 border border-white/10 rounded-xl hover:bg-white/5 transition-all duration-300"
+                    className="block px-6 py-4 border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-300"
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
                           {proposal.projectName}
                         </p>
-                        <p className="text-white/40 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                        <p className="text-white/50 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                           {proposal.clientName} • {proposal.budget}
                         </p>
                       </div>
@@ -263,7 +263,7 @@ export default function Dashboard() {
                         <span className={`text-xs px-3 py-1 rounded-full ${
                           proposal.status === 'sent'
                             ? 'bg-green-500/20 text-green-300'
-                            : 'bg-white/10 text-white/60'
+                            : 'bg-white/15 text-white/70'
                         }`} style={{ fontFamily: 'var(--font-inter)' }}>
                           {proposal.status || 'Draft'}
                         </span>

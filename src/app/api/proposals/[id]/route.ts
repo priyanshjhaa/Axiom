@@ -78,6 +78,14 @@ export async function GET(
         timeline: proposal.timelineDetails,
         termsAndConditions: proposal.termsAndConditions,
       },
+      // Signature fields
+      signatureStatus: proposal.signatureStatus || 'not_started',
+      freelancerSignedAt: proposal.freelancerSignedAt?.toISOString(),
+      clientSignedAt: proposal.clientSignedAt?.toISOString(),
+      freelancerSignatureData: proposal.freelancerSignatureData,
+      freelancerSignatureType: proposal.freelancerSignatureType,
+      clientSignatureData: proposal.clientSignatureData,
+      clientSignatureType: proposal.clientSignatureType,
     };
 
     console.log('Proposal found and sent');
