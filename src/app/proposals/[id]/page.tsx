@@ -36,6 +36,8 @@ interface Proposal {
   freelancerSignatureType?: string;
   clientSignatureData?: string;
   clientSignatureType?: string;
+  invoiceId?: string;
+  hasInvoice?: boolean;
 }
 
 export default function ProposalPage() {
@@ -48,6 +50,8 @@ export default function ProposalPage() {
   const [isSending, setIsSending] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
+  const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -350,6 +354,38 @@ export default function ProposalPage() {
     }
   };
 
+  const handleGenerateInvoice = async () => {
+    if (!proposal) return;
+
+    setIsGeneratingInvoice(true);
+    try {
+      const response = await fetch(`/api/proposals/${params.id}/generate-invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+          taxRate: 0,
+          currency: 'USD',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setInvoiceId(data.invoice.id);
+        setProposal(prev => prev ? { ...prev, hasInvoice: true, invoiceId: data.invoice.id } : null);
+        alert(`✅ Invoice generated successfully!\n\nInvoice Number: ${data.invoice.invoiceNumber}\nTotal: $${data.invoice.total.toFixed(2)}\n\nYou can view it anytime from the dashboard.`);
+      } else {
+        alert(`❌ Failed to generate invoice: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Invoice generation error:', err);
+      alert('❌ Failed to generate invoice. Please try again.');
+    } finally {
+      setIsGeneratingInvoice(false);
+    }
+  };
+
   const renderSignature = (signatureData: string, signatureType: string) => {
     if (signatureType === 'drawn') {
       return (
@@ -459,6 +495,30 @@ export default function ProposalPage() {
                 </svg>
                 {isSending ? 'Sending...' : proposal.status === 'sent' ? 'Sent ✓' : 'Send to Client'}
               </button>
+              {invoiceId ? (
+                <Link
+                  href={`/invoices/${invoiceId}`}
+                  className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-white/90 transition-all flex items-center gap-2"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  View Invoice
+                </Link>
+              ) : (
+                <button
+                  onClick={handleGenerateInvoice}
+                  disabled={isGeneratingInvoice}
+                  className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {isGeneratingInvoice ? 'Generating...' : 'Generate Invoice'}
+                </button>
+              )}
             </div>
           </div>
 

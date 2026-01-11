@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import CosmicBackground from './CosmicBackground';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -48,9 +49,9 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
 
   return (
     <div className="relative min-h-screen" style={{ fontFamily: 'var(--font-inter)', scrollBehavior: 'smooth' }}>
-      {/* Space Background */}
+      {/* Space Background Image */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
         style={{
           backgroundImage: 'url(/images/pexels-cris-menles-4621648-34385494.jpg)',
           backgroundSize: '110%',
@@ -59,64 +60,61 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
         }}
       />
 
+      {/* Animated Stars & Nebula Effects */}
+      <CosmicBackground />
+
       {/* Dark Overlay for better text visibility */}
-      <div className="fixed inset-0 bg-black/0 -z-10" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 -z-10" />
 
       {/* Navigation */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 bg-transparent transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
           isVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 w-full">
-            {/* Logo - Left */}
+            {/* Logo - Left with cosmic glow */}
             <div className="flex-shrink-0">
               <Link
                 href="/"
-                className="text-2xl sm:text-3xl font-bold text-white hover:text-white/80 transition-all"
+                className="text-2xl sm:text-3xl font-bold text-white hover:text-white/80 transition-all cosmic-glow"
                 style={{ fontFamily: 'var(--font-playfair)' }}
               >
                 AXIOM
               </Link>
             </div>
 
-            {/* Center Navigation - Hide on dashboard */}
-            {currentPage !== 'dashboard' && (
+            {/* Center Navigation - Only on landing page */}
+            {currentPage === 'home' && (
               <div className="hidden md:flex items-center space-x-1 flex-1 justify-center">
-                <Link
-                  href="/"
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
-                >
-                  Home
-                </Link>
                 <button
                   onClick={() => scrollToSection('about')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
+                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   About
                 </button>
                 <button
                   onClick={() => scrollToSection('features')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
+                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   Features
                 </button>
                 <button
                   onClick={() => scrollToSection('how-it-works')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
+                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   How It Works
                 </button>
                 <button
                   onClick={() => scrollToSection('pricing')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
+                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   Pricing
                 </button>
                 <button
                   onClick={() => scrollToSection('contact')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white hover:text-black transition-all duration-300"
+                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   Contact
                 </button>
@@ -185,17 +183,10 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
 
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-t border-white/10">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-black/80 backdrop-blur-xl">
             <div className="px-4 py-6 space-y-4">
-              {currentPage !== 'dashboard' && (
+              {currentPage === 'home' && (
                 <>
-                  <Link
-                    href="/"
-                    className="block w-full px-4 py-3 rounded-full text-sm font-light text-white hover:bg-white/10 transition-all duration-300 text-left"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
                   <button
                     onClick={() => scrollToSection('about')}
                     className="block w-full px-4 py-3 rounded-full text-sm font-light text-white hover:bg-white/10 transition-all duration-300 text-left"
@@ -230,7 +221,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
               )}
 
               {/* Mobile Auth Buttons */}
-              <div className="pt-4 border-t border-white/20 space-y-3">
+              <div className="pt-4 space-y-3">
                 {status === 'loading' ? (
                   <div className="text-white text-sm text-center">Loading...</div>
                 ) : session ? (

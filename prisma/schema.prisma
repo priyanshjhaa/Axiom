@@ -20,6 +20,7 @@ model User {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   proposals     Proposal[]
+  invoices      Invoice[]
 }
 
 model Proposal {
@@ -65,4 +66,54 @@ model Proposal {
   termsAccepted         Boolean  @default(false) // Client accepted terms?
   ipAddress             String?  // Client IP for audit trail
   userAgent             String?  // Client browser/device info
+
+  // Invoice relation
+  invoice               Invoice?
+}
+
+model Invoice {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proposalId         String   @unique
+  proposal           Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  // Client information
+  clientName         String
+  clientEmail        String
+  clientCompany      String?
+
+  // Invoice details
+  invoiceNumber      String   @unique // Auto-generated: INV-0001, INV-0002, etc.
+  issueDate          DateTime @default(now())
+  dueDate            DateTime // Payment due date
+  status             String   @default("pending") // 'pending' | 'paid' | 'overdue' | 'cancelled'
+
+  // Payment information
+  subtotal           Float    // Sum of all line items
+  taxRate            Float    @default(0) // Tax percentage (e.g., 10 for 10%)
+  taxAmount          Float    @default(0)
+  total              Float    // subtotal + taxAmount
+
+  // Payment details
+  currency           String   @default("USD")
+  paymentLink        String?  // Stripe payment link
+  paymentId          String?  // Stripe payment intent ID
+  paidAt             DateTime?
+  paidAmount         Float?
+
+  // Line items (JSON string)
+  lineItems          String   // JSON array of items: [{description, quantity, rate, amount}]
+
+  // Additional details
+  notes              String?
+  terms              String?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Reminders
+  reminderSent       Boolean  @default(false)
+  reminderCount      Int      @default(0)
+  lastReminderAt     DateTime?
 }

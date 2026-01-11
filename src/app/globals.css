@@ -3,6 +3,9 @@
 :root {
   --background: #000000;
   --foreground: #ffffff;
+  --cosmic-purple: #9333ea;
+  --cosmic-blue: #3b82f6;
+  --cosmic-pink: #ec4899;
 }
 
 @theme inline {
@@ -25,6 +28,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 /* Custom animations for space theme */
@@ -116,6 +120,69 @@ body {
   }
 }
 
+/* NEW: Enhanced Cosmic Animations */
+@keyframes starfield-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-1000px);
+  }
+}
+
+@keyframes cosmic-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.5))
+            drop-shadow(0 0 40px rgba(59, 130, 246, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.8))
+            drop-shadow(0 0 60px rgba(59, 130, 246, 0.5));
+  }
+}
+
+@keyframes text-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes border-glow {
+  0%, 100% {
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  }
+  50% {
+    border-color: rgba(59, 130, 246, 0.8);
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Radial gradient utility */
 .bg-gradient-radial {
   background: radial-gradient(circle, var(--tw-gradient-stops));
@@ -131,6 +198,39 @@ body {
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* NEW: Cosmic utility classes */
+.cosmic-glow {
+  animation: cosmic-glow 3s ease-in-out infinite;
+}
+
+.border-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(147, 51, 234, 1) 0%,
+    rgba(59, 130, 246, 1) 25%,
+    rgba(236, 72, 153, 1) 50%,
+    rgba(59, 130, 246, 1) 75%,
+    rgba(147, 51, 234, 1) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 4s linear infinite;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.scale-in {
+  animation: scale-in 0.4s ease-out forwards;
 }
 
 /* Smooth scrollbar */

@@ -10,6 +10,7 @@ export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [proposals, setProposals] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,271 +20,307 @@ export default function Dashboard() {
       return;
     }
 
-    // Fetch proposals from database
-    fetchProposals();
+    fetchData();
   }, [session, status, router]);
 
-  const fetchProposals = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/api/proposals/generate');
-      const data = await response.json();
-      if (response.ok) {
-        setProposals(data.proposals || []);
+      const [proposalsRes, invoicesRes] = await Promise.all([
+        fetch('/api/proposals/generate'),
+        fetch('/api/invoices')
+      ]);
+
+      const proposalsData = await proposalsRes.json();
+      const invoicesData = await invoicesRes.json();
+
+      if (proposalsRes.ok) {
+        setProposals(proposalsData.proposals || []);
+      }
+
+      if (invoicesRes.ok) {
+        setInvoices(invoicesData.invoices || []);
       }
     } catch (error) {
-      console.error('Failed to fetch proposals:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Calculate stats
   const totalProposals = proposals.length;
   const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
+  const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
-  // Calculate total earnings (just from sent proposals for now)
-  const totalEarnings = proposals
-    .filter((p: any) => p.status === 'sent')
-    .reduce((sum: number, p: any) => {
-      const budget = parseFloat(p.budget?.replace(/[^0-9.]/g, '') || '0');
-      return sum + budget;
-    }, 0);
+  // Invoice statistics
+  const pendingInvoices = invoices.filter((inv: any) => inv.status === 'pending').length;
+  const totalInvoiced = invoices.reduce((sum: number, inv: any) => sum + inv.total, 0);
+  const totalPaid = invoices
+    .filter((inv: any) => inv.status === 'paid')
+    .reduce((sum: number, inv: any) => sum + (inv.paidAmount || inv.total), 0);
+  const outstandingBalance = totalInvoiced - totalPaid;
 
   if (status === 'loading') {
     return (
       <Layout currentPage="dashboard">
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-white text-xl">Loading...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+            <p className="text-white/60 text-sm">Loading your dashboard...</p>
+          </div>
         </div>
       </Layout>
     );
   }
 
-  if (!session) {
-    return null;
-  }
+  if (!session) return null;
 
-  // Determine if user is new (less than 3 proposals)
   const isNewUser = totalProposals < 3;
-  const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
   return (
     <Layout currentPage="dashboard">
-      <div className="min-h-screen px-4 py-20 pb-32">
-        <div className="max-w-5xl mx-auto">
-          {/* Header - Personalized & Contextual */}
-          <div className="mb-12">
-            <p className="text-white/60 text-sm uppercase tracking-widest mb-4 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+      <div className="min-h-screen pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Simple Title */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
               Dashboard
-            </p>
-            <h1 className="text-4xl sm:text-5xl text-white font-light mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-              {isNewUser ? `Welcome, ${(session.user as any)?.firstName || 'there'}` : `${(session.user as any)?.firstName || 'Welcome'}`}
-            </h1>
-            <p className="text-white/70 text-lg max-w-2xl" style={{ fontFamily: 'var(--font-inter)' }}>
-              {isNewUser
-                ? "Let's create your first proposal and get you started on winning clients."
-                : "Here's what's happening with your proposals and business."
-              }
-            </p>
+            </h2>
+            <h4 className="text-white/50 text-sm">
+              Track your proposals
+            </h4>
           </div>
 
-          {/* Contextual: New User Onboarding vs Active User Dashboard */}
-          {isNewUser ? (
-            // NEW USER EXPERIENCE - Focus on getting started
-            <div className="space-y-6">
-              {/* Primary Goal - Get Started */}
-              <Link
-                href="/create-proposal"
-                className="block bg-white text-black p-8 rounded-2xl hover:scale-[1.01] transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-3xl font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      Create Your First Proposal
-                    </p>
-                    <p className="text-base opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
-                      AI-powered generation takes 2 minutes
-                    </p>
-                  </div>
-                  <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          {/* Stats Grid - Smaller, minimal, monochromatic */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Total Revenue */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-              </Link>
-
-              {/* Value Proposition - ROI Preview */}
-              <div className="grid sm:grid-cols-3 gap-6">
-                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
-                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Save Time
-                  </p>
-                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    2 hrs
-                  </p>
-                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                    per proposal
-                  </p>
-                </div>
-                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
-                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Win Rate
-                  </p>
-                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    +40%
-                  </p>
-                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                    with AI
-                  </p>
-                </div>
-                <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
-                  <p className="text-white/80 text-xs uppercase tracking-widest mb-3 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Get Paid
-                  </p>
-                  <p className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    3x
-                  </p>
-                  <p className="text-white/70 text-sm mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                    faster
-                  </p>
-                </div>
               </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                ${totalPaid.toLocaleString()}
+              </p>
+              <p className="text-white/50 text-xs">Total Paid</p>
             </div>
-          ) : (
-            // ACTIVE USER EXPERIENCE - Focus on outcomes & metrics
-            <div className="space-y-8">
-              {/* Key Metrics - What matters most */}
-              <div className="grid grid-cols-3 gap-6">
-                <div className="text-center">
-                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    ${totalEarnings.toLocaleString()}
-                  </p>
-                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Total Revenue
-                  </p>
-                </div>
-                <div className="text-center border-x border-white/10">
-                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    {sentProposals}
-                  </p>
-                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Proposals Sent
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-5xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    {conversionRate}%
-                  </p>
-                  <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Win Rate
-                  </p>
+
+            {/* Outstanding Balance */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
                 </div>
               </div>
-
-              {/* ROI Reinforcement - Time & Money Saved */}
-              <div className="bg-white/15 border border-white/20 p-6 rounded-xl backdrop-blur-xl">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white/80 text-xs uppercase tracking-widest mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Your Savings with AXIOM
-                    </p>
-                    <p className="text-white text-lg" style={{ fontFamily: 'var(--font-inter)' }}>
-                      ~{sentProposals * 2} hours saved • ${sentProposals * 500} potential value created
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      {sentProposals}x
-                    </p>
-                    <p className="text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                      more proposals
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Goal-Based Navigation - What do they want to do? */}
-              <div>
-                <p className="text-white/70 text-xs uppercase tracking-widest mb-5 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                  What would you like to do?
-                </p>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <Link
-                    href="/create-proposal"
-                    className="bg-white text-black p-6 rounded-xl hover:scale-[1.01] transition-all duration-300"
-                  >
-                    <p className="text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      Create New Proposal
-                    </p>
-                    <p className="text-sm opacity-60" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Win more clients
-                    </p>
-                  </Link>
-
-                  <button className="bg-white/15 border border-white/20 text-white p-6 rounded-xl hover:bg-white/20 transition-all duration-300 text-left backdrop-blur-xl">
-                    <p className="text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      Send Invoice
-                    </p>
-                    <p className="text-sm text-white/70" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Get paid faster
-                    </p>
-                  </button>
-                </div>
-              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                ${outstandingBalance.toLocaleString()}
+              </p>
+              <p className="text-white/50 text-xs">Outstanding</p>
             </div>
-          )}
 
-          {/* Recent Proposals - Contextual based on state */}
-          {proposals.length > 0 && (
-            <div className="mt-8">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-white/70 text-xs uppercase tracking-widest font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Recent Proposals
-                </p>
-                <Link href="/proposals" className="text-white/70 text-sm hover:text-white/90 transition-colors" style={{ fontFamily: 'var(--font-inter)' }}>
-                  View all
+            {/* Pending Invoices */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {pendingInvoices}
+              </p>
+              <p className="text-white/50 text-xs">Pending Invoices</p>
+            </div>
+
+            {/* Total Invoices */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {invoices.length}
+              </p>
+              <p className="text-white/50 text-xs">Total Invoices</p>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Proposals List */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Quick Actions */}
+              <div className="grid grid-cols-2 gap-4">
+                <Link
+                  href="/create-proposal"
+                  className="group bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium text-sm">Create Proposal</p>
+                      <p className="text-white/50 text-xs">Generate with AI</p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/invoices"
+                  className="group bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium text-sm">View Invoices</p>
+                      <p className="text-white/50 text-xs">{invoices.length} invoices</p>
+                    </div>
+                  </div>
                 </Link>
               </div>
-              <div className="space-y-3">
-                {proposals.slice(0, 3).map((proposal: any) => (
-                  <Link
-                    key={proposal.id}
-                    href={`/proposals/${proposal.id}`}
-                    className="block px-6 py-4 border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-light mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                          {proposal.projectName}
-                        </p>
-                        <p className="text-white/50 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                          {proposal.clientName} • {proposal.budget}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className={`text-xs px-3 py-1 rounded-full ${
-                          proposal.status === 'sent'
-                            ? 'bg-green-500/20 text-green-300'
-                            : 'bg-white/15 text-white/70'
-                        }`} style={{ fontFamily: 'var(--font-inter)' }}>
-                          {proposal.status || 'Draft'}
-                        </span>
-                      </div>
+
+              {/* Recent Proposals */}
+              <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-white">Recent Proposals</h2>
+                    <Link href="/proposals" className="text-white/50 text-xs hover:text-white/70 transition-colors">
+                      View all →
+                    </Link>
+                  </div>
+                </div>
+
+                {proposals.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
                     </div>
-                  </Link>
-                ))}
+                    <p className="text-white/80 text-sm mb-1">No proposals yet</p>
+                    <p className="text-white/50 text-xs mb-4">Create your first proposal</p>
+                    <Link
+                      href="/create-proposal"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full hover:bg-white/90 transition-all text-xs"
+                    >
+                      Create Proposal
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-white/10">
+                    {proposals.slice(0, 5).map((proposal: any, index: number) => (
+                      <Link
+                        key={proposal.id}
+                        href={`/proposals/${proposal.id}`}
+                        className="block p-3 hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-white text-sm font-medium">
+                                {proposal.projectName}
+                              </p>
+                              <p className="text-white/40 text-xs">{proposal.clientName}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-white/80 text-sm">{proposal.budget}</p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              proposal.status === 'sent'
+                                ? 'bg-white/10 text-white/70'
+                                : proposal.status === 'draft'
+                                ? 'bg-white/10 text-white/70'
+                                : 'bg-white/5 text-white/50'
+                            }`}>
+                              {proposal.status || 'Draft'}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          )}
 
-          {/* Simple Sign Out */}
-          <div className="mt-16 text-center">
-            <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="text-white/30 text-sm hover:text-white/50 transition-colors duration-300"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              Sign out
-            </button>
+            {/* Right Column - Minimal */}
+            <div className="space-y-4">
+              {/* Win Rate - Minimal */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-white text-sm font-medium">Win Rate</h3>
+                </div>
+                <div className="flex items-end gap-2 mb-2">
+                  <span className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {conversionRate}%
+                  </span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-1.5">
+                  <div
+                    className="bg-white/30 h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${conversionRate}%` }}
+                  />
+                </div>
+                <p className="text-white/50 text-xs mt-2">
+                  {sentProposals} of {totalProposals} sent
+                </p>
+              </div>
+
+              {/* Tips - Minimal */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <h3 className="text-white text-sm font-medium mb-3">Pro Tips</h3>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2 p-2 bg-white/5 rounded-lg">
+                    <svg className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <div>
+                      <p className="text-white text-xs font-medium">Quick Turnaround</p>
+                      <p className="text-white/40 text-xs">Send within 24hr</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-2 bg-white/5 rounded-lg">
+                    <svg className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <div>
+                      <p className="text-white text-xs font-medium">Personalize</p>
+                      <p className="text-white/40 text-xs">Add client details</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Help - Minimal */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                <p className="text-white/80 text-sm mb-1">Need help?</p>
+                <p className="text-white/50 text-xs mb-3">Check our documentation</p>
+                <button className="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-xs">
+                  View Guide
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

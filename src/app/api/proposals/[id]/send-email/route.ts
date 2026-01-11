@@ -23,7 +23,7 @@ export async function POST(
 
     console.log('Sending proposal email for ID:', proposalId);
 
-    // Fetch proposal from database
+    // Fetch proposal from database with security fields
     const { prisma } = await import('@/lib/db');
     const proposal = await prisma.proposal.findUnique({
       where: { id: proposalId },
@@ -34,7 +34,23 @@ export async function POST(
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }
 
+    // Check if freelancer has signed
+    if (!proposal.freelancerSignedAt || proposal.signatureStatus !== 'pending_client') {
+      return NextResponse.json(
+        { error: 'Freelancer must sign the proposal before sending to client' },
+        { status: 400 }
+      );
+    }
+
+    if (!proposal.signatureToken || !proposal.verificationCode) {
+      return NextResponse.json(
+        { error: 'Proposal security fields not found. Please sign the proposal again.' },
+        { status: 400 }
+      );
+    }
+
     console.log('Proposal found, sending to:', proposal.clientEmail);
+    console.log('Verification code:', proposal.verificationCode); // For development
 
     // Fetch user information to personalize the email
     const user = await prisma.user.findUnique({
@@ -206,10 +222,14 @@ export async function POST(
     // Convert PDF to buffer
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
 
-    // Create email HTML
+    // Create email HTML with signature link and verification code
     const senderName = user.firstName && user.lastName
       ? `${user.firstName} ${user.lastName}`
       : user.email.split('@')[0];
+
+    // Generate signature link
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const signatureLink = `${baseUrl}/sign/${proposal.signatureToken}`;
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -249,23 +269,59 @@ export async function POST(
                 </ul>
               </div>
 
-              <p style="margin: 30px 0 10px; font-size: 15px; line-height: 1.6; color: #555;">
-                The attached PDF includes:
-              </p>
+              <!-- Signature Request Section -->
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; margin: 30px 0; border-radius: 8px; text-align: center;">
+                <h2 style="margin: 0 0 15px; font-size: 22px; color: white;">📝 Please Review & Sign This Proposal</h2>
+                <p style="margin: 0 0 25px; font-size: 15px; color: rgba(255,255,255,0.9); line-height: 1.6;">
+                  I've signed this proposal and now it's ready for your review. Please follow these simple steps to complete the process:
+                </p>
 
-              <ul style="margin: 0 0 30px; padding-left: 20px; font-size: 14px; line-height: 1.8; color: #555;">
-                <li>Complete project scope and deliverables</li>
-                <li>Detailed timeline with milestones</li>
-                <li>Comprehensive pricing breakdown</li>
-                <li>Terms and conditions</li>
-              </ul>
+                <!-- Step 1: Verification Code -->
+                <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <p style="margin: 0 0 10px; font-size: 14px; color: rgba(255,255,255,0.9); font-weight: 500;">
+                    STEP 1: Your Verification Code
+                  </p>
+                  <div style="background: white; border-radius: 6px; padding: 15px; margin: 10px 0;">
+                    <p style="margin: 0; font-size: 32px; color: #667eea; font-weight: bold; letter-spacing: 8px; font-family: monospace;">
+                      ${proposal.verificationCode}
+                    </p>
+                  </div>
+                  <p style="margin: 10px 0 0; font-size: 13px; color: rgba(255,255,255,0.8);">
+                    ⏱ This code expires in 1 hour for security
+                  </p>
+                </div>
+
+                <!-- Step 2: Sign Button -->
+                <div style="margin: 20px 0;">
+                  <p style="margin: 0 0 10px; font-size: 14px; color: rgba(255,255,255,0.9); font-weight: 500;">
+                    STEP 2: Click Below to Sign
+                  </p>
+                  <a href="${signatureLink}" style="display: inline-block; background: white; color: #667eea; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    ✓ Review & Sign Proposal →
+                  </a>
+                </div>
+
+                <p style="margin: 20px 0 0; font-size: 13px; color: rgba(255,255,255,0.8);">
+                  Can't click the button? Copy this link into your browser:<br>
+                  <span style="background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 4px; display: inline-block; margin-top: 8px; font-family: monospace; font-size: 11px; word-break: break-all;">
+                    ${signatureLink}
+                  </span>
+                </p>
+              </div>
+
+              <!-- Security Notice -->
+              <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="margin: 0; font-size: 13px; color: #92400e; line-height: 1.6;">
+                  <strong>🔒 Security Notice:</strong> This proposal is protected by electronic signature laws (ESIGN Act, eIDAS). Your IP address and timestamp will be recorded for audit purposes. The content is secured with SHA-256 hashing to prevent tampering.
+                </p>
+              </div>
 
               <p style="margin: 30px 0 10px; font-size: 15px; line-height: 1.6; color: #555;">
-                Please review the proposal and feel free to reach out if you have any questions or would like to schedule a call to discuss further.
+                The attached PDF includes the complete proposal details. Please feel free to reach out if you have any questions.
               </p>
 
               <p style="margin: 30px 0 0; font-size: 15px; line-height: 1.6; color: #555;">
-                Looking forward to the possibility of working together!
+                Looking forward to working together!
               </p>
 
               <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
