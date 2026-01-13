@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { createCheckoutSession } from '@/lib/dodo-payments';
 
 export async function POST(
   request: NextRequest,
@@ -8,7 +9,7 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { dueDate, taxRate = 0, notes, terms, currency = 'USD' } = body;
+    const { dueDate, taxRate = 0, notes, terms, paymentLink: manualPaymentLink } = body;
 
     // Get the proposal
     const proposal = await prisma.proposal.findUnique({
@@ -18,6 +19,9 @@ export async function POST(
     if (!proposal) {
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }
+
+    // Use proposal's currency, or allow override
+    const currency = body.currency || proposal.currency || 'USD';
 
     // Check if invoice already exists for this proposal
     const existingInvoice = await prisma.invoice.findUnique({
@@ -71,14 +75,45 @@ export async function POST(
     const taxAmount = subtotal * (taxRate / 100);
     const total = subtotal + taxAmount;
 
-    // Generate invoice number
-    const invoiceCount = await prisma.invoice.count();
-    const invoiceNumber = `INV-${String(invoiceCount + 1).padStart(4, '0')}`;
-
     // Calculate due date (default: 30 days from issue date)
     const dueDateObj = dueDate ? new Date(dueDate) : new Date();
     if (!dueDate) {
       dueDateObj.setDate(dueDateObj.getDate() + 30);
+    }
+
+    // Generate unique invoice number using timestamp and random string
+    // This avoids conflicts when invoices are deleted
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    const invoiceNumber = `INV-${timestamp}-${random}`;
+
+    // Generate payment link automatically if not provided manually
+    let finalPaymentLink = manualPaymentLink || null;
+
+    // Try to create Dodo Payments checkout session for automatic payment link
+    if (!finalPaymentLink && process.env.DODO_PAYMENTS_PRODUCT_ID) {
+      try {
+        // Convert total to cents (or smallest currency unit)
+        const amountInSmallestUnit = Math.round(total * 100);
+
+        const checkoutSession = await createCheckoutSession({
+          amount: amountInSmallestUnit,
+          currency: currency,
+          productId: process.env.DODO_PAYMENTS_PRODUCT_ID,
+          customerEmail: proposal.clientEmail,
+          customerName: proposal.clientName,
+          metadata: {
+            proposal_id: proposal.id,
+            invoice_number: invoiceNumber,
+          },
+        });
+
+        finalPaymentLink = checkoutSession.checkoutUrl;
+        console.log('✅ Dodo Payments checkout session created:', checkoutSession.sessionId);
+      } catch (dodoError) {
+        console.error('⚠️  Failed to create Dodo Payments checkout session:', dodoError);
+        // Continue without payment link - user can add it later
+      }
     }
 
     // Create invoice
@@ -100,6 +135,7 @@ export async function POST(
         lineItems: JSON.stringify(lineItems),
         notes: notes || `Thank you for your business! Payment is due within 30 days.`,
         terms: terms || proposal.termsAndConditions,
+        paymentLink: finalPaymentLink,
       },
     });
 
@@ -120,7 +156,7 @@ export async function POST(
 }
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {

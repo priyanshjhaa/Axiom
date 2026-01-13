@@ -19,10 +19,23 @@ export default function CreateProposal() {
     projectTitle: '',
     projectDescription: '',
     budget: '',
+    currency: 'USD',
     timeline: '',
     startDate: '',
     deliverables: '',
   });
+
+  const currencies = [
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+    { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
+  ];
 
   if (status === 'loading') {
     return (
@@ -39,7 +52,7 @@ export default function CreateProposal() {
     return null;
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
@@ -313,7 +326,7 @@ export default function CreateProposal() {
                 <div className="grid sm:grid-cols-3 gap-6">
                   <div>
                     <label htmlFor="budget" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Budget ($) *
+                      Budget ({currencies.find(c => c.code === formData.currency)?.symbol || '$'}) *
                     </label>
                     <input
                       id="budget"
@@ -333,6 +346,27 @@ export default function CreateProposal() {
                         {errors.budget}
                       </p>
                     )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="currency" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Currency *
+                    </label>
+                    <select
+                      id="currency"
+                      name="currency"
+                      required
+                      value={formData.currency}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      {currencies.map(currency => (
+                        <option key={currency.code} value={currency.code} className="bg-gray-900 text-white">
+                          {currency.code} - {currency.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>

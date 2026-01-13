@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 import SignatureModal from '@/components/SignatureModal';
+import ShareModal from '@/components/ShareModal';
 
 interface ProposalContent {
   executiveSummary: string;
@@ -49,6 +50,7 @@ export default function ProposalPage() {
   const [error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
@@ -87,29 +89,8 @@ export default function ProposalPage() {
     }
   };
 
-  const handleSendProposal = async () => {
-    if (!proposal) return;
-
-    setIsSending(true);
-    try {
-      const response = await fetch(`/api/proposals/${params.id}/send-email`, {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setProposal(prev => prev ? { ...prev, status: 'sent' } : null);
-        alert(`✅ Proposal sent successfully to ${proposal.clientEmail}!\n\nThe proposal PDF has been attached to the email.`);
-      } else {
-        alert(`❌ Failed to send proposal: ${data.error || 'Unknown error'}`);
-      }
-    } catch (err) {
-      console.error('Send error:', err);
-      alert('❌ Network error. Please check your connection and try again.');
-    } finally {
-      setIsSending(false);
-    }
+  const handleSendProposal = () => {
+    setShowShareModal(true);
   };
 
   const handleDownloadPDF = async () => {
@@ -374,7 +355,12 @@ export default function ProposalPage() {
       if (response.ok) {
         setInvoiceId(data.invoice.id);
         setProposal(prev => prev ? { ...prev, hasInvoice: true, invoiceId: data.invoice.id } : null);
-        alert(`✅ Invoice generated successfully!\n\nInvoice Number: ${data.invoice.invoiceNumber}\nTotal: $${data.invoice.total.toFixed(2)}\n\nYou can view it anytime from the dashboard.`);
+
+        const paymentLinkMessage = data.invoice.paymentLink
+          ? `\n\n✨ Payment link created automatically!\nYour client can now pay directly via the "Pay Now" button.`
+          : '';
+
+        alert(`✅ Invoice generated successfully!\n\nInvoice Number: ${data.invoice.invoiceNumber}\nTotal: $${data.invoice.total.toFixed(2)}${paymentLinkMessage}\n\nYou can view it anytime from the dashboard.`);
       } else {
         alert(`❌ Failed to generate invoice: ${data.error || 'Unknown error'}`);
       }
@@ -486,14 +472,13 @@ export default function ProposalPage() {
               </button>
               <button
                 onClick={handleSendProposal}
-                disabled={isSending || proposal.status !== 'draft'}
-                className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-white text-black font-light rounded-lg hover:bg-white/90 transition-all flex items-center gap-2"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                {isSending ? 'Sending...' : proposal.status === 'sent' ? 'Sent ✓' : 'Send to Client'}
+                Share with Client
               </button>
               {invoiceId ? (
                 <Link
@@ -793,6 +778,17 @@ export default function ProposalPage() {
         onSubmit={handleSignProposal}
         title="Sign Proposal"
       />
+
+      {/* Share Modal */}
+      {proposal && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          type="proposal"
+          id={params.id as string}
+          title={proposal.projectTitle}
+        />
+      )}
     </Layout>
   );
 }

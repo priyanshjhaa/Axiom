@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Layout from '@/components/Layout';
+import ShareModal from '@/components/ShareModal';
 import jsPDF from 'jspdf';
 
 interface LineItem {
@@ -29,6 +30,7 @@ interface Invoice {
   clientName: string;
   clientEmail: string;
   clientCompany: string;
+  paymentLink?: string | null;
   proposal: {
     projectTitle: string;
   };
@@ -40,6 +42,7 @@ export default function InvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     fetchInvoice();
@@ -139,8 +142,8 @@ export default function InvoicePage() {
         const description = doc.splitTextToSize(item.description, pageWidth - 110);
         doc.text(description, 25, yPosition + 7);
         doc.text(item.quantity.toString(), pageWidth - 80, yPosition + 7);
-        doc.text(`${item.currency || '$'}${item.rate.toFixed(2)}`, pageWidth - 60, yPosition + 7);
-        doc.text(`${item.currency || '$'}${item.amount.toFixed(2)}`, pageWidth - 30, yPosition + 7, { align: 'right' });
+        doc.text(`${invoice.currency}$${item.rate.toFixed(2)}`, pageWidth - 60, yPosition + 7);
+        doc.text(`${invoice.currency}$${item.amount.toFixed(2)}`, pageWidth - 30, yPosition + 7, { align: 'right' });
         yPosition += description.length * 7 + 7;
       });
 
@@ -344,9 +347,30 @@ export default function InvoicePage() {
           {/* Actions */}
           <div className="flex gap-4 pt-6 border-t border-gray-200">
             <button
+              onClick={() => setShowShareModal(true)}
+              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share with Client
+            </button>
+            {invoice.paymentLink && invoice.status !== 'paid' && (
+              <a
+                href={invoice.paymentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+              >
+                Pay Now
+              </a>
+            )}
+            <button
               onClick={downloadPDF}
               disabled={downloading}
-              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`${
+                invoice.paymentLink && invoice.status !== 'paid' ? 'flex-1' : 'flex-1'
+              } bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {downloading ? 'Downloading...' : 'Download PDF'}
             </button>
@@ -359,6 +383,17 @@ export default function InvoicePage() {
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      {invoice && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          type="invoice"
+          id={params.id as string}
+          title={`Invoice ${invoice.invoiceNumber}`}
+        />
+      )}
     </Layout>
   );
 }

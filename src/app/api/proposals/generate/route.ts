@@ -204,6 +204,7 @@ export async function POST(request: NextRequest) {
         projectTitle: formData.projectTitle,
         projectDescription: formData.projectDescription,
         budget: formData.budget,
+        currency: formData.currency || 'USD',
         timeline: formData.timeline,
         startDate: formData.startDate || null,
         deliverables: formData.deliverables || '',
