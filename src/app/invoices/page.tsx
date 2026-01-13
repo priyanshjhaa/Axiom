@@ -13,6 +13,8 @@ interface Invoice {
   dueDate: string;
   status: string;
   total: number;
+  paidAmount: number;
+  remainingAmount: number;
   currency: string;
   clientName: string;
   clientEmail: string;
@@ -111,7 +113,7 @@ export default function InvoicesPage() {
 
   if (status === 'loading' || isLoading) {
     return (
-      <Layout>
+      <Layout currentPage="invoices">
         <div className="min-h-screen flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -125,18 +127,18 @@ export default function InvoicesPage() {
   if (!session) return null;
 
   const totalPaid = invoices
-    .filter((inv) => inv.status === 'paid')
+    .filter((inv) => inv.status === 'PAID')
     .reduce((sum, inv) => sum + (inv.total || 0), 0);
 
   const outstanding = invoices
-    .filter((inv) => inv.status !== 'paid')
-    .reduce((sum, inv) => sum + (inv.total || 0), 0);
+    .filter((inv) => inv.status !== 'PAID')
+    .reduce((sum, inv) => sum + ((inv.remainingAmount && inv.remainingAmount > 0) ? inv.remainingAmount : (inv.total || 0)), 0);
 
   const allSelected = invoices.length > 0 && selectedIds.size === invoices.length;
   const someSelected = selectedIds.size > 0 && selectedIds.size < invoices.length;
 
   return (
-    <Layout>
+    <Layout currentPage="invoices">
       <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Header */}
@@ -223,14 +225,14 @@ export default function InvoicesPage() {
                     onClick={toggleSelectAll}
                     className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
                       allSelected
-                        ? 'bg-indigo-500 border-indigo-500'
+                        ? 'bg-white border-white'
                         : someSelected
-                        ? 'bg-indigo-500/50 border-indigo-500'
+                        ? 'bg-white/80 border-white'
                         : 'border-white/30 hover:border-white/50'
                     }`}
                   >
                     {allSelected || someSelected ? (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : null}
@@ -249,12 +251,12 @@ export default function InvoicesPage() {
                       onClick={() => toggleSelect(invoice.id)}
                       className={`w-5 h-5 rounded border flex items-center justify-center transition-all mr-4 flex-shrink-0 ${
                         selectedIds.has(invoice.id)
-                          ? 'bg-indigo-500 border-indigo-500'
+                          ? 'bg-white border-white'
                           : 'border-white/30 hover:border-white/50'
                       }`}
                     >
                       {selectedIds.has(invoice.id) && (
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
@@ -284,13 +286,15 @@ export default function InvoicesPage() {
                           <p className="text-white/40 text-xs">{new Date(invoice.issueDate).toLocaleDateString()}</p>
                         </div>
                         <span className={`text-xs px-3 py-1 rounded-full ${
-                          invoice.status === 'paid'
+                          invoice.status === 'PAID'
                             ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                            : invoice.status === 'pending'
+                            : invoice.status === 'PARTIALLY_PAID'
+                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                            : invoice.status === 'UNPAID'
                             ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
                             : 'bg-red-500/20 text-red-300 border border-red-500/30'
                         }`}>
-                          {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                          {invoice.status.replace('_', ' ')}
                         </span>
                       </div>
                     </Link>

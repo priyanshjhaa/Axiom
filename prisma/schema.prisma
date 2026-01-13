@@ -92,7 +92,7 @@ model Invoice {
   invoiceNumber      String   @unique // Auto-generated: INV-0001, INV-0002, etc.
   issueDate          DateTime @default(now())
   dueDate            DateTime // Payment due date
-  status             String   @default("pending") // 'pending' | 'paid' | 'overdue' | 'cancelled'
+  status             String   @default("UNPAID") // 'UNPAID' | 'PARTIALLY_PAID' | 'PAID' | 'OVERDUE' | 'CANCELLED'
 
   // Payment information
   subtotal           Float    // Sum of all line items
@@ -100,12 +100,11 @@ model Invoice {
   taxAmount          Float    @default(0)
   total              Float    // subtotal + taxAmount
 
-  // Payment details
+  // Payment tracking
   currency           String   @default("USD")
-  paymentLink        String?  // Stripe payment link
-  paymentId          String?  // Stripe payment intent ID
-  paidAt             DateTime?
-  paidAmount         Float?
+  paymentLink        String?  // Dodo Payments checkout link
+  paidAmount         Float    @default(0) // Total amount paid so far (supports partial payments)
+  remainingAmount    Float    @default(0) // Total - paidAmount (computed)
 
   // Line items (JSON string)
   lineItems          String   // JSON array of items: [{description, quantity, rate, amount}]
@@ -117,6 +116,9 @@ model Invoice {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
+  // Relations
+  payments           Payment[]
+
   // Reminders
   reminderSent       Boolean  @default(false)
   reminderCount      Int      @default(0)
@@ -125,4 +127,26 @@ model Invoice {
   // Share link fields
   accessToken           String?  @unique  // Secure token for public sharing
   accessExpiresAt       DateTime? // Share link expiration (optional)
+}
+
+model Payment {
+  id                 String   @id @default(cuid())
+  invoiceId          String
+  invoice            Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  // Payment details from Dodo Payments
+  externalPaymentId  String   @unique // Dodo Payments payment/session ID
+  amount             Float    // Amount paid in this transaction
+  currency           String   @default("USD")
+
+  // Payment status
+  status             String   @default("succeeded") // 'succeeded' | 'pending' | 'failed' | 'refunded'
+
+  // Metadata
+  paymentMethod      String?  // e.g., 'card', 'upi'
+  metadata           String?  // JSON string for additional data
+
+  // Timestamps
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }

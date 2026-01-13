@@ -96,7 +96,6 @@ export default function SharedProposalPage() {
 
       if (response.ok) {
         setSignSuccess(true);
-        // Refresh proposal to show updated signature
         fetchProposal();
       } else {
         alert(data.error || 'Failed to sign proposal');
@@ -138,7 +137,7 @@ export default function SharedProposalPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-gray-400">Loading proposal...</p>
         </div>
       </div>
@@ -157,7 +156,7 @@ export default function SharedProposalPage() {
             <p className="text-gray-400 mb-6">{error || 'This proposal link is invalid or has expired.'}</p>
             <Link
               href="/"
-              className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-all"
+              className="inline-flex items-center px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-all"
             >
               Go to Axiom
             </Link>
@@ -183,7 +182,7 @@ export default function SharedProposalPage() {
       <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-white">AXIOM</h1>
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>AXIOM</h1>
             <p className="text-gray-400 text-sm">Proposal Sharing</p>
           </div>
           <div className="flex items-center gap-4">
@@ -191,7 +190,7 @@ export default function SharedProposalPage() {
             {proposal.signatureStatus === 'pending_client' && !proposal.clientSignedAt && (
               <button
                 onClick={() => setShowSignatureModal(true)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -210,13 +209,15 @@ export default function SharedProposalPage() {
       </header>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-32">
         {/* Title Card */}
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 mb-8">
           <div className="flex justify-between items-start mb-6">
             <div>
               <p className="text-gray-400 text-sm mb-2">Project Proposal</p>
-              <h2 className="text-4xl font-light text-white">{proposal.projectTitle}</h2>
+              <h2 className="text-4xl font-light text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {proposal.projectTitle}
+              </h2>
             </div>
             <span className={`px-4 py-2 rounded-full text-sm font-medium ${
               proposal.signatureStatus === 'signed' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
@@ -245,130 +246,214 @@ export default function SharedProposalPage() {
           </div>
         </div>
 
-        {/* Document Sections */}
-        <div className="space-y-6">
-          {/* Executive Summary */}
-          <section className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-xl font-light text-white mb-4 flex items-center gap-3">
-              <div className="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              Executive Summary
+        {/* Document Card - Matching Axiom Design */}
+        <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
+          {/* Document Header */}
+          <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
+            <h3 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+              Project Proposal
             </h3>
-            <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-              {proposal.executiveSummary}
-            </div>
-          </section>
+            <p className="text-white/90">
+              Prepared for {proposal.clientName}
+              {proposal.clientCompany && ` at ${proposal.clientCompany}`}
+            </p>
+            <p className="text-white/60 text-sm mt-2">
+              by {proposal.user.firstName && proposal.user.lastName ? `${proposal.user.firstName} ${proposal.user.lastName}` : proposal.user.email}
+            </p>
+          </div>
 
-          {/* Scope of Work */}
-          <section className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-xl font-light text-white mb-4 flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500/30 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+          {/* Document Body */}
+          <div className="p-8 text-white">
+            {/* Client & Project Info */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h4 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
+                  Client Information
+                </h4>
+                <p className="text-sm text-white mb-2"><strong className="text-white">Name:</strong> {proposal.clientName}</p>
+                <p className="text-sm text-white mb-2"><strong className="text-white">Email:</strong> {proposal.clientEmail}</p>
+                {proposal.clientCompany && (
+                  <p className="text-sm text-white"><strong className="text-white">Company:</strong> {proposal.clientCompany}</p>
+                )}
               </div>
-              Scope of Work
-            </h3>
-            <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-              {proposal.scopeOfWork}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h4 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
+                  Project Information
+                </h4>
+                <p className="text-sm text-white mb-2"><strong className="text-white">Title:</strong> {proposal.projectTitle}</p>
+                <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> ${proposal.budget}</p>
+                <p className="text-sm text-white"><strong className="text-white">Timeline:</strong> {proposal.timeline}</p>
+              </div>
             </div>
-          </section>
 
-          {/* Timeline */}
-          <section className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-xl font-light text-white mb-4 flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-500/30 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            {/* Executive Summary */}
+            <section className="mb-8 pb-8 border-b border-white/20">
+              <h4 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                Executive Summary
+              </h4>
+              <div className="text-white whitespace-pre-line leading-relaxed">
+                {proposal.executiveSummary}
               </div>
-              Project Timeline
-            </h3>
-            <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-              {proposal.timelineDetails}
-            </div>
-          </section>
+            </section>
 
-          {/* Pricing */}
-          <section className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-xl font-light text-white mb-4 flex items-center gap-3">
-              <div className="w-8 h-8 bg-amber-500/30 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+            {/* Scope of Work */}
+            <section className="mb-8 pb-8 border-b border-white/20">
+              <h4 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                Scope of Work
+              </h4>
+              <div className="text-white whitespace-pre-line leading-relaxed">
+                {proposal.scopeOfWork}
               </div>
-              Pricing & Payment Terms
-            </h3>
-            <div className="text-gray-300 whitespace-pre-line leading-relaxed">
-              {proposal.pricingBreakdown}
-            </div>
-          </section>
+            </section>
 
-          {/* Terms */}
-          <section className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-xl font-light text-white mb-4 flex items-center gap-3">
-              <div className="w-8 h-8 bg-cyan-500/30 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+            {/* Timeline */}
+            <section className="mb-8 pb-8 border-b border-white/20">
+              <h4 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                Project Timeline
+              </h4>
+              <div className="text-white whitespace-pre-line leading-relaxed">
+                {proposal.timelineDetails}
               </div>
-              Terms and Conditions
-            </h3>
-            <div className="text-gray-400 whitespace-pre-line leading-relaxed text-sm">
-              {proposal.termsAndConditions}
+            </section>
+
+            {/* Pricing */}
+            <section className="mb-8 pb-8 border-b border-white/20">
+              <h4 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="w-10 h-10 bg-amber-500/30 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                Pricing & Payment Terms
+              </h4>
+              <div className="text-white whitespace-pre-line leading-relaxed">
+                {proposal.pricingBreakdown}
+              </div>
+            </section>
+
+            {/* Terms */}
+            <section className="mb-8">
+              <h4 className="text-2xl font-light mb-4 text-white flex items-center gap-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+                <div className="w-10 h-10 bg-cyan-500/30 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                Terms and Conditions
+              </h4>
+              <div className="text-white/80 whitespace-pre-line leading-relaxed text-sm">
+                {proposal.termsAndConditions}
+              </div>
+            </section>
+          </div>
+
+          {/* Document Footer */}
+          <div className="bg-white/5 backdrop-blur-sm p-6 border-t border-white/10">
+            <div className="flex justify-between items-center text-sm text-white/70">
+              <div>
+                Created on {new Date(proposal.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              <div className="font-light text-white/60" style={{ fontFamily: 'var(--font-playfair)' }}>
+                Powered by AXIOM
+              </div>
             </div>
-          </section>
+          </div>
         </div>
 
-        {/* Signatures Section */}
+        {/* Signatures Section - Matching Axiom Design */}
         {(proposal.freelancerSignatureData || proposal.clientSignatureData) && (
-          <div className="mt-8 bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-            <h3 className="text-lg font-light text-white mb-6">Signatures</h3>
+          <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+            <h3 className="text-2xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+              Digital Signatures
+            </h3>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Freelancer Signature */}
               {proposal.freelancerSignatureData && (
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">
-                    {proposal.user.firstName || proposal.user.email} (Freelancer)
-                  </p>
-                  <div className="bg-white rounded-lg p-4 inline-block">
-                    {renderSignature(proposal.freelancerSignatureData, proposal.freelancerSignatureType || 'drawn')}
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg text-white font-light">
+                      {proposal.user.firstName && proposal.user.lastName ? `${proposal.user.firstName} ${proposal.user.lastName}` : proposal.user.email} (Freelancer)
+                    </h4>
+                    <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Signed
+                    </span>
                   </div>
-                  <p className="text-gray-500 text-xs mt-2">
-                    Signed {proposal.freelancerSignedAt ? new Date(proposal.freelancerSignedAt).toLocaleDateString() : ''}
-                  </p>
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-4">
+                      {renderSignature(proposal.freelancerSignatureData, proposal.freelancerSignatureType || 'drawn')}
+                    </div>
+                    <p className="text-white/60 text-xs">
+                      Signed {proposal.freelancerSignedAt ? new Date(proposal.freelancerSignedAt).toLocaleDateString() : ''}
+                    </p>
+                  </div>
                 </div>
               )}
 
               {/* Client Signature */}
               {proposal.clientSignatureData && (
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">{proposal.clientName} (Client)</p>
-                  <div className="bg-white rounded-lg p-4 inline-block">
-                    {renderSignature(proposal.clientSignatureData, proposal.clientSignatureType || 'drawn')}
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg text-white font-light">{proposal.clientName} (Client)</h4>
+                    <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Signed
+                    </span>
                   </div>
-                  <p className="text-gray-500 text-xs mt-2">
-                    Signed {proposal.clientSignedAt ? new Date(proposal.clientSignedAt).toLocaleDateString() : ''}
-                  </p>
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-4">
+                      {renderSignature(proposal.clientSignatureData, proposal.clientSignatureType || 'drawn')}
+                    </div>
+                    <p className="text-white/60 text-xs">
+                      Signed {proposal.clientSignedAt ? new Date(proposal.clientSignedAt).toLocaleDateString() : ''}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-500 text-sm">
-            Created on {new Date(proposal.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+        {/* Call to Action - Get Started with Axiom */}
+        <div className="mt-12 text-center bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+          <h3 className="text-2xl text-white font-light mb-3" style={{ fontFamily: 'var(--font-playfair)' }}>
+            Create Professional Proposals
+          </h3>
+          <p className="text-white/70 mb-6 max-w-md mx-auto">
+            Generate stunning proposals with AI, manage invoices, and get paid faster. Join Axiom today.
           </p>
-          <p className="text-gray-600 text-xs mt-2">Powered by AXIOM</p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-all"
+          >
+            Get Started for Free
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </Link>
         </div>
       </div>
 

@@ -24,7 +24,7 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get invoice
+    // Get invoice with payments
     const invoice = await prisma.invoice.findFirst({
       where: {
         id,
@@ -35,6 +35,11 @@ export async function GET(
           select: {
             projectTitle: true,
             status: true,
+          },
+        },
+        payments: {
+          orderBy: {
+            createdAt: 'desc',
           },
         },
       },

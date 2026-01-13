@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import ShareModal from '@/components/ShareModal';
+import Link from 'next/link';
 import jsPDF from 'jspdf';
 
 interface LineItem {
@@ -11,6 +12,14 @@ interface LineItem {
   quantity: number;
   rate: number;
   amount: number;
+}
+
+interface Payment {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
 }
 
 interface Invoice {
@@ -23,6 +32,8 @@ interface Invoice {
   taxRate: number;
   taxAmount: number;
   total: number;
+  paidAmount: number;
+  remainingAmount: number;
   currency: string;
   lineItems: LineItem[];
   notes: string;
@@ -31,6 +42,7 @@ interface Invoice {
   clientEmail: string;
   clientCompany: string;
   paymentLink?: string | null;
+  payments?: Payment[];
   proposal: {
     projectTitle: string;
   };
@@ -38,7 +50,6 @@ interface Invoice {
 
 export default function InvoicePage() {
   const params = useParams();
-  const router = useRouter();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -149,22 +160,29 @@ export default function InvoicePage() {
 
       yPosition += 10;
 
-      // Totals
-      doc.text('Subtotal:', pageWidth - 60, yPosition);
-      doc.text(`${invoice.currency}$${invoice.subtotal.toFixed(2)}`, pageWidth - 30, yPosition, { align: 'right' });
-      yPosition += 7;
+      // Totals - Right aligned with proper spacing
+      const totalsX = pageWidth - 70;
+      doc.setFont('helvetica', 'normal');
+      doc.text('Subtotal:', totalsX, yPosition);
+      doc.text(`${invoice.currency}${invoice.subtotal.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+      yPosition += 8;
 
       if (invoice.taxRate > 0) {
-        doc.text(`Tax (${invoice.taxRate}%):`, pageWidth - 60, yPosition);
-        doc.text(`${invoice.currency}$${invoice.taxAmount.toFixed(2)}`, pageWidth - 30, yPosition, { align: 'right' });
-        yPosition += 7;
+        doc.text(`Tax (${invoice.taxRate}%):`, totalsX, yPosition);
+        doc.text(`${invoice.currency}${invoice.taxAmount.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+        yPosition += 8;
       }
 
+      // Separator line
+      doc.setDrawColor(200, 200, 200);
+      doc.line(totalsX, yPosition, pageWidth - 25, yPosition);
+      yPosition += 8;
+
       doc.setFont('helvetica', 'bold');
-      doc.text('Total:', pageWidth - 60, yPosition);
-      doc.setFontSize(12);
-      doc.text(`${invoice.currency}$${invoice.total.toFixed(2)}`, pageWidth - 30, yPosition, { align: 'right' });
-      yPosition += 15;
+      doc.setFontSize(13);
+      doc.text('Total:', totalsX, yPosition);
+      doc.text(`${invoice.currency}${invoice.total.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+      yPosition += 20;
 
       // Notes and terms
       doc.setFontSize(10);
@@ -196,11 +214,11 @@ export default function InvoicePage() {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout currentPage="invoices">
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading invoice...</p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+            <p className="text-white/60 text-sm">Loading invoice...</p>
           </div>
         </div>
       </Layout>
@@ -209,16 +227,18 @@ export default function InvoicePage() {
 
   if (!invoice) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Invoice Not Found</h2>
-            <button
-              onClick={() => router.back()}
-              className="text-indigo-600 hover:text-indigo-700"
-            >
-              Go Back
-            </button>
+      <Layout currentPage="invoices">
+        <div className="min-h-screen px-4 py-20">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 border border-red-500/30">
+              <h1 className="text-2xl text-white mb-4">Invoice Not Found</h1>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all"
+              >
+                Back to Dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </Layout>
@@ -226,160 +246,267 @@ export default function InvoicePage() {
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <Layout currentPage="invoices">
+      {/* Solid black background overlay */}
+      <div className="fixed inset-0 bg-black -z-10" />
+      <div className="min-h-screen px-4 py-20 pb-32">
+        <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="flex justify-between items-start mb-8">
+          <div className="mb-8 flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">AXIOM</h1>
-              <p className="text-gray-600">Professional Invoice Solutions</p>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center text-white/80 hover:text-white transition-colors duration-300 mb-4"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Dashboard
+              </Link>
+              <h1 className="text-4xl sm:text-5xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {invoice.proposal.projectTitle}
+              </h1>
+              <p className="text-white/60 mt-2">Invoice: {invoice.invoiceNumber}</p>
             </div>
-            <div className="text-right">
-              <h2 className="text-2xl font-bold text-gray-900">INVOICE</h2>
-              <p className="text-gray-600">{invoice.invoiceNumber}</p>
-            </div>
-          </div>
 
-          {/* Invoice Details */}
-          <div className="grid grid-cols-2 gap-8 mb-8">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Bill To:</h3>
-              <p className="text-gray-700 font-semibold">{invoice.clientName}</p>
-              {invoice.clientCompany && (
-                <p className="text-gray-600">{invoice.clientCompany}</p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={downloadPDF}
+                disabled={downloading}
+                className="px-4 py-2 border border-white/20 text-white text-xs font-medium rounded hover:bg-white/5 transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {downloading ? 'Downloading...' : 'Export PDF'}
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="px-4 py-2 bg-white text-black text-xs font-medium rounded hover:bg-white/90 transition-colors flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Share
+              </button>
+              {invoice.paymentLink && !['PAID', 'paid', 'PA'].includes(invoice.status) && (
+                <a
+                  href={invoice.paymentLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-xs font-medium rounded hover:from-indigo-600 hover:to-indigo-700 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Pay
+                </a>
               )}
-              <p className="text-gray-600">{invoice.clientEmail}</p>
-            </div>
-            <div className="text-right">
-              <div className="mb-2">
-                <span className="text-sm text-gray-600">Issue Date:</span>
-                <span className="ml-2 font-semibold">{new Date(invoice.issueDate).toLocaleDateString()}</span>
-              </div>
-              <div className="mb-2">
-                <span className="text-sm text-gray-600">Due Date:</span>
-                <span className="ml-2 font-semibold">{new Date(invoice.dueDate).toLocaleDateString()}</span>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Status:</span>
-                <span className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                  invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                  invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
-                  {invoice.status.toUpperCase()}
-                </span>
-              </div>
             </div>
           </div>
 
-          {/* Project */}
-          <div className="mb-8 pb-8 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1">Project:</h3>
-            <p className="text-gray-700">{invoice.proposal.projectTitle}</p>
-          </div>
+          {/* Status Badge & Payment Progress */}
+          <div className="mb-6 space-y-4">
+            {/* Status Badge */}
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={`px-4 py-2 rounded-full text-sm font-light ${
+                invoice.status === 'PAID' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                invoice.status === 'PARTIALLY_PAID' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                invoice.status === 'UNPAID' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                'bg-red-500/20 text-red-300 border border-red-500/30'
+              }`}>
+                Status: {invoice.status.replace('_', ' ')}
+              </span>
+            </div>
 
-          {/* Line Items */}
-          <div className="mb-8">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-3 text-sm font-semibold text-gray-900">Description</th>
-                  <th className="text-center py-3 text-sm font-semibold text-gray-900">Qty</th>
-                  <th className="text-right py-3 text-sm font-semibold text-gray-900">Rate</th>
-                  <th className="text-right py-3 text-sm font-semibold text-gray-900">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.lineItems.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-100">
-                    <td className="py-4 text-gray-700">{item.description}</td>
-                    <td className="py-4 text-center text-gray-700">{item.quantity}</td>
-                    <td className="py-4 text-right text-gray-700">
-                      {invoice.currency}${item.rate.toFixed(2)}
-                    </td>
-                    <td className="py-4 text-right text-gray-700 font-semibold">
-                      {invoice.currency}${item.amount.toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Totals */}
-          <div className="flex justify-end mb-8">
-            <div className="w-64">
-              <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Subtotal:</span>
-                <span className="font-semibold">{invoice.currency}${invoice.subtotal.toFixed(2)}</span>
+            {/* Payment Progress Bar */}
+            {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-white/70 text-sm">Payment Progress</span>
+                  <span className="text-white font-medium text-sm">
+                    {invoice.currency}{invoice.paidAmount.toFixed(2)} / {invoice.currency}{invoice.total.toFixed(2)}
+                  </span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      invoice.status === 'PAID'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-400'
+                        : 'bg-gradient-to-r from-blue-500 to-cyan-400'
+                    }`}
+                    style={{ width: `${Math.min(100, (invoice.paidAmount / invoice.total) * 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between mt-2 text-sm">
+                  <span className="text-green-400">
+                    Paid: {invoice.currency}{invoice.paidAmount.toFixed(2)}
+                  </span>
+                  <span className="text-white/60">
+                    {Math.round((invoice.paidAmount / invoice.total) * 100)}%
+                  </span>
+                  {invoice.remainingAmount > 0 && (
+                    <span className="text-orange-400">
+                      Remaining: {invoice.currency}{invoice.remainingAmount.toFixed(2)}
+                    </span>
+                  )}
+                </div>
               </div>
-              {invoice.taxRate > 0 && (
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Tax ({invoice.taxRate}%):</span>
-                  <span className="font-semibold">{invoice.currency}${invoice.taxAmount.toFixed(2)}</span>
+            )}
+          </div>
+
+          {/* Invoice Document - Space Themed */}
+          <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
+            {/* Document Header */}
+            <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    INVOICE
+                  </h2>
+                  <p className="text-white/90">{invoice.invoiceNumber}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-white/60 text-sm">Issue Date</p>
+                  <p className="text-white font-medium">{new Date(invoice.issueDate).toLocaleDateString()}</p>
+                  <p className="text-white/60 text-sm mt-2">Due Date</p>
+                  <p className="text-white font-medium">{new Date(invoice.dueDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Document Body */}
+            <div className="p-8 text-white">
+              {/* Client & Project Info */}
+              <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    Bill To
+                  </h3>
+                  <p className="text-white font-medium mb-1">{invoice.clientName}</p>
+                  {invoice.clientCompany && (
+                    <p className="text-white/70 text-sm mb-1">{invoice.clientCompany}</p>
+                  )}
+                  <p className="text-white/70 text-sm">{invoice.clientEmail}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    Project Details
+                  </h3>
+                  <p className="text-white font-medium">{invoice.proposal.projectTitle}</p>
+                </div>
+              </div>
+
+              {/* Line Items Table */}
+              <div className="mb-8">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/20">
+                      <th className="text-left py-3 text-sm font-semibold text-white/80">Description</th>
+                      <th className="text-center py-3 text-sm font-semibold text-white/80">Qty</th>
+                      <th className="text-right py-3 text-sm font-semibold text-white/80">Rate</th>
+                      <th className="text-right py-3 text-sm font-semibold text-white/80">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.lineItems.map((item, index) => (
+                      <tr key={index} className="border-b border-white/10">
+                        <td className="py-4 text-white">{item.description}</td>
+                        <td className="py-4 text-center text-white">{item.quantity}</td>
+                        <td className="py-4 text-right text-white">
+                          {invoice.currency}${item.rate.toFixed(2)}
+                        </td>
+                        <td className="py-4 text-right text-white font-medium">
+                          {invoice.currency}${item.amount.toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals */}
+              <div className="flex justify-end mb-8">
+                <div className="w-72">
+                  <div className="flex justify-between mb-2">
+                    <span className="text-white/70">Subtotal:</span>
+                    <span className="font-medium text-white">{invoice.currency}${invoice.subtotal.toFixed(2)}</span>
+                  </div>
+                  {invoice.taxRate > 0 && (
+                    <div className="flex justify-between mb-2">
+                      <span className="text-white/70">Tax ({invoice.taxRate}%):</span>
+                      <span className="font-medium text-white">{invoice.currency}${invoice.taxAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
+                    <>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-green-400">Amount Paid:</span>
+                        <span className="font-medium text-green-400">{invoice.currency}${invoice.paidAmount.toFixed(2)}</span>
+                      </div>
+                      {invoice.remainingAmount > 0 && (
+                        <div className="flex justify-between mb-2">
+                          <span className="text-orange-400">Remaining:</span>
+                          <span className="font-medium text-orange-400">{invoice.currency}${invoice.remainingAmount.toFixed(2)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <div className="flex justify-between pt-4 border-t border-white/30">
+                    <span className="text-lg font-light text-white">Total:</span>
+                    <span className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      {invoice.currency}${invoice.total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment History */}
+              {invoice.payments && invoice.payments.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    Payment History
+                  </h3>
+                  <div className="bg-white/5 rounded-xl border border-white/20 overflow-hidden">
+                    <div className="divide-y divide-white/10">
+                      {invoice.payments.map((payment) => (
+                        <div key={payment.id} className="flex justify-between items-center p-4">
+                          <div>
+                            <p className="text-white font-medium">{invoice.currency}{payment.amount.toFixed(2)}</p>
+                            <p className="text-white/50 text-xs">{new Date(payment.createdAt).toLocaleString()}</p>
+                          </div>
+                          <span className="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-300 border border-green-500/30">
+                            {payment.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
-              <div className="flex justify-between pt-4 border-t-2 border-gray-900">
-                <span className="text-lg font-bold">Total:</span>
-                <span className="text-lg font-bold text-indigo-600">
-                  {invoice.currency}${invoice.total.toFixed(2)}
-                </span>
+
+              {/* Notes & Terms */}
+              {invoice.notes && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-white/90 mb-2">Notes:</h3>
+                  <p className="text-white/70 text-sm whitespace-pre-line">{invoice.notes}</p>
+                </div>
+              )}
+
+              {invoice.terms && (
+                <div>
+                  <h3 className="text-sm font-semibold text-white/90 mb-2">Terms:</h3>
+                  <p className="text-white/70 text-sm whitespace-pre-line">{invoice.terms}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Document Footer */}
+            <div className="bg-white/5 backdrop-blur-sm p-6 border-t border-white/10">
+              <div className="text-center text-sm text-white/60">
+                Powered by <span className="font-light text-white/80" style={{ fontFamily: 'var(--font-playfair)' }}>AXIOM</span>
               </div>
             </div>
-          </div>
-
-          {/* Notes & Terms */}
-          {invoice.notes && (
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Notes:</h3>
-              <p className="text-gray-600 text-sm">{invoice.notes}</p>
-            </div>
-          )}
-
-          {invoice.terms && (
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Terms:</h3>
-              <p className="text-gray-600 text-sm">{invoice.terms}</p>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex gap-4 pt-6 border-t border-gray-200">
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              Share with Client
-            </button>
-            {invoice.paymentLink && invoice.status !== 'paid' && (
-              <a
-                href={invoice.paymentLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
-              >
-                Pay Now
-              </a>
-            )}
-            <button
-              onClick={downloadPDF}
-              disabled={downloading}
-              className={`${
-                invoice.paymentLink && invoice.status !== 'paid' ? 'flex-1' : 'flex-1'
-              } bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {downloading ? 'Downloading...' : 'Download PDF'}
-            </button>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Back to Dashboard
-            </button>
           </div>
         </div>
       </div>

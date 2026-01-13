@@ -132,6 +132,8 @@ export async function POST(
         taxAmount,
         total,
         currency,
+        paidAmount: 0,
+        remainingAmount: total,
         lineItems: JSON.stringify(lineItems),
         notes: notes || `Thank you for your business! Payment is due within 30 days.`,
         terms: terms || proposal.termsAndConditions,

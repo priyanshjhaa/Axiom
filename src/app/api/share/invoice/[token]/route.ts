@@ -24,6 +24,11 @@ export async function GET(
             email: true,
           },
         },
+        payments: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
 
@@ -62,6 +67,8 @@ export async function GET(
         taxRate: invoice.taxRate,
         taxAmount: invoice.taxAmount,
         total: invoice.total,
+        paidAmount: invoice.paidAmount || 0,
+        remainingAmount: invoice.remainingAmount || invoice.total,
         currency: invoice.currency,
         lineItems,
         notes: invoice.notes,
@@ -70,6 +77,7 @@ export async function GET(
         clientEmail: invoice.clientEmail,
         clientCompany: invoice.clientCompany,
         paymentLink: invoice.paymentLink,
+        payments: invoice.payments,
         proposal: invoice.proposal,
         user: invoice.user,
       },

@@ -11,6 +11,14 @@ interface LineItem {
   amount: number;
 }
 
+interface Payment {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+}
+
 interface SharedInvoice {
   id: string;
   invoiceNumber: string;
@@ -21,6 +29,8 @@ interface SharedInvoice {
   taxRate: number;
   taxAmount: number;
   total: number;
+  paidAmount: number;
+  remainingAmount: number;
   currency: string;
   lineItems: LineItem[];
   notes: string;
@@ -29,6 +39,7 @@ interface SharedInvoice {
   clientEmail: string;
   clientCompany: string;
   paymentLink?: string | null;
+  payments?: Payment[];
   proposal: {
     projectTitle: string;
   };
@@ -154,15 +165,51 @@ export default function SharedInvoicePage() {
               <div>
                 <span className="text-sm text-gray-600">Status:</span>
                 <span className={`ml-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                  invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                  invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                  invoice.status === 'PAID' ? 'bg-green-100 text-green-800' :
+                  invoice.status === 'PARTIALLY_PAID' ? 'bg-blue-100 text-blue-800' :
+                  invoice.status === 'UNPAID' ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
                 }`}>
-                  {invoice.status.toUpperCase()}
+                  {invoice.status.replace('_', ' ')}
                 </span>
               </div>
             </div>
           </div>
+
+          {/* Payment Progress Bar */}
+          {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
+            <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-semibold text-blue-900">Payment Progress</span>
+                <span className="text-sm font-semibold text-blue-900">
+                  {invoice.currency}{invoice.paidAmount.toFixed(2)} / {invoice.currency}{invoice.total.toFixed(2)}
+                </span>
+              </div>
+              <div className="w-full bg-blue-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    invoice.status === 'PAID'
+                      ? 'bg-green-500'
+                      : 'bg-blue-600'
+                  }`}
+                  style={{ width: `${Math.min(100, (invoice.paidAmount / invoice.total) * 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-2 text-sm">
+                <span className="text-green-700 font-medium">
+                  Paid: {invoice.currency}{invoice.paidAmount.toFixed(2)}
+                </span>
+                <span className="text-blue-700">
+                  {Math.round((invoice.paidAmount / invoice.total) * 100)}%
+                </span>
+                {invoice.remainingAmount > 0 && (
+                  <span className="text-orange-700 font-medium">
+                    Remaining: {invoice.currency}{invoice.remainingAmount.toFixed(2)}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Project */}
           <div className="mb-8 pb-8 border-b border-gray-200">
@@ -200,7 +247,7 @@ export default function SharedInvoicePage() {
 
           {/* Totals */}
           <div className="flex justify-end mb-8">
-            <div className="w-64">
+            <div className="w-72">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Subtotal:</span>
                 <span className="font-semibold">{invoice.currency}${invoice.subtotal.toFixed(2)}</span>
@@ -211,6 +258,20 @@ export default function SharedInvoicePage() {
                   <span className="font-semibold">{invoice.currency}${invoice.taxAmount.toFixed(2)}</span>
                 </div>
               )}
+              {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
+                <>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-green-600">Amount Paid:</span>
+                    <span className="font-semibold text-green-600">{invoice.currency}${invoice.paidAmount.toFixed(2)}</span>
+                  </div>
+                  {invoice.remainingAmount > 0 && (
+                    <div className="flex justify-between mb-2">
+                      <span className="text-orange-600">Remaining:</span>
+                      <span className="font-semibold text-orange-600">{invoice.currency}${invoice.remainingAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                </>
+              )}
               <div className="flex justify-between pt-4 border-t-2 border-gray-900">
                 <span className="text-lg font-bold">Total:</span>
                 <span className="text-lg font-bold text-indigo-600">
@@ -219,6 +280,26 @@ export default function SharedInvoicePage() {
               </div>
             </div>
           </div>
+
+          {/* Payment History */}
+          {invoice.payments && invoice.payments.length > 0 && (
+            <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Payment History</h3>
+              <div className="space-y-2">
+                {invoice.payments.map((payment) => (
+                  <div key={payment.id} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
+                    <div>
+                      <p className="font-semibold text-gray-900">{invoice.currency}{payment.amount.toFixed(2)}</p>
+                      <p className="text-xs text-gray-500">{new Date(payment.createdAt).toLocaleString()}</p>
+                    </div>
+                    <span className="px-2 py-1 rounded text-xs bg-green-100 text-green-800 font-medium">
+                      {payment.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Notes & Terms */}
           {invoice.notes && (
@@ -236,16 +317,22 @@ export default function SharedInvoicePage() {
           )}
 
           {/* Pay Now Button */}
-          {invoice.paymentLink && invoice.status !== 'paid' && (
+          {invoice.paymentLink && !['PAID', 'paid', 'PA'].includes(invoice.status) && (
             <div className="pt-6 border-t border-gray-200">
               <a
                 href={invoice.paymentLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full bg-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center"
+                className="block w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-2.5 px-5 rounded-lg text-sm font-medium hover:from-indigo-600 hover:to-indigo-700 transition-colors text-center"
               >
-                Pay Now {invoice.currency}${invoice.total.toFixed(2)}
+                {invoice.status === 'PARTIALLY_PAID' || invoice.status === 'partial'
+                  ? `Pay Remaining ${invoice.currency}${invoice.remainingAmount.toFixed(2)}`
+                  : `Pay Now ${invoice.currency}${invoice.total.toFixed(2)}`
+                }
               </a>
+              <p className="text-xs text-gray-500 text-center mt-2">
+                Secure payment powered by Dodo Payments
+              </p>
             </div>
           )}
 
