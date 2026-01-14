@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 
@@ -9,6 +10,10 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     }),
     CredentialsProvider({
       name: "credentials",
@@ -110,17 +115,58 @@ export const authOptions = {
           });
         }
       }
+
+      // Handle GitHub OAuth users
+      if (account?.provider === 'github') {
+        const nameParts = user.name?.split(' ') || ['', ''];
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        // Check if user exists in database
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!existingUser) {
+          // Create new user in database
+          console.log('Creating new user from GitHub OAuth');
+          await prisma.user.create({
+            data: {
+              email: user.email,
+              firstName,
+              lastName,
+              picture: user.image,
+              password: '', // OAuth users don't have passwords
+            },
+          });
+        } else {
+          // Update existing user's picture if needed
+          console.log('User exists, updating picture if needed');
+          await prisma.user.update({
+            where: { email: user.email },
+            data: { picture: user.image },
+          });
+        }
+      }
+
       return true;
     },
     async jwt({ token, user, account }: any) {
       if (user) {
-        // For OAuth users (Google, etc.)
+        // For OAuth users (Google, GitHub, etc.)
         if (account?.provider === "google") {
           // Extract name from Google profile
           const nameParts = user.name?.split(' ') || ['', ''];
           token.firstName = nameParts[0] || user.name || '';
           token.lastName = nameParts.slice(1).join(' ') || '';
           token.provider = 'google';
+          token.picture = user.image;
+        } else if (account?.provider === "github") {
+          // Extract name from GitHub profile
+          const nameParts = user.name?.split(' ') || ['', ''];
+          token.firstName = nameParts[0] || user.name || '';
+          token.lastName = nameParts.slice(1).join(' ') || '';
+          token.provider = 'github';
           token.picture = user.image;
         }
         // For credentials users

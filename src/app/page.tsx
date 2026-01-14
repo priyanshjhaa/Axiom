@@ -115,23 +115,23 @@ export default function Home() {
             </div>
 
             <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Email Integration</h3>
-              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Send proposals directly to clients via email with professional formatting and PDF attachments.
-              </p>
-            </div>
-
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>PDF Export</h3>
-              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Export your proposals as high-quality PDFs perfect for email attachments or printing.
-              </p>
-            </div>
-
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
               <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Instant Invoicing</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Generate matching invoices with integrated payment links from Stripe and other payment processors.
+                Generate matching invoices with integrated payment links powered by Dodo Payments. Get paid faster.
+              </p>
+            </div>
+
+            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Secure Link Sharing</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Share proposals and invoices via secure access links. Track views, capture digital signatures, and get paid.
+              </p>
+            </div>
+
+            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Payment Tracking</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Track payment status in real-time. Support for partial payments, milestones, and complete payment history.
               </p>
             </div>
           </div>
@@ -140,32 +140,35 @@ export default function Home() {
 
       {/* Pricing Section */}
       <section id="pricing" className="min-h-screen flex items-center justify-center px-4 py-20">
-        <div className="max-w-6xl text-center">
+        <div className="max-w-4xl text-center">
           <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-4 leading-tight font-light px-4" style={{ fontFamily: 'var(--font-playfair)' }}>
             Simple, Transparent Pricing
           </h2>
           <p className="text-white/70 text-lg max-w-2xl mx-auto mb-12" style={{ fontFamily: 'var(--font-inter)' }}>
-            Choose the plan that fits your needs
+            Start free, upgrade when you're ready
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Free Tier */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            {/* Basic Tier */}
             <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+              <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>Try & Trust</p>
               <h3 className="text-2xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                Free
+                Basic
               </h3>
               <p className="text-white/60 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                 Perfect for getting started
               </p>
               <div className="text-4xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                $0<span className="text-lg">/month</span>
+                Free
               </div>
               <ul className="text-white/90 space-y-2 text-left text-sm mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                <li>• 5 proposals per month</li>
-                <li>• AI-powered generation</li>
-                <li>• PDF export & email</li>
-                <li>• Digital signatures</li>
-                <li>• Basic templates</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Create proposals (limited)</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Generate invoice PDFs</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Secure client access</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Digital signature capture</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Payment links</li>
+                <li className="flex items-center gap-2 text-white/40"><span>✗</span> Max 3 proposals/month</li>
+                <li className="flex items-center gap-2 text-white/40"><span>✗</span> "Powered by Axiom" branding</li>
               </ul>
               <Link
                 href="/create-proposal"
@@ -177,29 +180,30 @@ export default function Home() {
             </div>
 
             {/* Pro Tier */}
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/30 relative scale-105 shadow-2xl">
+            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/30 relative scale-105">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                 <span className="px-4 py-1 bg-white text-black text-xs font-medium rounded-full" style={{ fontFamily: 'var(--font-inter)' }}>
                   Most Popular
                 </span>
               </div>
+              <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>Get Paid Faster</p>
               <h3 className="text-2xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
                 Pro
               </h3>
               <p className="text-white/60 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                 For serious freelancers
               </p>
-              <div className="text-4xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                $29<span className="text-lg">/month</span>
+              <div className="text-4xl text-white mb-1 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                $4.99<span className="text-lg">/month</span>
               </div>
+              <p className="text-white/40 text-xs mb-6">₹299/month in India</p>
               <ul className="text-white/90 space-y-2 text-left text-sm mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                <li>• Unlimited proposals</li>
-                <li>• Everything in Free</li>
-                <li>• Custom templates</li>
-                <li>• Invoice generation</li>
-                <li>• Stripe payments</li>
-                <li>• Remove AXIOM branding</li>
-                <li>• Priority support</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Unlimited proposals & invoices</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Email delivery</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> "Viewed by client" status</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Partial payments & milestones</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Remove "Powered by Axiom"</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Custom logo & branding</li>
               </ul>
               <Link
                 href="/pricing"
@@ -208,35 +212,6 @@ export default function Home() {
               >
                 Learn More
               </Link>
-            </div>
-
-            {/* Enterprise Tier */}
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                Enterprise
-              </h3>
-              <p className="text-white/60 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
-                For growing teams
-              </p>
-              <div className="text-4xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                $99<span className="text-lg">/month</span>
-              </div>
-              <ul className="text-white/90 space-y-2 text-left text-sm mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
-                <li>• Everything in Pro</li>
-                <li>• Team collaboration</li>
-                <li>• White-label solution</li>
-                <li>• Custom branding</li>
-                <li>• API access</li>
-                <li>• Priority support</li>
-                <li>• Advanced analytics</li>
-              </ul>
-              <a
-                href="mailto:hello@axiom.app?subject=Enterprise Plan Inquiry"
-                className="block w-full px-6 py-3 bg-white/10 border border-white/30 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm font-light text-center"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                Contact Sales
-              </a>
             </div>
           </div>
 

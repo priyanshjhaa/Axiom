@@ -20,14 +20,14 @@ export default function Features() {
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
               <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Instant Invoicing</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Generate matching invoices with integrated payment links from Stripe and other payment processors.
+                Generate matching invoices with integrated payment links powered by Dodo Payments. Get paid faster.
               </p>
             </div>
 
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Professional Templates</h3>
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Secure Link Sharing</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Choose from beautifully designed templates that make your business look professional and established.
+                Share proposals and invoices via secure access links. Track views, capture digital signatures, and get paid.
               </p>
             </div>
 
@@ -35,6 +35,20 @@ export default function Features() {
               <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>PDF Export</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
                 Export your proposals and invoices as high-quality PDFs perfect for email attachments or printing.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Payment Tracking</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Track payment status in real-time. Support for partial payments, milestones, and complete payment history.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Digital Signatures</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Capture legally-binding digital signatures directly on your proposals. Close deals faster, anywhere.
               </p>
             </div>
           </div>

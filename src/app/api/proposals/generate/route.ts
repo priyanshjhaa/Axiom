@@ -194,6 +194,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check proposal limit for free users (max 3 proposals)
+    const proposalCount = await prisma.proposal.count({
+      where: { userId: user.id }
+    });
+
+    if (proposalCount >= 3) {
+      return NextResponse.json(
+        {
+          error: 'FREE_TIER_LIMIT',
+          message: 'You\'ve reached your free plan limit of 3 proposals. Upgrade to Pro for unlimited proposals.',
+          upgradeUrl: '/pricing'
+        },
+        { status: 403 }
+      );
+    }
+
     // Save proposal to database
     const proposal = await prisma.proposal.create({
       data: {

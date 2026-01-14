@@ -86,6 +86,25 @@ export default function InvoicePage() {
       const pageWidth = doc.internal.pageSize.getWidth();
       let yPosition = 20;
 
+      // Clean and format currency - strip any $ symbols and get clean code
+      const cleanCurrency = invoice.currency.replace(/[$\s]/g, '').toUpperCase();
+
+      // Currency symbols map
+      const currencySymbols: Record<string, string> = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'JPY': '¥',
+        'CAD': '$',
+        'AUD': '$',
+        'CHF': 'Fr',
+        'CNY': '¥',
+        'INR': '₹',
+      };
+
+      const currencySymbol = currencySymbols[cleanCurrency] || cleanCurrency + ' ';
+      const formatAmount = (amount: number) => `${currencySymbol}${amount.toFixed(2)}`;
+
       // Add AXIOM branding
       doc.setFontSize(24);
       doc.setFont('helvetica', 'bold');
@@ -153,8 +172,8 @@ export default function InvoicePage() {
         const description = doc.splitTextToSize(item.description, pageWidth - 110);
         doc.text(description, 25, yPosition + 7);
         doc.text(item.quantity.toString(), pageWidth - 80, yPosition + 7);
-        doc.text(`${invoice.currency}$${item.rate.toFixed(2)}`, pageWidth - 60, yPosition + 7);
-        doc.text(`${invoice.currency}$${item.amount.toFixed(2)}`, pageWidth - 30, yPosition + 7, { align: 'right' });
+        doc.text(formatAmount(item.rate), pageWidth - 60, yPosition + 7);
+        doc.text(formatAmount(item.amount), pageWidth - 30, yPosition + 7, { align: 'right' });
         yPosition += description.length * 7 + 7;
       });
 
@@ -164,12 +183,12 @@ export default function InvoicePage() {
       const totalsX = pageWidth - 70;
       doc.setFont('helvetica', 'normal');
       doc.text('Subtotal:', totalsX, yPosition);
-      doc.text(`${invoice.currency}${invoice.subtotal.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+      doc.text(formatAmount(invoice.subtotal), pageWidth - 25, yPosition, { align: 'right' });
       yPosition += 8;
 
       if (invoice.taxRate > 0) {
         doc.text(`Tax (${invoice.taxRate}%):`, totalsX, yPosition);
-        doc.text(`${invoice.currency}${invoice.taxAmount.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+        doc.text(formatAmount(invoice.taxAmount), pageWidth - 25, yPosition, { align: 'right' });
         yPosition += 8;
       }
 
@@ -181,7 +200,7 @@ export default function InvoicePage() {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(13);
       doc.text('Total:', totalsX, yPosition);
-      doc.text(`${invoice.currency}${invoice.total.toFixed(2)}`, pageWidth - 25, yPosition, { align: 'right' });
+      doc.text(formatAmount(invoice.total), pageWidth - 25, yPosition, { align: 'right' });
       yPosition += 20;
 
       // Notes and terms

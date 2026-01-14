@@ -1,136 +1,80 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 
 export default function Pricing() {
   const { data: session } = useSession();
-  const [isYearly, setIsYearly] = useState(false);
 
   const plans = [
     {
-      name: 'Free',
+      name: 'Basic',
+      tagline: 'Try & Trust',
       monthlyPrice: 0,
-      yearlyPrice: 0,
       description: 'Perfect for getting started',
       features: [
-        '5 proposals per month',
-        'AI-powered generation',
-        'PDF export',
-        'Email sending',
-        'Digital signatures',
-        'Basic templates',
-        'Community support',
-      ],
-      limitations: [
-        'AXIOM branding on emails/PDFs',
-        'No custom domain',
-        'No invoice generation',
+        { text: 'Create proposals (limited)', included: true },
+        { text: 'Generate invoice PDFs', included: true },
+        { text: 'Secure client access (OTP / token)', included: true },
+        { text: 'Digital signature capture', included: true },
+        { text: 'One-time payment link', included: true },
+        { text: 'Payment status (Paid / Partially Paid)', included: true },
+        { text: 'Copy & share secure link', included: true },
+        { text: 'Max 3 proposals / month', included: false },
+        { text: 'Max 3 invoices', included: false },
+        { text: '"Powered by Axiom" branding on PDFs', included: false },
+        { text: 'No email delivery (link-only sharing)', included: false },
       ],
       cta: 'Current Plan',
       popular: false,
     },
     {
       name: 'Pro',
-      monthlyPrice: 29,
-      yearlyPrice: 278, // ~$23/month (20% off)
+      tagline: 'Get Paid Faster',
+      monthlyPrice: 4.99,
+      inrPrice: 299,
       description: 'For serious freelancers',
       features: [
-        'Unlimited proposals',
-        'Everything in Free',
-        'Custom templates',
-        'Invoice generation',
-        'Stripe payments integration',
-        'Priority email support',
-        'Remove AXIOM branding',
-        'Custom domain for emails',
-        'Analytics dashboard',
+        { text: 'Unlimited proposals & invoices', included: true, category: 'Usage' },
+        { text: 'Unlimited clients', included: true, category: 'Usage' },
+        { text: 'Email delivery to client', included: true, category: 'Delivery & Tracking' },
+        { text: '"Viewed by client" status', included: true, category: 'Delivery & Tracking' },
+        { text: 'Signed timestamp + audit trail', included: true, category: 'Delivery & Tracking' },
+        { text: 'Partial payments & milestones', included: true, category: 'Payments' },
+        { text: 'Multiple payments per invoice', included: true, category: 'Payments' },
+        { text: 'Payment history per invoice', included: true, category: 'Payments' },
+        { text: 'Remove "Powered by Axiom"', included: true, category: 'Branding' },
+        { text: 'Upload logo', included: true, category: 'Branding' },
+        { text: 'Custom accent color', included: true, category: 'Branding' },
       ],
-      limitations: [],
       cta: 'Upgrade to Pro',
       popular: true,
-    },
-    {
-      name: 'Enterprise',
-      monthlyPrice: 99,
-      yearlyPrice: 950, // ~$79/month (20% off)
-      description: 'For growing teams',
-      features: [
-        'Everything in Pro',
-        'Team collaboration (up to 10 users)',
-        'White-label solution',
-        'Custom branding',
-        'API access',
-        'Priority phone support',
-        'Advanced analytics',
-        'Multiple domains',
-        'Webhooks & integrations',
-      ],
-      limitations: [],
-      cta: 'Contact Sales',
-      popular: false,
     },
   ];
 
   return (
     <Layout currentPage="pricing">
       <div className="min-h-screen px-4 py-20 pb-32">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-4 leading-tight font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
               Simple, Transparent Pricing
             </h2>
             <p className="text-white/70 text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-inter)' }}>
-              Choose the plan that fits your needs. Upgrade or downgrade at any time.
+              Start free, upgrade when you're ready. Cancel anytime.
             </p>
-
-            {/* Billing Toggle */}
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <button
-                onClick={() => setIsYearly(false)}
-                className={`text-sm font-light transition-colors ${
-                  !isYearly ? 'text-white' : 'text-white/50 hover:text-white/70'
-                }`}
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setIsYearly(!isYearly)}
-                className={`relative w-14 h-7 rounded-full transition-colors ${
-                  isYearly ? 'bg-white' : 'bg-white/30'
-                }`}
-              >
-                <div
-                  className={`absolute top-1 w-5 h-5 bg-black rounded-full transition-transform ${
-                    isYearly ? 'translate-x-7' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-              <button
-                onClick={() => setIsYearly(true)}
-                className={`text-sm font-light transition-colors ${
-                  isYearly ? 'text-white' : 'text-white/50 hover:text-white/70'
-                }`}
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                Yearly
-                <span className="ml-1 text-xs text-white/60">(Save 20%)</span>
-              </button>
-            </div>
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
             {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={`relative bg-white/15 backdrop-blur-xl rounded-2xl p-8 border transition-all duration-300 ${
                   plan.popular
-                    ? 'border-white/30 scale-105 shadow-2xl'
+                    ? 'border-white/30 scale-105'
                     : 'border-white/20 hover:border-white/30'
                 }`}
               >
@@ -143,46 +87,51 @@ export default function Pricing() {
                 )}
 
                 <div className="text-center mb-6">
+                  <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                    {plan.tagline}
+                  </p>
                   <h3 className="text-2xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
                     {plan.name}
                   </h3>
                   <p className="text-white/60 text-sm mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                     {plan.description}
                   </p>
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-4xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      ${isYearly ? Math.floor(plan.yearlyPrice / 12) : plan.monthlyPrice}
-                    </span>
-                    <span className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                      /month
-                    </span>
-                  </div>
-                  {isYearly && plan.monthlyPrice > 0 && (
-                    <p className="text-white/50 text-xs mt-2" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Billed ${plan.yearlyPrice}/yearly
-                    </p>
+                  {plan.monthlyPrice > 0 ? (
+                    <div className="flex items-baseline justify-center gap-2">
+                      <span className="text-4xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                        ${plan.monthlyPrice}
+                      </span>
+                      <span className="text-white/60 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                        /month
+                      </span>
+                      <span className="text-white/40 text-xs">(₹{plan.inrPrice}/mo)</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-4xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                        Free
+                      </span>
+                    </div>
                   )}
                 </div>
 
                 <div className="mb-6">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-white/90 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                          {feature}
+                  <ul className="space-y-2">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className={`flex items-start gap-3 ${!feature.included ? 'opacity-50' : ''}`}>
+                        <span className="flex-shrink-0 mt-0.5">
+                          {feature.included ? (
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          )}
                         </span>
-                      </li>
-                    ))}
-                    {plan.limitations.map((limitation) => (
-                      <li key={limitation} className="flex items-start gap-3">
-                        <svg className="w-5 h-5 text-white/40 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        <span className="text-white/50 text-sm line-through" style={{ fontFamily: 'var(--font-inter)' }}>
-                          {limitation}
+                        <span className={`text-sm ${feature.included ? 'text-white/90' : 'text-white/40 line-through'}`} style={{ fontFamily: 'var(--font-inter)' }}>
+                          {feature.text}
                         </span>
                       </li>
                     ))}
@@ -190,40 +139,31 @@ export default function Pricing() {
                 </div>
 
                 <div>
-                  {plan.name === 'Free' && session ? (
+                  {plan.name === 'Basic' && session ? (
                     <button
                       disabled
-                      className="w-full px-6 py-3 bg-white/10 text-white/60 rounded-full cursor-not-allowed text-sm font-light"
+                      className="w-full px-6 py-3 bg-white/10 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       Current Plan
                     </button>
-                  ) : plan.name === 'Enterprise' ? (
-                    <a
-                      href="mailto:hello@axiom.app?subject=Enterprise Plan Inquiry"
-                      className="block w-full px-6 py-3 bg-white/10 border border-white/30 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm font-light text-center"
-                      style={{ fontFamily: 'var(--font-inter)' }}
-                    >
-                      Contact Sales
-                    </a>
                   ) : !session ? (
                     <Link
                       href="/signup"
-                      className="block w-full px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300 text-sm font-light text-center"
+                      className="block w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light text-center"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       Get Started
                     </Link>
                   ) : (
                     <button
-                      className="w-full px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300 text-sm font-light"
+                      className="w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light"
                       style={{ fontFamily: 'var(--font-inter)' }}
                       onClick={() => {
-                        // TODO: Implement upgrade flow
                         alert('Upgrade flow coming soon! For now, please contact hello@axiom.app');
                       }}
                     >
-                      Upgrade to {plan.name}
+                      {plan.cta}
                     </button>
                   )}
                 </div>
@@ -239,26 +179,18 @@ export default function Pricing() {
             <div className="space-y-4">
               <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                 <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Can I change plans later?
-                </h4>
-                <p className="text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and you'll be prorated accordingly.
-                </p>
-              </div>
-              <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
-                <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                   What payment methods do you accept?
                 </h4>
                 <p className="text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                  We accept all major credit cards (Visa, MasterCard, American Express) through Stripe, as well as PayPal.
+                  We accept all major credit cards and UPI payments. Pricing is ₹299/month in India or $4.99/month internationally.
                 </p>
               </div>
               <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                 <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Is there a free trial for paid plans?
+                  Can I upgrade from Basic to Pro?
                 </h4>
                 <p className="text-white/70 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Yes! All paid plans come with a 14-day free trial. No credit card required to start.
+                  Yes! You can upgrade anytime. Your existing proposals and invoices will remain intact.
                 </p>
               </div>
               <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
