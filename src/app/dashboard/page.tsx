@@ -221,45 +221,45 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Proposals List */}
             <div className="lg:col-span-2 space-y-4">
-              {/* Quick Actions */}
+              {/* Quick Actions - Improved for mobile touch */}
               <div className="grid grid-cols-2 gap-4">
                 <Link
                   href="/create-proposal"
-                  className="group bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                  className="group bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all active:scale-[0.98]"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-white font-medium text-sm">Create Proposal</p>
-                      <p className="text-white/50 text-xs">Generate with AI</p>
+                      <p className="text-white font-medium">Create</p>
+                      <p className="text-white/50 text-xs">New proposal</p>
                     </div>
                   </div>
                 </Link>
 
                 <Link
                   href="/invoices"
-                  className="group bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                  className="group bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all active:scale-[0.98]"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-white font-medium text-sm">View Invoices</p>
-                      <p className="text-white/50 text-xs">{invoices.length} invoices</p>
+                      <p className="text-white font-medium">Invoices</p>
+                      <p className="text-white/50 text-xs">{invoices.length} total</p>
                     </div>
                   </div>
                 </Link>
               </div>
 
               {/* Recent Proposals */}
-              <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+              <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                 <div className="p-4 border-b border-white/10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -271,7 +271,7 @@ export default function Dashboard() {
                       {selectedProposalIds.size > 0 && (
                         <button
                           onClick={() => confirmDelete(Array.from(selectedProposalIds))}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-all text-sm"
+                          className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white/70 border border-white/30 rounded-xl hover:bg-white/20 transition-all text-sm h-10"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -304,17 +304,17 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="divide-y divide-white/10">
-                    {/* Select All Header */}
+                    {/* Select All Header - Larger touch target */}
                     {displayedProposals.length > 0 && (
-                      <div className="px-3 py-2 bg-white/5 flex items-center gap-3">
+                      <div className="px-4 py-3 bg-white/5 flex items-center gap-3">
                         <button
                           onClick={toggleSelectAllProposals}
-                          className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                          className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
                             allSelected
                               ? 'bg-white border-white'
                               : someSelected
                               ? 'bg-white/60 border-white/60'
-                              : 'border-white/20 hover:border-white/40'
+                              : 'border-white/40 hover:border-white/60 bg-white/5'
                           }`}
                         >
                           {allSelected || someSelected ? (
@@ -331,19 +331,19 @@ export default function Dashboard() {
                     {displayedProposals.map((proposal: any) => (
                       <div
                         key={proposal.id}
-                        className={`flex items-center p-3 transition-all duration-200 ${selectedProposalIds.has(proposal.id) ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                        className={`flex items-center p-4 transition-all duration-200 ${selectedProposalIds.has(proposal.id) ? 'bg-white/10' : 'hover:bg-white/5'}`}
                       >
-                        {/* Checkbox */}
+                        {/* Checkbox - Larger touch target */}
                         <button
                           onClick={() => toggleSelectProposal(proposal.id)}
-                          className={`w-4 h-4 rounded border flex items-center justify-center transition-all mr-3 flex-shrink-0 ${
+                          className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all mr-4 flex-shrink-0 ${
                             selectedProposalIds.has(proposal.id)
                               ? 'bg-white border-white'
-                              : 'border-white/20 hover:border-white/40'
+                              : 'border-white/40 hover:border-white/60 bg-white/5'
                           }`}
                         >
                           {selectedProposalIds.has(proposal.id) && (
-                            <svg className="w-2.5 h-2.5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                             </svg>
                           )}
@@ -352,24 +352,24 @@ export default function Dashboard() {
                         {/* Proposal Content */}
                         <Link
                           href={`/proposals/${proposal.id}`}
-                          className="flex-1 flex items-center justify-between"
+                          className="flex-1 flex items-center justify-between min-w-0"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                              <svg className="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                             </div>
-                            <div>
-                              <p className="text-white text-sm font-medium">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-white text-sm font-medium truncate">
                                 {proposal.projectName}
                               </p>
-                              <p className="text-white/40 text-xs">{proposal.clientName}</p>
+                              <p className="text-white/40 text-xs truncate">{proposal.clientName}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                             <p className="text-white/80 text-sm">{proposal.budget}</p>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            <span className={`text-xs px-2 py-1 rounded-full ${
                               proposal.status === 'sent'
                                 ? 'bg-white/10 text-white/70'
                                 : proposal.status === 'draft'
@@ -381,17 +381,17 @@ export default function Dashboard() {
                           </div>
                         </Link>
 
-                        {/* Individual Delete Button */}
+                        {/* Individual Delete Button - Larger touch target */}
                         <button
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             confirmDelete(proposal.id);
                           }}
-                          className="ml-3 p-2 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="ml-4 w-10 h-10 flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/10 rounded-xl transition-all flex-shrink-0"
                           title="Delete proposal"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
@@ -466,11 +466,11 @@ export default function Dashboard() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-gray-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-black border border-white/20 rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
@@ -492,7 +492,7 @@ export default function Dashboard() {
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 bg-white text-black rounded-lg hover:bg-white/90 transition-all text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isDeleting ? (
                   <>

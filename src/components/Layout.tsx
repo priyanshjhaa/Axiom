@@ -51,10 +51,10 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
     <div className="relative min-h-screen" style={{ fontFamily: 'var(--font-inter)', scrollBehavior: 'smooth' }}>
       {/* Space Background Image */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
+        className="fixed inset-0 -z-20"
         style={{
           backgroundImage: 'url(/images/pexels-cris-menles-4621648-34385494.jpg)',
-          backgroundSize: '110%',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
@@ -66,7 +66,8 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
       {/* Dark Overlay for better text visibility */}
       <div className="fixed inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 -z-10" />
 
-      {/* Navigation */}
+      {/* Navigation - Hide for create-proposal page */}
+      {currentPage !== 'create-proposal' && (
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
           isVisible ? 'translate-y-0' : '-translate-y-full'
@@ -273,6 +274,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
           </div>
         )}
       </nav>
+      )}
 
       {/* Page Content */}
       <main className="relative z-10">

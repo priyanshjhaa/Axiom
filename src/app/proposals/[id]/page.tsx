@@ -54,6 +54,7 @@ export default function ProposalPage() {
   const [isSigning, setIsSigning] = useState(false);
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
+  const [showActionMenu, setShowActionMenu] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -121,6 +122,18 @@ export default function ProposalPage() {
       const maxWidth = pageWidth - (margin * 2);
       let yPosition = margin;
 
+      // Helper function to add footer to current page
+      const addFooter = () => {
+        const footerY = pageHeight - 15;
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(150, 150, 150);
+        doc.text('Powered by AXIOM', pageWidth - margin - 30, footerY);
+      };
+
+      // Track pages for footer
+      let pageCount = 1;
+
       // Helper function to add text with word wrap
       const addText = (text: string, fontSize: number, isBold: boolean = false, marginTop: number = 0) => {
         doc.setFontSize(fontSize);
@@ -128,8 +141,11 @@ export default function ProposalPage() {
 
         const lines = doc.splitTextToSize(text, maxWidth);
         lines.forEach((line: string) => {
-          if (yPosition > pageHeight - margin) {
+          if (yPosition > pageHeight - margin - 20) {
+            // Add footer to current page before adding new page
+            addFooter();
             doc.addPage();
+            pageCount++;
             // Add white background to new page
             doc.setFillColor(255, 255, 255);
             doc.rect(0, 0, pageWidth, pageHeight, 'F');
@@ -145,8 +161,11 @@ export default function ProposalPage() {
 
       // Helper function to check if we need a new page
       const checkPageBreak = (requiredSpace: number) => {
-        if (yPosition + requiredSpace > pageHeight - margin) {
+        if (yPosition + requiredSpace > pageHeight - margin - 20) {
+          // Add footer to current page before adding new page
+          addFooter();
           doc.addPage();
+          pageCount++;
           // Add white background to new page
           doc.setFillColor(255, 255, 255);
           doc.rect(0, 0, pageWidth, pageHeight, 'F');
@@ -155,7 +174,7 @@ export default function ProposalPage() {
         }
       };
 
-      // Title - White background with black text
+      // First page - White background with black text
       doc.setFillColor(255, 255, 255);
       doc.rect(0, 0, pageWidth, pageHeight, 'F');
       doc.setTextColor(0, 0, 0);
@@ -260,20 +279,19 @@ export default function ProposalPage() {
 
       addText(proposal.content.termsAndConditions, 10, false, 15);
 
-      // Footer
-      yPosition = pageHeight - 20;
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
+      // Add footer and date to last page
+      const footerY = pageHeight - 15;
+      addFooter();
 
       const createdDate = new Date(proposal.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       });
-
-      doc.text(`Created on ${createdDate}`, margin, yPosition);
-      doc.text('Powered by AXIOM', pageWidth - margin - 30, yPosition);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Created on ${createdDate}`, margin, footerY);
 
       // Save PDF
       const filename = `${proposal.projectTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_proposal.pdf`;
@@ -413,7 +431,7 @@ export default function ProposalPage() {
 
   if (error || !proposal) {
     return (
-      <Layout>
+      <Layout currentPage="proposals">
         <div className="min-h-screen px-4 py-20">
           <div className="max-w-4xl mx-auto">
             <div className="bg-red-500/20 backdrop-blur-sm rounded-2xl p-8 border border-red-500/50">
@@ -434,13 +452,120 @@ export default function ProposalPage() {
   }
 
   return (
-    <Layout>
+    <Layout currentPage="proposals">
       {/* Solid black background overlay for proposal page */}
       <div className="fixed inset-0 bg-black -z-10" />
-      <div className="min-h-screen px-4 py-20 pb-32">
+
+      {/* Mobile Header - Sticky with one primary action + more menu */}
+      <div className="lg:hidden fixed top-16 left-0 right-0 z-20 bg-black/95 backdrop-blur-lg border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-1 text-white/70 hover:text-white"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-sm">Back</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSendProposal}
+              className="h-10 px-4 bg-white text-black rounded-full text-sm font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share
+            </button>
+
+            <button
+              onClick={() => setShowActionMenu(!showActionMenu)}
+              className="h-10 w-10 flex items-center justify-center bg-white/10 rounded-full text-white"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Action Menu Bottom Sheet */}
+        {showActionMenu && (
+          <>
+            <div
+              className="fixed inset-0 z-40 bg-black/60"
+              onClick={() => setShowActionMenu(false)}
+            />
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-white/20 rounded-t-3xl p-4 animate-slide-up">
+              <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
+              <div className="space-y-2">
+                <button
+                  onClick={() => { handleDownloadPDF(); setShowActionMenu(false); }}
+                  className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
+                >
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Export PDF</p>
+                    <p className="text-xs text-white/50">Download as PDF</p>
+                  </div>
+                </button>
+
+                {invoiceId ? (
+                  <Link
+                    href={`/invoices/${invoiceId}`}
+                    onClick={() => setShowActionMenu(false)}
+                    className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
+                  >
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <p className="font-medium">View Invoice</p>
+                      <p className="text-xs text-white/50">See generated invoice</p>
+                    </div>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => { handleGenerateInvoice(); setShowActionMenu(false); }}
+                    disabled={isGeneratingInvoice}
+                    className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20 disabled:opacity-50"
+                  >
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <p className="font-medium">Generate Invoice</p>
+                      <p className="text-xs text-white/50">Create invoice from proposal</p>
+                    </div>
+                  </button>
+                )}
+              </div>
+
+              <button
+                onClick={() => setShowActionMenu(false)}
+                className="w-full h-12 mt-4 text-white/60 font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="min-h-screen px-4 pt-36 pb-32 lg:pt-24 lg:pb-12">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-8 flex justify-between items-start">
+          {/* Desktop Header - Full actions */}
+          <div className="hidden lg:block mb-8 flex justify-between items-start">
             <div>
               <Link
                 href="/dashboard"
@@ -505,6 +630,16 @@ export default function ProposalPage() {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Mobile Title */}
+          <div className="lg:hidden mb-6 pt-2">
+            <h1 className="text-2xl font-semibold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
+              {proposal.projectTitle}
+            </h1>
+            <p className="text-white/40 text-sm mt-1">
+              {proposal.id.slice(0, 8)}...
+            </p>
           </div>
 
           {/* Status Badge */}

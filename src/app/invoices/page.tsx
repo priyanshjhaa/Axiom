@@ -190,7 +190,7 @@ export default function InvoicesPage() {
                 {selectedIds.size > 0 && (
                   <button
                     onClick={() => confirmDelete(Array.from(selectedIds))}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-all text-sm"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white/70 border border-white/30 rounded-lg hover:bg-white/20 transition-all text-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -228,7 +228,7 @@ export default function InvoicesPage() {
                         ? 'bg-white border-white'
                         : someSelected
                         ? 'bg-white/60 border-white/60'
-                        : 'border-white/20 hover:border-white/40'
+                        : 'border-white/40 hover:border-white/60 bg-white/5'
                     }`}
                   >
                     {allSelected || someSelected ? (
@@ -252,7 +252,7 @@ export default function InvoicesPage() {
                       className={`w-4 h-4 rounded border flex items-center justify-center transition-all mr-4 flex-shrink-0 ${
                         selectedIds.has(invoice.id)
                           ? 'bg-white border-white'
-                          : 'border-white/20 hover:border-white/40'
+                          : 'border-white/40 hover:border-white/60 bg-white/5'
                       }`}
                     >
                       {selectedIds.has(invoice.id) && (
@@ -306,7 +306,7 @@ export default function InvoicesPage() {
                         e.stopPropagation();
                         confirmDelete(invoice.id);
                       }}
-                      className="ml-4 p-2 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                      className="ml-4 p-2 text-white/40 hover:text-white/70 hover:bg-white/10 rounded-lg transition-all"
                       title="Delete invoice"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,7 +327,7 @@ export default function InvoicesPage() {
           <div className="bg-black border border-white/20 rounded-xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>

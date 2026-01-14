@@ -62,6 +62,10 @@ export default function CreateProposal() {
     return null;
   }
 
+  const handleBack = () => {
+    router.push('/dashboard');
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -138,8 +142,8 @@ export default function CreateProposal() {
   return (
     <Layout currentPage="create-proposal">
       <div className="min-h-screen px-4 py-20 pb-32">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
+        <div className="max-w-2xl mx-auto">
+          {/* Header with Back button */}
           <div className="mb-8">
             <Link
               href="/dashboard"
@@ -459,9 +463,8 @@ export default function CreateProposal() {
       {/* Limit Reached Modal */}
       {showLimitModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-black border border-white/20 rounded-2xl p-8 max-w-md w-full">
+          <div className="bg-black border border-white/20 rounded-2xl p-8 max-w-md w-full mx-4">
             <div className="text-center">
-              {/* Icon */}
               <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -475,7 +478,6 @@ export default function CreateProposal() {
                 You've created 3 proposals on the free plan. Upgrade to Pro for unlimited proposals and more features.
               </p>
 
-              {/* Features list */}
               <div className="text-left mb-6 space-y-2">
                 <div className="flex items-center gap-2 text-white/80 text-sm">
                   <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -497,7 +499,6 @@ export default function CreateProposal() {
                 </div>
               </div>
 
-              {/* Buttons */}
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowLimitModal(false)}
