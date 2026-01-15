@@ -1,22 +1,55 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
+import { useCachedFetch } from '@/hooks/useCachedFetch';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Cached data fetching - shows instant data from cache, updates in background
+  const { data: proposalsData, refetch: refetchProposals } = useCachedFetch(
+    async () => {
+      const res = await fetch('/api/proposals/generate');
+      const data = await res.json();
+      return data.proposals || [];
+    },
+    { cacheKey: 'dashboard-proposals', cacheTime: 5 * 60 * 1000, enabled: !!session }
+  );
+
+  const { data: invoicesData } = useCachedFetch(
+    async () => {
+      const res = await fetch('/api/invoices');
+      const data = await res.json();
+      return data.invoices || [];
+    },
+    { cacheKey: 'dashboard-invoices', cacheTime: 5 * 60 * 1000, enabled: !!session }
+  );
+
+  const proposals = proposalsData || [];
+  const invoices = invoicesData || [];
+
   const [selectedProposalIds, setSelectedProposalIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | string[]>('');
   const [deleteType, setDeleteType] = useState<'single' | 'bulk'>('single');
+
+  // Local state for immediate UI updates
+  const [localProposals, setLocalProposals] = useState<any[]>(proposals);
+
+  // Sync local state when cache data changes
+  useEffect(() => {
+    setLocalProposals(proposals);
+  }, [proposals]);
+
+  const displayedProposals = localProposals.slice(0, 5);
+  const allSelected = displayedProposals.length > 0 && selectedProposalIds.size === displayedProposals.length;
+  const someSelected = selectedProposalIds.size > 0 && selectedProposalIds.size < displayedProposals.length;
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -24,33 +57,7 @@ export default function Dashboard() {
       router.push('/login');
       return;
     }
-
-    fetchData();
   }, [session, status, router]);
-
-  const fetchData = async () => {
-    try {
-      const [proposalsRes, invoicesRes] = await Promise.all([
-        fetch('/api/proposals/generate'),
-        fetch('/api/invoices')
-      ]);
-
-      const proposalsData = await proposalsRes.json();
-      const invoicesData = await invoicesRes.json();
-
-      if (proposalsRes.ok) {
-        setProposals(proposalsData.proposals || []);
-      }
-
-      if (invoicesRes.ok) {
-        setInvoices(invoicesData.invoices || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const toggleSelectProposal = (id: string) => {
     const newSelected = new Set(selectedProposalIds);
@@ -63,11 +70,11 @@ export default function Dashboard() {
   };
 
   const toggleSelectAllProposals = () => {
-    const displayedProposals = proposals.slice(0, 5);
+    const displayedProposals = localProposals.slice(0, 5);
     if (selectedProposalIds.size === displayedProposals.length) {
       setSelectedProposalIds(new Set());
     } else {
-      setSelectedProposalIds(new Set(displayedProposals.map((p) => p.id)));
+      setSelectedProposalIds(new Set(displayedProposals.map((p: any) => p.id)));
     }
   };
 
@@ -85,9 +92,8 @@ export default function Dashboard() {
           method: 'DELETE',
         });
         if (response.ok) {
-          setProposals((prev) => prev.filter((p) => p.id !== deleteTarget));
-          // Also update stats
-          fetchData();
+          setLocalProposals((prev: any[]) => prev.filter((p) => p.id !== deleteTarget));
+          refetchProposals();
         }
       } else {
         const response = await fetch('/api/proposals/bulk-delete', {
@@ -96,8 +102,8 @@ export default function Dashboard() {
           body: JSON.stringify({ ids: deleteTarget }),
         });
         if (response.ok) {
-          setProposals((prev) => prev.filter((p) => !(deleteTarget as string[]).includes(p.id)));
-          fetchData();
+          setLocalProposals((prev: any[]) => prev.filter((p) => !(deleteTarget as string[]).includes(p.id)));
+          refetchProposals();
         }
       }
       setSelectedProposalIds(new Set());
@@ -109,21 +115,17 @@ export default function Dashboard() {
     }
   };
 
-  const totalProposals = proposals.length;
-  const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
+  const totalProposals = localProposals.length;
+  const sentProposals = localProposals.filter((p: any) => p.status === 'sent').length;
   const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
-  // Invoice statistics
+  // Invoice statistics - use cached invoices directly since we don't modify them
   const pendingInvoices = invoices.filter((inv: any) => inv.status === 'pending').length;
   const totalInvoiced = invoices.reduce((sum: number, inv: any) => sum + inv.total, 0);
   const totalPaid = invoices
     .filter((inv: any) => inv.status === 'paid')
     .reduce((sum: number, inv: any) => sum + (inv.paidAmount || inv.total), 0);
   const outstandingBalance = totalInvoiced - totalPaid;
-
-  const displayedProposals = proposals.slice(0, 5);
-  const allSelected = displayedProposals.length > 0 && selectedProposalIds.size === displayedProposals.length;
-  const someSelected = selectedProposalIds.size > 0 && selectedProposalIds.size < displayedProposals.length;
 
   if (status === 'loading') {
     return (
@@ -264,7 +266,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <h2 className="text-sm font-semibold text-white">Recent Proposals</h2>
-                      <span className="text-white/50 text-xs">{proposals.length} total</span>
+                      <span className="text-white/50 text-xs">{localProposals.length} total</span>
                     </div>
                     <div className="flex items-center gap-3">
                       {/* Bulk Delete Button */}
@@ -286,7 +288,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {proposals.length === 0 ? (
+                {localProposals.length === 0 ? (
                   <div className="p-8 text-center">
                     <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
                       <svg className="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
