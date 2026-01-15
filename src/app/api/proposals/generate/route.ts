@@ -21,16 +21,40 @@ async function generateProposalWithAI(formData: any): Promise<ProposalContent> {
     timeline,
     deliverables,
     startDate,
+    currency,
   } = formData;
 
-  // Build comprehensive prompt for Groq AI
-  const systemPrompt = `You are an expert proposal writer with years of experience in creating professional, winning proposals. Your task is to transform project requirements into a polished, client-ready proposal.
+  // Get currency symbol for display
+  const getCurrencySymbol = (code: string): string => {
+    const symbols: Record<string, string> = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      INR: '₹',
+      AUD: 'A$',
+      CAD: 'C$',
+      JPY: '¥',
+      CHF: 'CHF ',
+      CNY: '¥',
+      SGD: 'S$',
+    };
+    return symbols[currency] || currency + ' ';
+  };
 
-Your proposal must be:
-- Professional and concise
-- Persuasive but realistic
-- Well-structured and easy to read
-- Tailored to the specific project
+  const currencySymbol = getCurrencySymbol(currency || 'USD');
+
+  // Build comprehensive prompt for Groq AI
+  const systemPrompt = `You are an experienced professional consultant who writes clear, practical, and client-ready project proposals.
+
+Rules:
+- Write in professional, human, business-friendly language
+- Avoid buzzwords, hype, or exaggerated claims
+- Be specific and structured
+- Do NOT promise unrealistic outcomes
+- Focus on clarity, scope, timelines, and deliverables
+- Use simple headings and bullet points
+- The proposal must be suitable to send directly to a real client
+- Do not mention AI or automated generation
 
 IMPORTANT: You must respond with a valid JSON object containing these exact fields:
 {
@@ -56,8 +80,14 @@ ${deliverables ? `- Key Deliverables:\n${deliverables}` : ''}
 
 PROJECT PARAMETERS:
 - Budget: ${budget}
+- Currency: ${currency || 'USD'} (use currency symbol "${currencySymbol}" throughout the proposal)
 - Timeline: ${timeline}
 ${startDate ? `- Start Date: ${startDate}` : ''}
+
+IMPORTANT CURRENCY INSTRUCTIONS:
+- Use "${currencySymbol}" as the currency symbol throughout the pricing section
+- Format prices as "${currencySymbol}X,XXX" (e.g., "${currencySymbol}5,000")
+- All monetary values must use the ${currency || 'USD'} currency
 
 Please generate a comprehensive, professional proposal that demonstrates expertise and builds client confidence.`;
 
@@ -116,18 +146,37 @@ Please generate a comprehensive, professional proposal that demonstrates experti
 }
 
 function generateTemplateBasedContent(formData: any): ProposalContent {
-  const { projectTitle, projectDescription, budget, timeline, deliverables, startDate } = formData;
+  const { projectTitle, projectDescription, budget, timeline, deliverables, startDate, currency } = formData;
 
-  const executiveSummary = `We are pleased to present this proposal for ${projectTitle}. This document outlines our understanding of your requirements and our proposed approach to delivering a successful solution.\n\nBased on our initial discussions, we understand that you need ${projectDescription}\n\nOur team is excited about the opportunity to work with you and is confident in our ability to deliver exceptional results that meet your specific needs.`;
+  // Get currency symbol
+  const getCurrencySymbol = (curr: string): string => {
+    const symbols: Record<string, string> = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      INR: '₹',
+      AUD: 'A$',
+      CAD: 'C$',
+      JPY: '¥',
+      CHF: 'CHF ',
+      CNY: '¥',
+      SGD: 'S$',
+    };
+    return symbols[curr] || curr + ' ';
+  };
 
-  const scopeOfWork = `Project Overview:\n${projectDescription}\n\n${deliverables ? `Key Deliverables:\n${deliverables.split('\n').filter((d: string) => d.trim()).map((d: string) => `• ${d.replace(/^[-•]\s*/, '')}`).join('\n')}` : ''}\n\nOur Approach:\n• We will follow industry best practices to ensure high-quality deliverables\n• Regular communication and progress updates throughout the project\n• Flexible approach to accommodate any necessary adjustments\n• Quality assurance at every stage of development`;
+  const currencySymbol = getCurrencySymbol(currency || 'USD');
+
+  const executiveSummary = `We are pleased to present this proposal for ${projectTitle}. This document outlines our understanding of your requirements and our proposed approach to delivering a successful solution.\n\nBased on our initial discussions, we understand that you need ${projectDescription}\n\nOur team is excited about the opportunity to work with you and is confident in our ability to deliver results that meet your specific needs.`;
+
+  const scopeOfWork = `Project Overview\n${projectDescription}\n\n${deliverables ? `Key Deliverables\n${deliverables.split('\n').filter((d: string) => d.trim()).map((d: string) => `• ${d.replace(/^[-•]\s*/, '')}`).join('\n')}\n\n` : ''}Our Approach\n• We will follow industry best practices to ensure quality deliverables\n• Regular communication and progress updates throughout the project\n• Flexible approach to accommodate necessary adjustments\n• Quality assurance at each stage`;
 
   const budgetNum = parseFloat(budget.replace(/[^0-9.]/g, '')) || 0;
-  const pricingBreakdown = `Total Project Cost: $${budgetNum.toLocaleString()}\n\nThis includes:\n• Project planning and requirement analysis\n• Development and implementation\n• Testing and quality assurance\n• Project management and communication\n• Documentation and handover\n\nPayment Terms:\n• 50% deposit to commence work\n• 50% on completion and delivery\n\nThe pricing is fixed for the scope outlined above. Any additional requirements outside this scope will be discussed and quoted separately.`;
+  const pricingBreakdown = `Total Project Cost: ${currencySymbol}${budgetNum.toLocaleString()}\n\nThis includes\n• Project planning and requirements\n• Development and implementation\n• Testing and quality assurance\n• Project management and communication\n• Documentation and handover\n\nPayment Terms\n• 50% deposit to begin work\n• 50% on completion and delivery\n\nThe pricing is fixed for the scope outlined above. Any additional work outside this scope will be discussed and quoted separately.`;
 
-  const timelineContent = `Estimated Duration: ${timeline}\n\n${startDate ? `Proposed Start Date: ${new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n` : ''}Project Phases:\n\n1. Discovery & Planning Phase\n   • Requirements gathering and analysis\n   • Project planning and milestone definition\n   • Duration: ~15% of timeline\n\n2. Development/Execution Phase\n   • Core implementation\n   • Regular progress reviews\n   • Duration: ~60% of timeline\n\n3. Testing & Refinement Phase\n   • Quality assurance and testing\n   • Refinements based on feedback\n   • Duration: ~20% of timeline\n\n4. Delivery & Handover Phase\n   • Final delivery\n   • Documentation and training\n   • Duration: ~5% of timeline`;
+  const timelineContent = `Estimated Duration: ${timeline}\n\n${startDate ? `Proposed Start Date: ${new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n` : ''}Project Phases\n\n1. Discovery & Planning\n   Requirements gathering, analysis, and project planning\n   Duration: ~15% of timeline\n\n2. Development & Execution\n   Core implementation with regular progress reviews\n   Duration: ~60% of timeline\n\n3. Testing & Refinement\n   Quality assurance, testing, and refinements\n   Duration: ~20% of timeline\n\n4. Delivery & Handover\n   Final delivery, documentation, and training\n   Duration: ~5% of timeline`;
 
-  const termsAndConditions = `1. Acceptance: This proposal is valid for 30 days from the date of issue.\n\n2. Scope: This proposal covers the work described above. Any additional work will require a separate agreement.\n\n3. Timeline: The estimated timeline may vary based on client feedback and response times.\n\n4. Payment: Payment terms as outlined in the pricing section must be strictly followed.\n\n5. Intellectual Property: All deliverables and intellectual property will be transferred to the client upon full payment.\n\n6. Confidentiality: Both parties agree to maintain confidentiality of all proprietary information shared during this project.\n\n7. Cancellation: Either party may terminate this agreement with 14 days written notice. Work completed up to that point will be billed proportionally.`;
+  const termsAndConditions = `1. Acceptance\nThis proposal is valid for 30 days from the date of issue.\n\n2. Scope\nThis proposal covers the work described above. Any additional work will require a separate agreement.\n\n3. Timeline\nThe estimated timeline may vary based on client feedback and response times.\n\n4. Payment\nPayment terms as outlined in the pricing section must be followed.\n\n5. Intellectual Property\nAll deliverables and intellectual property will transfer to the client upon full payment.\n\n6. Confidentiality\nBoth parties agree to maintain confidentiality of proprietary information shared during this project.\n\n7. Cancellation\nEither party may terminate this agreement with 14 days written notice. Work completed will be billed proportionally.`;
 
   return {
     executiveSummary,
@@ -256,7 +305,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
