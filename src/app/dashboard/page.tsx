@@ -2,22 +2,16 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  // Simple in-memory cache that persists across navigations
-  const proposalsCache = useRef<any[] | null>(null);
-  const invoicesCache = useRef<any[] | null>(null);
-
-  const [proposals, setProposals] = useState<any[]>(proposalsCache.current || []);
-  const [invoices, setInvoices] = useState<any[]>(invoicesCache.current || []);
-  const [isLoading, setIsLoading] = useState(proposalsCache.current === null);
-
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProposalIds, setSelectedProposalIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -35,7 +29,6 @@ export default function Dashboard() {
       return;
     }
 
-    // If we have cached data, show it immediately and fetch in background
     const fetchData = async () => {
       try {
         const [proposalsRes, invoicesRes] = await Promise.all([
@@ -47,15 +40,11 @@ export default function Dashboard() {
         const invoicesData = await invoicesRes.json();
 
         if (proposalsRes.ok) {
-          const newProposals = proposalsData.proposals || [];
-          proposalsCache.current = newProposals;
-          setProposals(newProposals);
+          setProposals(proposalsData.proposals || []);
         }
 
         if (invoicesRes.ok) {
-          const newInvoices = invoicesData.invoices || [];
-          invoicesCache.current = newInvoices;
-          setInvoices(newInvoices);
+          setInvoices(invoicesData.invoices || []);
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -100,9 +89,13 @@ export default function Dashboard() {
           method: 'DELETE',
         });
         if (response.ok) {
-          const updatedProposals = proposals.filter((p) => p.id !== deleteTarget);
-          proposalsCache.current = updatedProposals;
-          setProposals(updatedProposals);
+          setProposals((prev) => prev.filter((p) => p.id !== deleteTarget));
+          // Refetch to get fresh data
+          const proposalsRes = await fetch('/api/proposals/generate');
+          if (proposalsRes.ok) {
+            const proposalsData = await proposalsRes.json();
+            setProposals(proposalsData.proposals || []);
+          }
         }
       } else {
         const response = await fetch('/api/proposals/bulk-delete', {
@@ -111,9 +104,13 @@ export default function Dashboard() {
           body: JSON.stringify({ ids: deleteTarget }),
         });
         if (response.ok) {
-          const updatedProposals = proposals.filter((p) => !(deleteTarget as string[]).includes(p.id));
-          proposalsCache.current = updatedProposals;
-          setProposals(updatedProposals);
+          setProposals((prev) => prev.filter((p) => !(deleteTarget as string[]).includes(p.id)));
+          // Refetch to get fresh data
+          const proposalsRes = await fetch('/api/proposals/generate');
+          if (proposalsRes.ok) {
+            const proposalsData = await proposalsRes.json();
+            setProposals(proposalsData.proposals || []);
+          }
         }
       }
       setSelectedProposalIds(new Set());
