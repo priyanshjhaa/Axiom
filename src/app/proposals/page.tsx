@@ -13,10 +13,27 @@ interface Proposal {
   clientEmail: string;
   clientCompany?: string;
   budget: string;
+  currency: string;
   timeline: string;
   status: string;
   createdAt: string;
 }
+
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
 
 export default function AllProposalsPage() {
   const { data: session, status } = useSession();
@@ -151,7 +168,7 @@ export default function AllProposalsPage() {
                     </div>
                     <div className="text-right ml-4">
                       <p className="text-white font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                        ${proposal.budget}
+                        {getCurrencySymbol(proposal.currency)}{proposal.budget}
                       </p>
                       <p className="text-white/50 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                         {proposal.timeline}

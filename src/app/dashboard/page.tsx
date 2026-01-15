@@ -6,6 +6,22 @@ import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
+
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -377,7 +393,7 @@ export default function Dashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                            <p className="text-white/80 text-sm">{proposal.budget}</p>
+                            <p className="text-white/80 text-sm">{getCurrencySymbol(proposal.currency)}{proposal.budget}</p>
                             <span className={`text-xs px-2 py-1 rounded-full ${
                               proposal.status === 'sent'
                                 ? 'bg-white/10 text-white/70'

@@ -23,6 +23,22 @@ interface Invoice {
   };
 }
 
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
+
 export default function InvoicesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -281,7 +297,7 @@ export default function InvoicesPage() {
                       <div className="flex items-center gap-3">
                         <div className="text-right">
                           <p className="text-white text-sm font-medium">
-                            {invoice.currency}${invoice.total.toLocaleString()}
+                            {getCurrencySymbol(invoice.currency)}{invoice.total.toLocaleString()}
                           </p>
                           <p className="text-white/40 text-xs">{new Date(invoice.issueDate).toLocaleDateString()}</p>
                         </div>
