@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 
 interface Star {
   id: number;
@@ -11,7 +11,7 @@ interface Star {
   delay: number;
 }
 
-export default function CosmicBackground() {
+function CosmicBackground() {
   const [stars, setStars] = useState<Star[]>([]);
 
   useEffect(() => {
@@ -94,3 +94,5 @@ export default function CosmicBackground() {
     </>
   );
 }
+
+export default memo(CosmicBackground);

@@ -66,8 +66,8 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
       {/* Dark Overlay for better text visibility */}
       <div className="fixed inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 -z-10" />
 
-      {/* Navigation - Hide for create-proposal page */}
-      {currentPage !== 'create-proposal' && (
+      {/* Navigation - Hide for create-proposal and proposal-detail pages */}
+      {currentPage !== 'create-proposal' && currentPage !== 'proposal-detail' && (
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
           isVisible ? 'translate-y-0' : '-translate-y-full'
@@ -149,18 +149,18 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                 </>
               ) : (
                 <>
-                  <a
+                  <Link
                     href="/login"
                     className="px-4 py-2 text-sm font-light text-white hover:text-white/80 transition-all duration-300"
                   >
                     Login
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/signup"
                     className="px-4 py-2 text-sm font-light bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300"
                   >
                     Sign Up
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
@@ -253,20 +253,20 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                   </>
                 ) : (
                   <>
-                    <a
+                    <Link
                       href="/login"
                       className="block px-4 py-3 text-sm font-light text-white hover:bg-white/10 rounded-full transition-all duration-300 text-center"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Login
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/signup"
                       className="block px-4 py-3 text-sm font-light bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300 text-center"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Sign Up
-                    </a>
+                    </Link>
                   </>
                 )}
               </div>

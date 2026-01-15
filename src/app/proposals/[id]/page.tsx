@@ -452,12 +452,12 @@ export default function ProposalPage() {
   }
 
   return (
-    <Layout currentPage="proposals">
+    <Layout currentPage="proposal-detail">
       {/* Solid black background overlay for proposal page */}
       <div className="fixed inset-0 bg-black -z-10" />
 
       {/* Mobile Header - Sticky with one primary action + more menu */}
-      <div className="lg:hidden fixed top-16 left-0 right-0 z-20 bg-black/95 backdrop-blur-lg border-b border-white/10">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <Link
             href="/dashboard"
@@ -562,7 +562,7 @@ export default function ProposalPage() {
         )}
       </div>
 
-      <div className="min-h-screen px-4 pt-36 pb-32 lg:pt-24 lg:pb-12">
+      <div className="min-h-screen px-4 pt-20 pb-32 lg:pt-24 lg:pb-12">
         <div className="max-w-4xl mx-auto">
           {/* Desktop Header - Full actions */}
           <div className="hidden lg:block mb-8 flex justify-between items-start">
