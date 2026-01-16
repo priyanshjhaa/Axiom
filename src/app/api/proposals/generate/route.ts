@@ -221,11 +221,12 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Generating proposal with AI...');
-    console.log('Form data:', {
+    console.log('Form data received:', {
       projectTitle: formData.projectTitle,
       clientName: formData.clientName,
       budget: formData.budget,
       timeline: formData.timeline,
+      currency: formData.currency, // DEBUG: Log received currency
     });
 
     // Generate professional proposal content using Groq AI
@@ -288,6 +289,8 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       projectTitle: proposal.projectTitle,
       status: proposal.status,
+      currency: proposal.currency, // DEBUG: Log saved currency
+      budget: proposal.budget,
     });
 
     return NextResponse.json({

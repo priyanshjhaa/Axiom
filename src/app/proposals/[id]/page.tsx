@@ -24,6 +24,7 @@ interface Proposal {
   projectTitle: string;
   projectDescription: string;
   budget: string;
+  currency: string;
   timeline: string;
   startDate: string;
   deliverables: string;
@@ -40,6 +41,22 @@ interface Proposal {
   invoiceId?: string;
   hasInvoice?: boolean;
 }
+
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
 
 export default function ProposalPage() {
   const { data: session, status } = useSession();
@@ -225,7 +242,7 @@ export default function ProposalPage() {
       doc.setFont('helvetica', 'normal');
       doc.text(`Title: ${proposal.projectTitle}`, margin + 5, yPosition);
       yPosition += 7;
-      doc.text(`Budget: $${proposal.budget}`, margin + 5, yPosition);
+      doc.text(`Budget: ${getCurrencySymbol(proposal.currency)}${proposal.budget}`, margin + 5, yPosition);
       yPosition += 7;
       doc.text(`Timeline: ${proposal.timeline}`, margin + 5, yPosition);
       yPosition += 15;
@@ -364,7 +381,7 @@ export default function ProposalPage() {
         body: JSON.stringify({
           dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
           taxRate: 0,
-          currency: 'USD',
+          // Don't send currency - let the API inherit it from the proposal
         }),
       });
 
@@ -686,7 +703,7 @@ export default function ProposalPage() {
                     Project Information
                   </h3>
                   <p className="text-sm text-white mb-2"><strong className="text-white">Title:</strong> {proposal.projectTitle}</p>
-                  <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> ${proposal.budget}</p>
+                  <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> {getCurrencySymbol(proposal.currency)}{proposal.budget}</p>
                   <p className="text-sm text-white"><strong className="text-white">Timeline:</strong> {proposal.timeline}</p>
                 </div>
               </div>
