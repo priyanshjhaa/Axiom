@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display, Dancing_Script, Great_Vibes, Herr_Von_Muellerhoff } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
+import QueryProvider from "@/providers/QueryProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,7 +56,9 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} ${dancingScript.variable} ${greatVibes.variable} ${herrVonMuellerhoff.variable} antialiased`}
       >
         <SessionProvider>
-          {children}
+          <QueryProvider>
+            {children}
+          </QueryProvider>
         </SessionProvider>
       </body>
     </html>

@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 
@@ -25,9 +26,34 @@ const getCurrencySymbol = (currencyCode: string): string => {
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  // Fetch proposals with React Query
+  const { data: proposalsData, isLoading: proposalsLoading } = useQuery({
+    queryKey: ['proposals'],
+    queryFn: async () => {
+      const res = await fetch('/api/proposals/generate');
+      if (!res.ok) throw new Error('Failed to fetch proposals');
+      return res.json();
+    },
+    staleTime: 60_000, // 1 minute cache
+  });
+
+  // Fetch invoices with React Query
+  const { data: invoicesData, isLoading: invoicesLoading } = useQuery({
+    queryKey: ['invoices'],
+    queryFn: async () => {
+      const res = await fetch('/api/invoices');
+      if (!res.ok) throw new Error('Failed to fetch invoices');
+      return res.json();
+    },
+    staleTime: 60_000, // 1 minute cache
+  });
+
+  const proposals = proposalsData?.proposals || [];
+  const invoices = invoicesData?.invoices || [];
+  const isLoading = proposalsLoading || invoicesLoading;
+
   const [selectedProposalIds, setSelectedProposalIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -42,34 +68,7 @@ export default function Dashboard() {
     if (status === 'loading') return;
     if (!session) {
       router.push('/login');
-      return;
     }
-
-    const fetchData = async () => {
-      try {
-        const [proposalsRes, invoicesRes] = await Promise.all([
-          fetch('/api/proposals/generate'),
-          fetch('/api/invoices')
-        ]);
-
-        const proposalsData = await proposalsRes.json();
-        const invoicesData = await invoicesRes.json();
-
-        if (proposalsRes.ok) {
-          setProposals(proposalsData.proposals || []);
-        }
-
-        if (invoicesRes.ok) {
-          setInvoices(invoicesData.invoices || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
   }, [session, status, router]);
 
   const toggleSelectProposal = (id: string) => {
@@ -105,13 +104,8 @@ export default function Dashboard() {
           method: 'DELETE',
         });
         if (response.ok) {
-          setProposals((prev) => prev.filter((p) => p.id !== deleteTarget));
-          // Refetch to get fresh data
-          const proposalsRes = await fetch('/api/proposals/generate');
-          if (proposalsRes.ok) {
-            const proposalsData = await proposalsRes.json();
-            setProposals(proposalsData.proposals || []);
-          }
+          // Invalidate and refetch proposals using React Query
+          queryClient.invalidateQueries({ queryKey: ['proposals'] });
         }
       } else {
         const response = await fetch('/api/proposals/bulk-delete', {
@@ -120,13 +114,8 @@ export default function Dashboard() {
           body: JSON.stringify({ ids: deleteTarget }),
         });
         if (response.ok) {
-          setProposals((prev) => prev.filter((p) => !(deleteTarget as string[]).includes(p.id)));
-          // Refetch to get fresh data
-          const proposalsRes = await fetch('/api/proposals/generate');
-          if (proposalsRes.ok) {
-            const proposalsData = await proposalsRes.json();
-            setProposals(proposalsData.proposals || []);
-          }
+          // Invalidate and refetch proposals using React Query
+          queryClient.invalidateQueries({ queryKey: ['proposals'] });
         }
       }
       setSelectedProposalIds(new Set());
