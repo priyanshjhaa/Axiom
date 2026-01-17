@@ -122,7 +122,8 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
               </div>
             )}
 
-            {/* Auth Buttons - Right */}
+            {/* Auth Buttons - Right - Hide on login/signup pages */}
+            {currentPage !== 'login' && currentPage !== 'signup' && (
             <div className="hidden md:flex items-center space-x-3">
               {status === 'loading' ? (
                 <div className="text-white text-sm">Loading...</div>
@@ -164,6 +165,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                 </>
               )}
             </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -221,7 +223,8 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                 </>
               )}
 
-              {/* Mobile Auth Buttons */}
+              {/* Mobile Auth Buttons - Hide on login/signup pages */}
+              {currentPage !== 'login' && currentPage !== 'signup' && (
               <div className="pt-4 space-y-3">
                 {status === 'loading' ? (
                   <div className="text-white text-sm text-center">Loading...</div>
@@ -270,6 +273,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                   </>
                 )}
               </div>
+              )}
             </div>
           </div>
         )}

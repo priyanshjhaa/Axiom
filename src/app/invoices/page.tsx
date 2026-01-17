@@ -142,6 +142,7 @@ export default function InvoicesPage() {
 
   if (!session) return null;
 
+  // Calculate totals across all currencies
   const totalPaid = invoices
     .filter((inv) => inv.status === 'PAID')
     .reduce((sum, inv) => sum + (inv.total || 0), 0);
@@ -181,15 +182,15 @@ export default function InvoicesPage() {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <p className="text-white/50 text-xs mb-1">Total Paid</p>
+              <p className="text-white/50 text-xs mb-1">Total Paid (All Currencies)</p>
               <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-                ${totalPaid.toLocaleString()}
+                {totalPaid.toLocaleString()}
               </p>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <p className="text-white/50 text-xs mb-1">Outstanding</p>
+              <p className="text-white/50 text-xs mb-1">Outstanding (All Currencies)</p>
               <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-                ${outstanding.toLocaleString()}
+                {outstanding.toLocaleString()}
               </p>
             </div>
           </div>
