@@ -191,9 +191,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                ${totalPaid.toLocaleString()}
+                {totalPaid.toLocaleString()}
               </p>
-              <p className="text-white/50 text-xs">Total Paid</p>
+              <p className="text-white/50 text-xs">Total Paid (All Currencies)</p>
             </div>
 
             {/* Outstanding Balance */}
@@ -206,9 +206,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                ${outstandingBalance.toLocaleString()}
+                {outstandingBalance.toLocaleString()}
               </p>
-              <p className="text-white/50 text-xs">Outstanding</p>
+              <p className="text-white/50 text-xs">Outstanding (All Currencies)</p>
             </div>
 
             {/* Pending Invoices */}

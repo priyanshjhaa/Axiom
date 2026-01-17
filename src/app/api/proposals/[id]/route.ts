@@ -66,6 +66,7 @@ export async function GET(
       projectTitle: proposal.projectTitle,
       projectDescription: proposal.projectDescription,
       budget: proposal.budget,
+      currency: proposal.currency || 'USD',
       timeline: proposal.timeline,
       startDate: proposal.startDate || '',
       deliverables: proposal.deliverables,
@@ -88,7 +89,7 @@ export async function GET(
       clientSignatureType: proposal.clientSignatureType,
     };
 
-    console.log('Proposal found and sent');
+    console.log('Proposal found and sent with currency:', formattedProposal.currency);
 
     return NextResponse.json({
       proposal: formattedProposal,
