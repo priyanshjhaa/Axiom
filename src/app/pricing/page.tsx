@@ -155,6 +155,14 @@ export default function Pricing() {
                     >
                       Get Started
                     </Link>
+                  ) : plan.name === 'Pro' ? (
+                    <button
+                      disabled
+                      className="w-full px-6 py-3 bg-white/10 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      Coming Soon
+                    </button>
                   ) : (
                     <button
                       className="w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light"

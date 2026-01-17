@@ -124,6 +124,18 @@ export async function DELETE(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Check if user is on free plan
+    if (user.plan === 'free') {
+      return NextResponse.json(
+        {
+          error: 'UPGRADE_REQUIRED',
+          message: 'Proposal management is available for Pro users only. Upgrade to delete proposals.',
+          upgradeUrl: '/pricing'
+        },
+        { status: 403 }
+      );
+    }
+
     // Check if proposal exists and belongs to user
     const proposal = await prisma.proposal.findUnique({
       where: { id },

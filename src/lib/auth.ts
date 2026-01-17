@@ -67,6 +67,7 @@ export const authOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           picture: user.picture,
+          plan: user.plan,
         };
       }
     })
@@ -174,6 +175,7 @@ export const authOptions = {
           token.firstName = user.firstName;
           token.lastName = user.lastName;
           token.provider = 'credentials';
+          token.plan = user.plan;
         }
       }
       return token;
@@ -183,6 +185,7 @@ export const authOptions = {
       session.user.lastName = token.lastName;
       session.user.provider = token.provider;
       session.user.picture = token.picture;
+      session.user.plan = token.plan || 'free'; // Default to 'free' if not set
       return session;
     },
   },

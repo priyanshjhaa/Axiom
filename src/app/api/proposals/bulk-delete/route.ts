@@ -19,6 +19,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Check if user is on free plan
+    if (user.plan === 'free') {
+      return NextResponse.json(
+        {
+          error: 'UPGRADE_REQUIRED',
+          message: 'Proposal management is available for Pro users only. Upgrade to delete proposals.',
+          upgradeUrl: '/pricing'
+        },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { ids } = body;
 

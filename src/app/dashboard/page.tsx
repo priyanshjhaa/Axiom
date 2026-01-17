@@ -281,8 +281,8 @@ export default function Dashboard() {
                       <span className="text-white/50 text-xs">{proposals.length} total</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      {/* Bulk Delete Button */}
-                      {selectedProposalIds.size > 0 && (
+                      {/* Bulk Delete Button - Pro users only */}
+                      {selectedProposalIds.size > 0 && (session as any)?.user?.plan === 'pro' && (
                         <button
                           onClick={() => confirmDelete(Array.from(selectedProposalIds))}
                           className="flex items-center gap-2 px-3 py-2 bg-white/10 text-white/70 border border-white/30 rounded-xl hover:bg-white/20 transition-all text-sm h-10"
@@ -318,8 +318,8 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="divide-y divide-white/10">
-                    {/* Select All Header - Larger touch target */}
-                    {displayedProposals.length > 0 && (
+                    {/* Select All Header - Pro users only */}
+                    {(session as any)?.user?.plan === 'pro' && displayedProposals.length > 0 && (
                       <div className="px-4 py-3 bg-white/5 flex items-center gap-3">
                         <button
                           onClick={toggleSelectAllProposals}
@@ -347,7 +347,8 @@ export default function Dashboard() {
                         key={proposal.id}
                         className={`flex items-center p-4 transition-all duration-200 ${selectedProposalIds.has(proposal.id) ? 'bg-white/10' : 'hover:bg-white/5'}`}
                       >
-                        {/* Checkbox - Larger touch target */}
+                        {/* Checkbox - Pro users only */}
+                        {(session as any)?.user?.plan === 'pro' && (
                         <button
                           onClick={() => toggleSelectProposal(proposal.id)}
                           className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all mr-4 flex-shrink-0 ${
@@ -362,6 +363,7 @@ export default function Dashboard() {
                             </svg>
                           )}
                         </button>
+                        )}
 
                         {/* Proposal Content */}
                         <Link
@@ -395,7 +397,8 @@ export default function Dashboard() {
                           </div>
                         </Link>
 
-                        {/* Individual Delete Button - Larger touch target */}
+                        {/* Individual Delete Button - Pro users only */}
+                        {(session as any)?.user?.plan === 'pro' && (
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -409,6 +412,7 @@ export default function Dashboard() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -469,9 +473,12 @@ export default function Dashboard() {
               <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                 <p className="text-white/80 text-sm mb-1">Need help?</p>
                 <p className="text-white/50 text-xs mb-3">Check our documentation</p>
-                <button className="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-xs">
+                <Link
+                  href="/guide"
+                  className="block w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-xs"
+                >
                   View Guide
-                </button>
+                </Link>
               </div>
             </div>
           </div>
