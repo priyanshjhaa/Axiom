@@ -44,17 +44,16 @@ async function generateProposalWithAI(formData: any): Promise<ProposalContent> {
   const currencySymbol = getCurrencySymbol(currency || 'USD');
 
   // Build comprehensive prompt for Groq AI
-  const systemPrompt = `You are an experienced professional consultant who writes clear, practical, and client-ready project proposals.
+  const systemPrompt = `You are a professional business consultant who writes clear, structured, and client-ready project proposals.
 
-Rules:
-- Write in professional, human, business-friendly language
-- Avoid buzzwords, hype, or exaggerated claims
-- Be specific and structured
-- Do NOT promise unrealistic outcomes
-- Focus on clarity, scope, timelines, and deliverables
-- Use simple headings and bullet points
-- The proposal must be suitable to send directly to a real client
-- Do not mention AI or automated generation
+You write in a professional, neutral tone suitable for any industry.
+You do not use emojis.
+You do not use markdown formatting.
+You do not mention AI or automation.
+You avoid exaggerated marketing language.
+You focus on clarity, trust, and alignment with client needs.
+
+Your output must be suitable to send directly to a paying client.
 
 IMPORTANT: You must respond with a valid JSON object containing these exact fields:
 {
@@ -65,31 +64,55 @@ IMPORTANT: You must respond with a valid JSON object containing these exact fiel
   "termsAndConditions": "professional terms covering acceptance, scope, IP, confidentiality, etc."
 }
 
-Make each section detailed and professional (200-400 words per section).`;
+Keep each section between 3-6 sentences. Focus on clarity and professionalism.`;
 
-  const userPrompt = `Create a professional proposal with the following details:
+  const userPrompt = `Generate a professional project proposal using the information below.
 
-CLIENT INFORMATION:
-- Name: ${clientName}
-- Company: ${clientCompany || 'N/A'}
+Client Name: ${clientName}
+Client Company: ${clientCompany || 'N/A'}
 
-PROJECT DETAILS:
-- Title: ${projectTitle}
-- Description: ${projectDescription}
-${deliverables ? `- Key Deliverables:\n${deliverables}` : ''}
+Project Title: ${projectTitle}
 
-PROJECT PARAMETERS:
-- Budget: ${budget}
-- Currency: ${currency || 'USD'} (use currency symbol "${currencySymbol}" throughout the proposal)
-- Timeline: ${timeline}
-${startDate ? `- Start Date: ${startDate}` : ''}
+Project Description:
+${projectDescription}
 
-IMPORTANT CURRENCY INSTRUCTIONS:
-- Use "${currencySymbol}" as the currency symbol throughout the pricing section
-- Format prices as "${currencySymbol}X,XXX" (e.g., "${currencySymbol}5,000")
-- All monetary values must use the ${currency || 'USD'} currency
+Budget: ${budget}
+Currency: ${currency || 'USD'}
+Timeline: ${timeline}
+${deliverables ? `Deliverables:\n${deliverables}` : ''}
 
-Please generate a comprehensive, professional proposal that demonstrates expertise and builds client confidence.`;
+---
+
+The proposal MUST include exactly the following sections, in this order:
+
+1. Executive Summary
+Provide a concise overview of the project and its objectives.
+
+2. Understanding of Requirements
+Clearly restate the client's needs based on the provided description.
+
+3. Scope of Work
+Outline what will be delivered as part of this project.
+
+4. Pricing & Payment Terms
+Explain the pricing clearly and professionally using the currency symbol "${currencySymbol}".
+- The total budget is exactly: ${budget} (use this exact value, do not multiply or change it)
+- Format prices as "${currencySymbol}X,XXX" only if the amount is 1000 or greater
+- For amounts under 1000, format as "${currencySymbol}XXX" (e.g., "${currencySymbol}500")
+- NEVER modify or multiply the budget amount - use it exactly as provided
+
+5. Timeline & Delivery
+Describe how the work will be delivered over the specified timeline.
+
+6. Terms & Conditions
+Include neutral, professional terms suitable for service-based projects.
+
+Rules:
+- Do not add or remove sections
+- Do not invent legal clauses
+- Do not include greetings or signatures
+- Keep each section between 3-6 sentences`;
+
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -110,7 +133,7 @@ Please generate a comprehensive, professional proposal that demonstrates experti
             content: userPrompt,
           },
         ],
-        temperature: 0.7,
+        temperature: 0.5, // Lower temperature for more consistent, professional output
         max_tokens: 3000,
         response_format: { type: 'json_object' },
       }),
