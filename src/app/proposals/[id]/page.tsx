@@ -83,6 +83,20 @@ export default function ProposalPage() {
     fetchProposal();
   }, [session, status, params.id]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (showActionMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showActionMenu]);
+
   const fetchProposal = async () => {
     try {
       console.log('Fetching proposal with ID:', params.id);
@@ -511,13 +525,19 @@ export default function ProposalPage() {
         {/* Action Menu Bottom Sheet */}
         {showActionMenu && (
           <>
+            {/* Backdrop */}
             <div
-              className="fixed inset-0 z-50 bg-black/60"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
               onClick={() => setShowActionMenu(false)}
             />
-            <div className="fixed bottom-0 left-0 right-0 z-[60] bg-black border-t border-white/20 rounded-t-3xl p-4 animate-slide-up">
-              <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
-              <div className="space-y-2">
+
+            {/* Bottom Sheet */}
+            <div className="fixed inset-x-0 bottom-0 z-[60] bg-black border-t border-white/10 rounded-t-2xl p-4 animate-slide-up safe-area-inset-bottom">
+              {/* Drag Handle */}
+              <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6" />
+
+              {/* Actions */}
+              <div className="space-y-3">
                 <button
                   onClick={() => { handleDownloadPDF(); setShowActionMenu(false); }}
                   className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"

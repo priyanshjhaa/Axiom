@@ -35,7 +35,7 @@ interface Invoice {
   paidAmount: number;
   remainingAmount: number;
   currency: string;
-  lineItems: LineItem[];
+  lineItems: LineItem[] | string; // Can be array or JSON string
   notes: string;
   terms: string;
   clientName: string;
@@ -62,6 +62,18 @@ const getCurrencySymbol = (currencyCode: string): string => {
     AED: 'د.إ',
   };
   return symbols[currencyCode] || currencyCode + ' ';
+};
+
+// Helper function to parse lineItems from JSON string or return array
+const parseLineItems = (lineItems: LineItem[] | string): LineItem[] => {
+  if (Array.isArray(lineItems)) {
+    return lineItems;
+  }
+  try {
+    return JSON.parse(lineItems as string);
+  } catch {
+    return [];
+  }
 };
 
 export default function InvoicePage() {
@@ -184,7 +196,8 @@ export default function InvoicePage() {
 
       // Line items
       doc.setFont('helvetica', 'normal');
-      invoice.lineItems.forEach((item) => {
+      const parsedLineItems = parseLineItems(invoice.lineItems);
+      parsedLineItems.forEach((item) => {
         const description = doc.splitTextToSize(item.description, pageWidth - 110);
         doc.text(description, 25, yPosition + 7);
         doc.text(item.quantity.toString(), pageWidth - 80, yPosition + 7);
@@ -484,7 +497,7 @@ export default function InvoicePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoice.lineItems.map((item, index) => (
+                    {parseLineItems(invoice.lineItems).map((item, index) => (
                       <tr key={index} className="border-b border-white/10">
                         <td className="py-4 text-white">{item.description}</td>
                         <td className="py-4 text-center text-white">{item.quantity}</td>
