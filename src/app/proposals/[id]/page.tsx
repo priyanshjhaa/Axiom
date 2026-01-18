@@ -474,7 +474,7 @@ export default function ProposalPage() {
       <div className="fixed inset-0 bg-black -z-10" />
 
       {/* Mobile Header - Sticky with one primary action + more menu */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-lg border-b border-white/10">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <Link
             href="/dashboard"
@@ -512,10 +512,10 @@ export default function ProposalPage() {
         {showActionMenu && (
           <>
             <div
-              className="fixed inset-0 z-40 bg-black/60"
+              className="fixed inset-0 z-50 bg-black/60"
               onClick={() => setShowActionMenu(false)}
             />
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-white/20 rounded-t-3xl p-4 animate-slide-up">
+            <div className="fixed bottom-0 left-0 right-0 z-[60] bg-black border-t border-white/20 rounded-t-3xl p-4 animate-slide-up">
               <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
               <div className="space-y-2">
                 <button

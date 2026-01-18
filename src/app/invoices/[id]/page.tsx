@@ -322,21 +322,8 @@ export default function InvoicePage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                Share
+                Share with Client
               </button>
-              {invoice.paymentLink && !['PAID', 'paid', 'PA'].includes(invoice.status) && (
-                <a
-                  href={invoice.paymentLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-xs font-medium rounded hover:from-indigo-600 hover:to-indigo-700 transition-colors flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  Pay
-                </a>
-              )}
             </div>
           </div>
 
@@ -350,44 +337,97 @@ export default function InvoicePage() {
                 invoice.status === 'UNPAID' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                 'bg-red-500/20 text-red-300 border border-red-500/30'
               }`}>
-                Status: {invoice.status.replace('_', ' ')}
+                {invoice.status === 'PARTIALLY_PAID'
+                  ? `Partially Paid (${Math.round((invoice.paidAmount / invoice.total) * 100)}%)`
+                  : invoice.status.replace('_', ' ')
+                }
               </span>
             </div>
 
-            {/* Payment Progress Bar */}
-            {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-white/70 text-sm">Payment Progress</span>
-                  <span className="text-white font-medium text-sm">
-                    {getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)} / {getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}
-                  </span>
+            {/* Payment Summary Card */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Total Amount */}
+                <div className="text-center">
+                  <p className="text-white/60 text-xs mb-1">Total Amount</p>
+                  <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}
+                  </p>
                 </div>
-                <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      invoice.status === 'PAID'
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-400'
-                        : 'bg-gradient-to-r from-blue-500 to-cyan-400'
-                    }`}
-                    style={{ width: `${Math.min(100, (invoice.paidAmount / invoice.total) * 100)}%` }}
-                  />
+
+                {/* Amount Received */}
+                <div className="text-center">
+                  <p className="text-white/60 text-xs mb-1">Amount Received</p>
+                  <p className={`text-2xl font-bold ${invoice.paidAmount > 0 ? 'text-green-400' : 'text-white/40'}`} style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)}
+                  </p>
                 </div>
-                <div className="flex justify-between mt-2 text-sm">
-                  <span className="text-green-400">
-                    Paid: {getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)}
-                  </span>
-                  <span className="text-white/60">
-                    {Math.round((invoice.paidAmount / invoice.total) * 100)}%
-                  </span>
-                  {invoice.remainingAmount > 0 && (
-                    <span className="text-orange-400">
-                      Remaining: {getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)}
-                    </span>
-                  )}
+
+                {/* Remaining Amount */}
+                <div className="text-center">
+                  <p className="text-white/60 text-xs mb-1">Remaining</p>
+                  <p className={`text-2xl font-bold ${invoice.remainingAmount > 0 ? 'text-orange-400' : 'text-green-400'}`} style={{ fontFamily: 'var(--font-playfair)' }}>
+                    {getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)}
+                  </p>
                 </div>
               </div>
-            )}
+
+              {/* Payment Progress Bar */}
+              {invoice.paidAmount > 0 && (
+                <div className="mt-6">
+                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        invoice.status === 'PAID'
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-400'
+                          : 'bg-gradient-to-r from-blue-500 to-cyan-400'
+                      }`}
+                      style={{ width: `${Math.min(100, (invoice.paidAmount / invoice.total) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-2 text-xs">
+                    <span className="text-green-400">
+                      {Math.round((invoice.paidAmount / invoice.total) * 100)}% Paid
+                    </span>
+                    {invoice.remainingAmount > 0 && (
+                      <span className="text-white/60">
+                        {getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)} pending
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="mt-6 flex flex-wrap gap-3">
+                {/* Copy Payment Link */}
+                {invoice.paymentLink && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(invoice.paymentLink!);
+                      alert('Payment link copied to clipboard!');
+                    }}
+                    className="flex-1 min-w-[200px] px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy Payment Link
+                  </button>
+                )}
+
+                {/* Resend Invoice */}
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="flex-1 min-w-[200px] px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Resend Invoice
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Invoice Document - Space Themed */}

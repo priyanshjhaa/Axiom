@@ -316,25 +316,62 @@ export default function SharedInvoicePage() {
             </div>
           )}
 
-          {/* Pay Now Button */}
-          {invoice.paymentLink && !['PAID', 'paid', 'PA'].includes(invoice.status) && (
-            <div className="pt-6 border-t border-gray-200">
-              <a
-                href={invoice.paymentLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-2.5 px-5 rounded-lg text-sm font-medium hover:from-indigo-600 hover:to-indigo-700 transition-colors text-center"
-              >
-                {invoice.status === 'PARTIALLY_PAID' || invoice.status === 'partial'
-                  ? `Pay Remaining ${invoice.currency}${invoice.remainingAmount.toFixed(2)}`
-                  : `Pay Now ${invoice.currency}${invoice.total.toFixed(2)}`
-                }
-              </a>
-              <p className="text-xs text-gray-500 text-center mt-2">
-                Secure payment powered by Dodo Payments
-              </p>
+          {/* Payment Summary & Pay Now */}
+          <div className="pt-6 border-t border-gray-200">
+            {/* Payment Breakdown */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">Payment Summary</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Total Amount:</span>
+                  <span className="font-semibold text-gray-900">{invoice.currency}{invoice.total.toFixed(2)}</span>
+                </div>
+                {invoice.paidAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600">Amount Paid:</span>
+                    <span className="font-semibold text-green-700">{invoice.currency}{invoice.paidAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                {invoice.remainingAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-orange-600">Remaining Balance:</span>
+                    <span className="font-semibold text-orange-700">{invoice.currency}{invoice.remainingAmount.toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+
+            {/* Pay Now Button */}
+            {invoice.paymentLink && !['PAID', 'paid', 'PA'].includes(invoice.status) && (
+              <div>
+                <a
+                  href={invoice.paymentLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-5 rounded-lg text-base font-medium hover:from-indigo-600 hover:to-indigo-700 transition-colors text-center"
+                >
+                  {invoice.status === 'PARTIALLY_PAID' || invoice.status === 'partial'
+                    ? `Pay Remaining Amount: ${invoice.currency}${invoice.remainingAmount.toFixed(2)}`
+                    : `Pay Now: ${invoice.currency}${invoice.total.toFixed(2)}`
+                  }
+                </a>
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  🔒 Secure payment powered by Dodo Payments
+                </p>
+              </div>
+            )}
+
+            {/* Paid In Full Message */}
+            {['PAID', 'paid'].includes(invoice.status) && (
+              <div className="text-center py-4 bg-green-50 rounded-lg border border-green-200">
+                <svg className="w-12 h-12 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-green-800 font-semibold">Invoice Paid in Full</p>
+                <p className="text-green-600 text-sm">Thank you for your payment!</p>
+              </div>
+            )}
+          </div>
 
           {/* From */}
           <div className="mt-8 pt-8 border-t border-gray-200">
