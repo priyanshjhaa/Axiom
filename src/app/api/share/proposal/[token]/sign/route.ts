@@ -49,6 +49,7 @@ export async function POST(
         clientSignatureData: signatureData,
         clientSignedAt: new Date(),
         signatureStatus: 'signed',
+        status: 'accepted', // ✅ Update proposal status to accepted when client signs
         // Capture IP address for audit trail
         ipAddress: request.headers.get('x-forwarded-for') ||
                   request.headers.get('x-real-ip') ||
@@ -58,7 +59,8 @@ export async function POST(
       },
     });
 
-    console.log('Client signed via share link for proposal:', proposal.id);
+    console.log('✅ [Proposal] Client signed proposal via share link:', proposal.id);
+    console.log('✅ [Proposal] Status updated to: accepted');
 
     return NextResponse.json({
       success: true,
