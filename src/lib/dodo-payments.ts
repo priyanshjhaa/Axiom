@@ -61,8 +61,10 @@ export async function createCheckoutSession(
       productCartItem.name = params.productName;
       productCartItem.type = 'one_time';
       productCartItem.price = params.amount;
-      productCartItem.currency = params.currency;
     }
+
+    // Always set currency for both ad-hoc and existing products
+    productCartItem.currency = params.currency;
 
     // Create checkout session using the correct API structure
     const session = await client.checkoutSessions.create({

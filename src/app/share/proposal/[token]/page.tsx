@@ -386,12 +386,12 @@ export default function SharedProposalPage() {
               Digital Signatures
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Freelancer Signature */}
+              {/* User Signature */}
               {proposal.freelancerSignatureData && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-lg text-white font-light">
-                      {proposal.user.firstName && proposal.user.lastName ? `${proposal.user.firstName} ${proposal.user.lastName}` : proposal.user.email} (Freelancer)
+                      {proposal.user.firstName && proposal.user.lastName ? `${proposal.user.firstName} ${proposal.user.lastName}` : proposal.user.email} (User)
                     </h4>
                     <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -405,7 +405,7 @@ export default function SharedProposalPage() {
                       {renderSignature(proposal.freelancerSignatureData, proposal.freelancerSignatureType || 'drawn')}
                     </div>
                     <p className="text-white/60 text-xs">
-                      Signed {proposal.freelancerSignedAt ? new Date(proposal.freelancerSignedAt).toLocaleDateString() : ''}
+                      Signed {proposal.freelancerSignedAt ? new Date(proposal.freelancerSignedAt).toLocaleString() : ''}
                     </p>
                   </div>
                 </div>
@@ -428,7 +428,7 @@ export default function SharedProposalPage() {
                       {renderSignature(proposal.clientSignatureData, proposal.clientSignatureType || 'drawn')}
                     </div>
                     <p className="text-white/60 text-xs">
-                      Signed {proposal.clientSignedAt ? new Date(proposal.clientSignedAt).toLocaleDateString() : ''}
+                      Signed {proposal.clientSignedAt ? new Date(proposal.clientSignedAt).toLocaleString() : ''}
                     </p>
                   </div>
                 </div>
