@@ -78,13 +78,6 @@ export default function Pricing() {
                     : 'border-white/20 hover:border-white/30'
                 }`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-white text-black text-xs font-medium rounded-full" style={{ fontFamily: 'var(--font-inter)' }}>
-                      Most Popular
-                    </span>
-                  </div>
-                )}
 
                 <div className="text-center mb-6">
                   <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
@@ -147,14 +140,6 @@ export default function Pricing() {
                     >
                       Current Plan
                     </button>
-                  ) : !session ? (
-                    <Link
-                      href="/signup"
-                      className="block w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light text-center"
-                      style={{ fontFamily: 'var(--font-inter)' }}
-                    >
-                      Get Started
-                    </Link>
                   ) : plan.name === 'Pro' ? (
                     <button
                       disabled
@@ -163,6 +148,14 @@ export default function Pricing() {
                     >
                       Coming Soon
                     </button>
+                  ) : !session ? (
+                    <Link
+                      href="/signup"
+                      className="block w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light text-center"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      Get Started
+                    </Link>
                   ) : (
                     <button
                       className="w-full px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 text-sm font-light"

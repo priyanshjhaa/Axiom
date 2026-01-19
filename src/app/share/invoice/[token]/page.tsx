@@ -50,6 +50,22 @@ interface SharedInvoice {
   };
 }
 
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
+
 export default function SharedInvoicePage() {
   const params = useParams();
   const [invoice, setInvoice] = useState<SharedInvoice | null>(null);
@@ -182,7 +198,7 @@ export default function SharedInvoicePage() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold text-blue-900">Payment Progress</span>
                 <span className="text-sm font-semibold text-blue-900">
-                  {invoice.currency}{invoice.paidAmount.toFixed(2)} / {invoice.currency}{invoice.total.toFixed(2)}
+                  {getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)} / {getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}
                 </span>
               </div>
               <div className="w-full bg-blue-200 rounded-full h-3 overflow-hidden">
@@ -197,14 +213,14 @@ export default function SharedInvoicePage() {
               </div>
               <div className="flex justify-between mt-2 text-sm">
                 <span className="text-green-700 font-medium">
-                  Paid: {invoice.currency}{invoice.paidAmount.toFixed(2)}
+                  Paid: {getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)}
                 </span>
                 <span className="text-blue-700">
                   {Math.round((invoice.paidAmount / invoice.total) * 100)}%
                 </span>
                 {invoice.remainingAmount > 0 && (
                   <span className="text-orange-700 font-medium">
-                    Remaining: {invoice.currency}{invoice.remainingAmount.toFixed(2)}
+                    Remaining: {getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)}
                   </span>
                 )}
               </div>
@@ -234,10 +250,10 @@ export default function SharedInvoicePage() {
                     <td className="py-4 text-gray-700">{item.description}</td>
                     <td className="py-4 text-center text-gray-700">{item.quantity}</td>
                     <td className="py-4 text-right text-gray-700">
-                      {invoice.currency}${item.rate.toFixed(2)}
+                      {getCurrencySymbol(invoice.currency)}{item.rate.toFixed(2)}
                     </td>
                     <td className="py-4 text-right text-gray-700 font-semibold">
-                      {invoice.currency}${item.amount.toFixed(2)}
+                      {getCurrencySymbol(invoice.currency)}{item.amount.toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -250,24 +266,24 @@ export default function SharedInvoicePage() {
             <div className="w-72">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Subtotal:</span>
-                <span className="font-semibold">{invoice.currency}${invoice.subtotal.toFixed(2)}</span>
+                <span className="font-semibold">{getCurrencySymbol(invoice.currency)}{invoice.subtotal.toFixed(2)}</span>
               </div>
               {invoice.taxRate > 0 && (
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600">Tax ({invoice.taxRate}%):</span>
-                  <span className="font-semibold">{invoice.currency}${invoice.taxAmount.toFixed(2)}</span>
+                  <span className="font-semibold">{getCurrencySymbol(invoice.currency)}{invoice.taxAmount.toFixed(2)}</span>
                 </div>
               )}
               {(invoice.paidAmount > 0 || invoice.status === 'PARTIALLY_PAID') && (
                 <>
                   <div className="flex justify-between mb-2">
                     <span className="text-green-600">Amount Paid:</span>
-                    <span className="font-semibold text-green-600">{invoice.currency}${invoice.paidAmount.toFixed(2)}</span>
+                    <span className="font-semibold text-green-600">{getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)}</span>
                   </div>
                   {invoice.remainingAmount > 0 && (
                     <div className="flex justify-between mb-2">
                       <span className="text-orange-600">Remaining:</span>
-                      <span className="font-semibold text-orange-600">{invoice.currency}${invoice.remainingAmount.toFixed(2)}</span>
+                      <span className="font-semibold text-orange-600">{getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)}</span>
                     </div>
                   )}
                 </>
@@ -275,7 +291,7 @@ export default function SharedInvoicePage() {
               <div className="flex justify-between pt-4 border-t-2 border-gray-900">
                 <span className="text-lg font-bold">Total:</span>
                 <span className="text-lg font-bold text-indigo-600">
-                  {invoice.currency}${invoice.total.toFixed(2)}
+                  {getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -324,18 +340,18 @@ export default function SharedInvoicePage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Total Amount:</span>
-                  <span className="font-semibold text-gray-900">{invoice.currency}{invoice.total.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-900">{getCurrencySymbol(invoice.currency)}{invoice.total.toFixed(2)}</span>
                 </div>
                 {invoice.paidAmount > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-green-600">Amount Paid:</span>
-                    <span className="font-semibold text-green-700">{invoice.currency}{invoice.paidAmount.toFixed(2)}</span>
+                    <span className="font-semibold text-green-700">{getCurrencySymbol(invoice.currency)}{invoice.paidAmount.toFixed(2)}</span>
                   </div>
                 )}
                 {invoice.remainingAmount > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-orange-600">Remaining Balance:</span>
-                    <span className="font-semibold text-orange-700">{invoice.currency}{invoice.remainingAmount.toFixed(2)}</span>
+                    <span className="font-semibold text-orange-700">{getCurrencySymbol(invoice.currency)}{invoice.remainingAmount.toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -351,8 +367,8 @@ export default function SharedInvoicePage() {
                   className="block w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-5 rounded-lg text-base font-medium hover:from-indigo-600 hover:to-indigo-700 transition-colors text-center"
                 >
                   {invoice.status === 'PARTIALLY_PAID' || invoice.status === 'partial'
-                    ? `Pay Remaining Amount: ${invoice.currency}${invoice.remainingAmount.toFixed(2)}`
-                    : `Pay Now: ${invoice.currency}${invoice.total.toFixed(2)}`
+                    ? `Pay Remaining Amount: ${getCurrencySymbol(invoice.currency)}${invoice.remainingAmount.toFixed(2)}`
+                    : `Pay Now: ${getCurrencySymbol(invoice.currency)}${invoice.total.toFixed(2)}`
                   }
                 </a>
                 <p className="text-xs text-gray-500 text-center mt-2">
