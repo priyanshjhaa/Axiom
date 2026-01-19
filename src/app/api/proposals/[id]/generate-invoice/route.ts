@@ -90,12 +90,20 @@ export async function POST(
     // Generate payment link automatically if not provided manually
     let finalPaymentLink = manualPaymentLink || null;
 
-    // Map currency to product ID
+    // Map currency to product ID (matching .env variable names)
     const PRODUCT_BY_CURRENCY: Record<string, string | undefined> = {
-      INR: process.env.DODO_PRODUCT_INR,
-      USD: process.env.DODO_PRODUCT_USD,
-      EUR: process.env.DODO_PRODUCT_EUR,
+      INR: process.env.DODO_PAYMENTS_PRODUCT_ID_INR,
+      USD: process.env.DODO_PAYMENTS_PRODUCT_ID_USD,
+      EUR: process.env.DODO_PAYMENTS_PRODUCT_ID_EUR,
     };
+
+    // Debug: Log all environment variables
+    console.log('🔍 Environment variables check:');
+    console.log('- DODO_PAYMENTS_PRODUCT_ID_INR:', process.env.DODO_PAYMENTS_PRODUCT_ID_INR ? '✅ Set' : '❌ Missing');
+    console.log('- DODO_PAYMENTS_PRODUCT_ID_USD:', process.env.DODO_PAYMENTS_PRODUCT_ID_USD ? '✅ Set' : '❌ Missing');
+    console.log('- DODO_PAYMENTS_PRODUCT_ID_EUR:', process.env.DODO_PAYMENTS_PRODUCT_ID_EUR ? '✅ Set' : '❌ Missing');
+    console.log('- Invoice currency:', currency);
+    console.log('- Product ID for this currency:', PRODUCT_BY_CURRENCY[currency] || '❌ Not found');
 
     // Try to create Dodo Payments checkout session for automatic payment link
     if (!finalPaymentLink) {
@@ -112,6 +120,7 @@ export async function POST(
 
           console.log(`💰 Creating payment link: ${currency} ${total} (amount: ${amountInSmallestUnit})`);
           console.log(`📦 Using product ID: ${productId}`);
+          console.log(`👤 Customer: ${proposal.clientEmail} (${proposal.clientName})`);
 
           const checkoutSession = await createCheckoutSession({
             amount: amountInSmallestUnit,
@@ -127,9 +136,12 @@ export async function POST(
           });
 
           finalPaymentLink = checkoutSession.checkoutUrl;
-          console.log('✅ Dodo Payments checkout session created:', checkoutSession.sessionId);
+          console.log('✅ Dodo Payments checkout session created!');
+          console.log('   Session ID:', checkoutSession.sessionId);
+          console.log('   Checkout URL:', finalPaymentLink);
         } catch (dodoError) {
           console.error('⚠️  Failed to create Dodo Payments checkout session:', dodoError);
+          console.error('   Error details:', dodoError instanceof Error ? dodoError.message : String(dodoError));
           // Continue without payment link - user can add it later
         }
       }
