@@ -80,6 +80,38 @@ export default function SharedProposalPage() {
     fetchProposal();
   }, [params.token]);
 
+  useEffect(() => {
+    // Log proposal view when proposal is loaded
+    if (proposal && !error) {
+      logProposalView();
+    }
+  }, [proposal]);
+
+  const logProposalView = async () => {
+    if (!proposal) return;
+
+    try {
+      // Get client IP and user agent info
+      const ipAddress = await fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => data.ip)
+        .catch(() => null);
+
+      await fetch(`/api/proposals/${proposal.id}/view`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ipAddress,
+          userAgent: navigator.userAgent,
+          referer: document.referrer,
+        }),
+      });
+    } catch (err) {
+      // Silently fail - don't block proposal viewing if tracking fails
+      console.warn('Failed to log proposal view:', err);
+    }
+  };
+
   const fetchProposal = async () => {
     try {
       const response = await fetch(`/api/share/proposal/${params.token}`);

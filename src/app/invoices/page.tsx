@@ -11,10 +11,7 @@ interface Invoice {
   invoiceNumber: string;
   issueDate: string;
   dueDate: string;
-  status: string;
   total: number;
-  paidAmount: number;
-  remainingAmount: number;
   currency: string;
   clientName: string;
   clientEmail: string;
@@ -142,15 +139,6 @@ export default function InvoicesPage() {
 
   if (!session) return null;
 
-  // Calculate totals across all currencies
-  const totalPaid = invoices
-    .filter((inv) => inv.status === 'PAID')
-    .reduce((sum, inv) => sum + (inv.total || 0), 0);
-
-  const outstanding = invoices
-    .filter((inv) => inv.status !== 'PAID')
-    .reduce((sum, inv) => sum + ((inv.remainingAmount && inv.remainingAmount > 0) ? inv.remainingAmount : (inv.total || 0)), 0);
-
   const allSelected = invoices.length > 0 && selectedIds.size === invoices.length;
   const someSelected = selectedIds.size > 0 && selectedIds.size < invoices.length;
 
@@ -175,24 +163,8 @@ export default function InvoicesPage() {
               Invoices
             </h2>
             <h4 className="text-white/50 text-sm">
-              Manage your invoices and payments
+              Manage your invoices
             </h4>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <p className="text-white/50 text-xs mb-1">Total Paid (All Currencies)</p>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {totalPaid.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <p className="text-white/50 text-xs mb-1">Outstanding (All Currencies)</p>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {outstanding.toLocaleString()}
-              </p>
-            </div>
           </div>
 
           {/* Invoices List */}
@@ -302,17 +274,6 @@ export default function InvoicesPage() {
                           </p>
                           <p className="text-white/40 text-xs">{new Date(invoice.issueDate).toLocaleDateString()}</p>
                         </div>
-                        <span className={`text-xs px-3 py-1 rounded-full ${
-                          invoice.status === 'PAID'
-                            ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                            : invoice.status === 'PARTIALLY_PAID'
-                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                            : invoice.status === 'UNPAID'
-                            ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                            : 'bg-red-500/20 text-red-300 border border-red-500/30'
-                        }`}>
-                          {invoice.status.replace('_', ' ')}
-                        </span>
                       </div>
                     </Link>
 

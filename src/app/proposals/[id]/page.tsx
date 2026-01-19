@@ -72,6 +72,8 @@ export default function ProposalPage() {
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const [showActionMenu, setShowActionMenu] = useState(false);
+  const [timeline, setTimeline] = useState<any[]>([]);
+  const [totalViews, setTotalViews] = useState(0);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -82,6 +84,28 @@ export default function ProposalPage() {
 
     fetchProposal();
   }, [session, status, params.id]);
+
+  useEffect(() => {
+    if (proposal) {
+      fetchTimeline();
+    }
+  }, [proposal]);
+
+  const fetchTimeline = async () => {
+    if (!proposal) return;
+
+    try {
+      const response = await fetch(`/api/proposals/${params.id}/timeline`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setTimeline(data.activities || []);
+        setTotalViews(data.totalViews || 0);
+      }
+    } catch (err) {
+      console.error('Failed to fetch timeline:', err);
+    }
+  };
 
   const fetchProposal = async () => {
     try {
@@ -907,6 +931,109 @@ export default function ProposalPage() {
               </div>
             </div>
           </div>
+
+          {/* Timeline Section */}
+          {timeline.length > 0 && (
+            <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
+                  Activity Timeline
+                </h3>
+                {totalViews > 0 && (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
+                    <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span className="text-sm text-white/90">{totalViews} {totalViews === 1 ? 'view' : 'views'}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                {timeline.map((activity, index) => {
+                  const getActivityIcon = (type: string) => {
+                    switch (type) {
+                      case 'created':
+                        return (
+                          <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                          </div>
+                        );
+                      case 'shared':
+                        return (
+                          <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'viewed':
+                        return (
+                          <div className="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'signed':
+                        return (
+                          <div className="w-10 h-10 bg-indigo-500/30 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'invoice_generated':
+                        return (
+                          <div className="w-10 h-10 bg-yellow-500/30 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                          </div>
+                        );
+                      default:
+                        return (
+                          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                            <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        );
+                    }
+                  };
+
+                  return (
+                    <div key={activity.id} className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        {getActivityIcon(activity.type)}
+                      </div>
+                      <div className="flex-1 pb-4 border-l border-white/10 pl-6 relative">
+                        {index !== timeline.length - 1 && (
+                          <div className="absolute left-0 top-10 w-0.5 h-full bg-white/10" />
+                        )}
+                        <div className="mb-1">
+                          <p className="text-white font-medium">{activity.description}</p>
+                        </div>
+                        <p className="text-white/50 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                          {new Date(activity.createdAt).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

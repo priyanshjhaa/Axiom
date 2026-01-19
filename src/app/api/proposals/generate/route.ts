@@ -316,6 +316,19 @@ export async function POST(request: NextRequest) {
       budget: proposal.budget,
     });
 
+    // Log activity
+    await prisma.activity.create({
+      data: {
+        proposalId: proposal.id,
+        type: 'created',
+        description: 'Proposal created',
+        metadata: JSON.stringify({
+          userId: user.id,
+          projectTitle: proposal.projectTitle,
+        }),
+      },
+    });
+
     return NextResponse.json({
       success: true,
       proposalId: proposal.id,

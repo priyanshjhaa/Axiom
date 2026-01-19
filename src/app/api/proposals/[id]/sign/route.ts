@@ -132,6 +132,21 @@ export async function POST(
       data: updateData,
     });
 
+    // Log activity when proposal is fully signed
+    if (role === 'client' && updateData.signatureStatus === 'signed') {
+      await prisma.activity.create({
+        data: {
+          proposalId: id,
+          type: 'signed',
+          description: 'Proposal signed by both parties',
+          metadata: JSON.stringify({
+            clientSignedAt: updateData.clientSignedAt,
+            freelancerSignedAt: proposal.freelancerSignedAt,
+          }),
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       proposal: updatedProposal,

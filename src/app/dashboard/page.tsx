@@ -131,13 +131,8 @@ export default function Dashboard() {
   const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
   const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
-  // Invoice statistics - use cached invoices directly since we don't modify them
-  const pendingInvoices = invoices.filter((inv: any) => inv.status === 'pending').length;
-  const totalInvoiced = invoices.reduce((sum: number, inv: any) => sum + inv.total, 0);
-  const totalPaid = invoices
-    .filter((inv: any) => inv.status === 'paid')
-    .reduce((sum: number, inv: any) => sum + (inv.paidAmount || inv.total), 0);
-  const outstandingBalance = totalInvoiced - totalPaid;
+  // Invoice statistics
+  const totalInvoices = invoices.length;
 
   if (status === 'loading') {
     return (
@@ -170,52 +165,7 @@ export default function Dashboard() {
 
           {/* Stats Grid - Smaller, minimal, monochromatic */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {/* Total Revenue */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {totalPaid.toLocaleString()}
-              </p>
-              <p className="text-white/50 text-xs">Total Paid (All Currencies)</p>
-            </div>
-
-            {/* Outstanding Balance */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {outstandingBalance.toLocaleString()}
-              </p>
-              <p className="text-white/50 text-xs">Outstanding (All Currencies)</p>
-            </div>
-
-            {/* Pending Invoices */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {pendingInvoices}
-              </p>
-              <p className="text-white/50 text-xs">Pending Invoices</p>
-            </div>
-
-            {/* Total Invoices */}
+            {/* Total Proposals */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
               <div className="flex items-center justify-between mb-2">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
@@ -225,7 +175,52 @@ export default function Dashboard() {
                 </div>
               </div>
               <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {invoices.length}
+                {totalProposals}
+              </p>
+              <p className="text-white/50 text-xs">Total Proposals</p>
+            </div>
+
+            {/* Sent Proposals */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {sentProposals}
+              </p>
+              <p className="text-white/50 text-xs">Proposals Sent</p>
+            </div>
+
+            {/* Win Rate */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {conversionRate}%
+              </p>
+              <p className="text-white/50 text-xs">Win Rate</p>
+            </div>
+
+            {/* Total Invoices */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                {totalInvoices}
               </p>
               <p className="text-white/50 text-xs">Total Invoices</p>
             </div>

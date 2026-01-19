@@ -58,6 +58,19 @@ export async function POST(
       data: { status: 'sent' },
     });
 
+    // Log activity
+    await prisma.activity.create({
+      data: {
+        proposalId: id,
+        type: 'shared',
+        description: 'Proposal shared with client',
+        metadata: JSON.stringify({
+          clientEmail: proposal.clientEmail,
+          clientName: proposal.clientName,
+        }),
+      },
+    });
+
     console.log('Proposal sent:', {
       id: id,
       to: proposal.clientEmail,

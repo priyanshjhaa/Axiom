@@ -117,7 +117,7 @@ export default function Home() {
             <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
               <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Instant Invoicing</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Generate matching invoices with integrated payment links powered by Dodo Payments. Get paid faster.
+                Generate matching invoices with integrated payment links. Track payments in real-time.
               </p>
             </div>
 

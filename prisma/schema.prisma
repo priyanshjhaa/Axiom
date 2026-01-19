@@ -75,6 +75,40 @@ model Proposal {
 
   // Invoice relation
   invoice               Invoice?
+
+  // View tracking and activity
+  views                 ProposalView[]
+  activities            Activity[]
+}
+
+model ProposalView {
+  id          String   @id @default(cuid())
+  proposalId  String
+  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  // View details
+  viewedAt    DateTime @default(now())
+  ipAddress   String?
+  userAgent   String?
+  referer     String?
+
+  @@index([proposalId])
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  proposalId  String
+  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  // Activity details
+  type        String   // 'created' | 'shared' | 'viewed' | 'signed' | 'invoice_generated'
+  description String?  // Human-readable description
+  metadata    String?  // JSON string for additional data (e.g., view count, signature details)
+
+  createdAt   DateTime @default(now())
+
+  @@index([proposalId])
+  @@index([createdAt])
 }
 
 model Invoice {
