@@ -83,20 +83,6 @@ export default function ProposalPage() {
     fetchProposal();
   }, [session, status, params.id]);
 
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (showActionMenu) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [showActionMenu]);
-
   const fetchProposal = async () => {
     try {
       console.log('Fetching proposal with ID:', params.id);
@@ -489,6 +475,7 @@ export default function ProposalPage() {
 
       {/* Mobile Header - Sticky with one primary action + more menu */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-lg border-b border-white/10">
+        {/* Header Top Row */}
         <div className="flex items-center justify-between px-4 py-3">
           <Link
             href="/dashboard"
@@ -522,80 +509,60 @@ export default function ProposalPage() {
           </div>
         </div>
 
-        {/* Action Menu Bottom Sheet */}
+        {/* Action Menu - INSIDE header, pushes content down */}
         {showActionMenu && (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowActionMenu(false)}
-            />
+          <div className="px-4 pb-4 border-t border-white/10 bg-black/95">
+            <div className="pt-4 space-y-2">
+              <button
+                onClick={() => { handleDownloadPDF(); setShowActionMenu(false); }}
+                className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
+              >
+                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">Export PDF</p>
+                  <p className="text-xs text-white/50">Download as PDF</p>
+                </div>
+              </button>
 
-            {/* Bottom Sheet */}
-            <div className="fixed inset-x-0 bottom-0 z-[60] bg-black border-t border-white/10 rounded-t-2xl p-4 animate-slide-up safe-area-inset-bottom">
-              {/* Drag Handle */}
-              <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6" />
-
-              {/* Actions */}
-              <div className="space-y-3">
-                <button
-                  onClick={() => { handleDownloadPDF(); setShowActionMenu(false); }}
+              {invoiceId ? (
+                <Link
+                  href={`/invoices/${invoiceId}`}
+                  onClick={() => setShowActionMenu(false)}
                   className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
                 >
                   <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
                   <div className="text-left">
-                    <p className="font-medium">Export PDF</p>
-                    <p className="text-xs text-white/50">Download as PDF</p>
+                    <p className="font-medium">View Invoice</p>
+                    <p className="text-xs text-white/50">See generated invoice</p>
+                  </div>
+                </Link>
+              ) : (
+                <button
+                  onClick={() => { handleGenerateInvoice(); setShowActionMenu(false); }}
+                  disabled={isGeneratingInvoice}
+                  className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20 disabled:opacity-50"
+                >
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Generate Invoice</p>
+                    <p className="text-xs text-white/50">Create invoice from proposal</p>
                   </div>
                 </button>
-
-                {invoiceId ? (
-                  <Link
-                    href={`/invoices/${invoiceId}`}
-                    onClick={() => setShowActionMenu(false)}
-                    className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
-                  >
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium">View Invoice</p>
-                      <p className="text-xs text-white/50">See generated invoice</p>
-                    </div>
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => { handleGenerateInvoice(); setShowActionMenu(false); }}
-                    disabled={isGeneratingInvoice}
-                    className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20 disabled:opacity-50"
-                  >
-                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium">Generate Invoice</p>
-                      <p className="text-xs text-white/50">Create invoice from proposal</p>
-                    </div>
-                  </button>
-                )}
-              </div>
-
-              <button
-                onClick={() => setShowActionMenu(false)}
-                className="w-full h-12 mt-4 text-white/60 font-medium"
-              >
-                Cancel
-              </button>
+              )}
             </div>
-          </>
+          </div>
         )}
       </div>
 
