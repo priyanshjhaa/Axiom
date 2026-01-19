@@ -91,15 +91,17 @@ export async function POST(
     let finalPaymentLink = manualPaymentLink || null;
 
     // Try to create Dodo Payments checkout session for automatic payment link
-    if (!finalPaymentLink && process.env.DODO_PAYMENTS_PRODUCT_ID) {
+    // Don't use productId to allow dynamic amounts - create ad-hoc product instead
+    if (!finalPaymentLink && process.env.DODO_PAYMENTS_API_KEY) {
       try {
-        // Convert total to cents (or smallest currency unit)
+        // Convert total to smallest currency unit (cents for USD, paise for INR, etc.)
         const amountInSmallestUnit = Math.round(total * 100);
 
         const checkoutSession = await createCheckoutSession({
           amount: amountInSmallestUnit,
           currency: currency,
-          productId: process.env.DODO_PAYMENTS_PRODUCT_ID,
+          productName: `Invoice ${invoiceNumber} - ${proposal.projectTitle}`,
+          // Don't pass productId - create ad-hoc product with dynamic pricing
           customerEmail: proposal.clientEmail,
           customerName: proposal.clientName,
           metadata: {

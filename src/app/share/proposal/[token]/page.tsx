@@ -47,7 +47,24 @@ interface SharedProposal {
     lastName?: string;
     email: string;
   };
+  currency?: string;
 }
+
+// Currency symbol mapping
+const getCurrencySymbol = (currencyCode: string): string => {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    AUD: 'A$',
+    CAD: 'C$',
+    SGD: 'S$',
+    JPY: '¥',
+    AED: 'د.إ',
+  };
+  return symbols[currencyCode] || currencyCode + ' ';
+};
 
 export default function SharedProposalPage() {
   const params = useParams();
@@ -237,7 +254,7 @@ export default function SharedProposalPage() {
             </div>
             <div>
               <p className="text-gray-400">Budget</p>
-              <p className="text-white font-medium">${proposal.budget}</p>
+              <p className="text-white font-medium">{getCurrencySymbol(proposal.currency || 'USD')}{proposal.budget}</p>
             </div>
             <div>
               <p className="text-gray-400">Timeline</p>
@@ -281,7 +298,7 @@ export default function SharedProposalPage() {
                   Project Information
                 </h4>
                 <p className="text-sm text-white mb-2"><strong className="text-white">Title:</strong> {proposal.projectTitle}</p>
-                <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> ${proposal.budget}</p>
+                <p className="text-sm text-white mb-2"><strong className="text-white">Budget:</strong> {getCurrencySymbol(proposal.currency || 'USD')}{proposal.budget}</p>
                 <p className="text-sm text-white"><strong className="text-white">Timeline:</strong> {proposal.timeline}</p>
               </div>
             </div>

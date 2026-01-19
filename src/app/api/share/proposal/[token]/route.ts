@@ -47,6 +47,7 @@ export async function GET(
         clientCompany: proposal.clientCompany,
         projectDescription: proposal.projectDescription,
         budget: proposal.budget,
+        currency: proposal.currency || 'USD',
         timeline: proposal.timeline,
         startDate: proposal.startDate,
         deliverables: proposal.deliverables,
