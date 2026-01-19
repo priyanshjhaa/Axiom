@@ -90,31 +90,48 @@ export async function POST(
     // Generate payment link automatically if not provided manually
     let finalPaymentLink = manualPaymentLink || null;
 
+    // Map currency to product ID
+    const PRODUCT_BY_CURRENCY: Record<string, string | undefined> = {
+      INR: process.env.DODO_PRODUCT_INR,
+      USD: process.env.DODO_PRODUCT_USD,
+      EUR: process.env.DODO_PRODUCT_EUR,
+    };
+
     // Try to create Dodo Payments checkout session for automatic payment link
-    // Don't use productId to allow dynamic amounts - create ad-hoc product instead
-    if (!finalPaymentLink && process.env.DODO_PAYMENTS_API_KEY) {
-      try {
-        // Convert total to smallest currency unit (cents for USD, paise for INR, etc.)
-        const amountInSmallestUnit = Math.round(total * 100);
+    if (!finalPaymentLink) {
+      const productId = PRODUCT_BY_CURRENCY[currency];
 
-        const checkoutSession = await createCheckoutSession({
-          amount: amountInSmallestUnit,
-          currency: currency,
-          productName: `Invoice ${invoiceNumber} - ${proposal.projectTitle}`,
-          // Don't pass productId - create ad-hoc product with dynamic pricing
-          customerEmail: proposal.clientEmail,
-          customerName: proposal.clientName,
-          metadata: {
-            proposal_id: proposal.id,
-            invoice_number: invoiceNumber,
-          },
-        });
+      if (!productId) {
+        console.warn(`⚠️  No Dodo Payments product configured for currency: ${currency}`);
+        console.warn('⚠️  Payment link will not be generated. User can add it manually.');
+        // Continue without payment link - user can add it manually
+      } else {
+        try {
+          // Convert total to smallest currency unit (cents for USD, paise for INR, etc.)
+          const amountInSmallestUnit = Math.round(total * 100);
 
-        finalPaymentLink = checkoutSession.checkoutUrl;
-        console.log('✅ Dodo Payments checkout session created:', checkoutSession.sessionId);
-      } catch (dodoError) {
-        console.error('⚠️  Failed to create Dodo Payments checkout session:', dodoError);
-        // Continue without payment link - user can add it later
+          console.log(`💰 Creating payment link: ${currency} ${total} (amount: ${amountInSmallestUnit})`);
+          console.log(`📦 Using product ID: ${productId}`);
+
+          const checkoutSession = await createCheckoutSession({
+            amount: amountInSmallestUnit,
+            currency: currency,
+            productId: productId,
+            customerEmail: proposal.clientEmail,
+            customerName: proposal.clientName,
+            metadata: {
+              proposal_id: proposal.id,
+              invoice_number: invoiceNumber,
+              currency: currency,
+            },
+          });
+
+          finalPaymentLink = checkoutSession.checkoutUrl;
+          console.log('✅ Dodo Payments checkout session created:', checkoutSession.sessionId);
+        } catch (dodoError) {
+          console.error('⚠️  Failed to create Dodo Payments checkout session:', dodoError);
+          // Continue without payment link - user can add it later
+        }
       }
     }
 
