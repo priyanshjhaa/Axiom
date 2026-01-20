@@ -102,12 +102,6 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                   Features
                 </button>
                 <button
-                  onClick={() => scrollToSection('how-it-works')}
-                  className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
-                >
-                  How It Works
-                </button>
-                <button
                   onClick={() => scrollToSection('pricing')}
                   className="px-6 py-2 rounded-full text-sm font-light text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105"
                 >
@@ -201,12 +195,6 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
                     className="block w-full px-4 py-3 rounded-full text-sm font-light text-white hover:bg-white/10 transition-all duration-300 text-left"
                   >
                     Features
-                  </button>
-                  <button
-                    onClick={() => scrollToSection('how-it-works')}
-                    className="block w-full px-4 py-3 rounded-full text-sm font-light text-white hover:bg-white/10 transition-all duration-300 text-left"
-                  >
-                    How It Works
                   </button>
                   <button
                     onClick={() => scrollToSection('pricing')}

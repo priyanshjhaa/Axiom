@@ -24,7 +24,7 @@ export default function Home() {
             </span>
           </h2>
 
-          <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+          <p className="text-base sm:text-lg md:text-xl text-white mb-8 sm:mb-12 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
             Describe your project in simple terms and instantly generate professional proposals and invoices — ready to share, track, and get approved.
           </p>
 
@@ -142,36 +142,50 @@ export default function Home() {
       {/* Features Section */}
       <section id="features" className="min-h-screen flex items-center justify-center px-4 py-20">
         <div className="max-w-5xl text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-8 sm:mb-12 leading-tight font-light px-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-            Features
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-6 sm:mb-10 leading-tight font-light px-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+            What You Can Do With Axiom
           </h2>
 
           <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 px-4">
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>AI-Powered Generation</h3>
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Generate Professional Proposals</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Advanced AI understands your project needs and creates tailored, professional proposals that impress clients.
+                Turn rough ideas into polished proposals in seconds with AI. Just describe your project and get a tailored document ready to send.
               </p>
             </div>
 
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Instant Invoicing</h3>
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Create Clean Invoices</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Generate matching invoices with integrated payment links. Track payments in real-time.
+                Generate matching invoices from approved proposals with one click. Export as PDF and share instantly with clients.
               </p>
             </div>
 
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Secure Link Sharing</h3>
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Track Proposal Activity</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Share proposals and invoices via secure access links. Track views, capture digital signatures, and get paid.
+                Know exactly when clients view your proposals. See the complete timeline of views, shares, and signatures.
               </p>
             </div>
 
-            <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20">
-              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Payment Tracking</h3>
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Capture Digital Signatures</h3>
               <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                Track payment status in real-time. Support for partial payments, milestones, and complete payment history.
+                Collect legally-binding signatures directly on proposals. No paperwork, no delays—just smooth approvals.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Share Secure Access Links</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Send secure proposals via email links. Clients can view, sign, and approve without creating accounts.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <h3 className="text-lg sm:text-xl text-white mb-3 sm:mb-4 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Export Professional PDFs</h3>
+              <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                Download publication-ready PDFs perfect for email attachments, printing, or archiving.
               </p>
             </div>
           </div>
