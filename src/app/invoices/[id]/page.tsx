@@ -110,24 +110,10 @@ export default function InvoicePage() {
       const pageWidth = doc.internal.pageSize.getWidth();
       let yPosition = 20;
 
-      // Clean and format currency - strip any $ symbols and get clean code
-      const cleanCurrency = invoice.currency.replace(/[$\s]/g, '').toUpperCase();
-
-      // Currency symbols map
-      const currencySymbols: Record<string, string> = {
-        'USD': '$',
-        'EUR': '€',
-        'GBP': '£',
-        'JPY': '¥',
-        'CAD': '$',
-        'AUD': '$',
-        'CHF': 'Fr',
-        'CNY': '¥',
-        'INR': '₹',
-      };
-
-      const currencySymbol = currencySymbols[cleanCurrency] || cleanCurrency + ' ';
-      const formatAmount = (amount: number) => `${currencySymbol}${amount.toFixed(2)}`;
+      // Use currency code for PDF (font-safe)
+      // Examples: USD 100.00, EUR 50.00, INR 5000.00
+      const currencyCode = invoice.currency.replace(/[$\s]/g, '').toUpperCase();
+      const formatAmount = (amount: number) => `${currencyCode} ${amount.toFixed(2)}`;
 
       // Add AXIOM branding
       doc.setFontSize(24);

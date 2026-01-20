@@ -25,8 +25,7 @@ export default function Home() {
           </h2>
 
           <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-            Describe your project in simple terms and generate professional proposals
-            and invoices with payment links in seconds.
+            Describe your project in simple terms and instantly generate professional proposals and invoices — ready to share, track, and get approved.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
@@ -38,61 +37,102 @@ export default function Home() {
               Get Started
             </Link>
             <button
-              onClick={() => scrollToSection('how-it-works')}
+              onClick={() => scrollToSection('why-axiom')}
               className="px-8 py-3 sm:px-10 border border-white text-white font-light rounded-full hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
-              Learn More
+              See Why Axiom
             </button>
           </div>
+
+          {/* Micro-trust line */}
+          <p className="text-white/40 text-xs sm:text-sm mt-6 max-w-md mx-auto" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+            No setup. No accounting tools. Just clean proposals and invoices.
+          </p>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="min-h-screen flex items-center justify-center px-4 py-20">
+      {/* Why Axiom Section */}
+      <section id="why-axiom" className="min-h-screen flex items-center justify-center px-4 py-20">
         <div className="max-w-4xl text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-8 sm:mb-12 leading-tight font-light px-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-            How It Works
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-white mb-6 sm:mb-10 leading-tight font-light px-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+            Why Freelancers Choose Axiom
           </h2>
+          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-12 sm:mb-16" style={{ fontFamily: 'var(--font-inter)' }}>
+            Stop wrestling with Word docs and scattered tools. Close deals faster with proposals that work as hard as you do.
+          </p>
 
-          <div className="space-y-6 sm:space-y-8 px-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-left">
-              <div className="text-2xl sm:text-3xl text-white font-light min-w-fit">1</div>
-              <div>
-                <h3 className="text-lg sm:text-xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Describe Your Project</h3>
-                <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                  Write a simple description of the work you need to propose for. No technical knowledge required.
-                </p>
+          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 px-4">
+            <div className="text-left bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-600/30 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl text-white mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    AI-Powered Speed
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                    Transform rough ideas into polished proposals in seconds. No more blank page paralysis.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-left">
-              <div className="text-2xl sm:text-3xl text-white font-light min-w-fit">2</div>
-              <div>
-                <h3 className="text-lg sm:text-xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>AI Generates Proposal</h3>
-                <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                  Our AI analyzes your description and creates a professional proposal with scope, timeline, and pricing.
-                </p>
+            <div className="text-left bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/30 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl text-white mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Real-Time Tracking
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                    Know exactly when clients open your proposals. Stop guessing and start closing more deals.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-left">
-              <div className="text-2xl sm:text-3xl text-white font-light min-w-fit">3</div>
-              <div>
-                <h3 className="text-lg sm:text-xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Send to Client</h3>
-                <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                  Export as PDF or send directly via email with professional formatting.
-                </p>
+            <div className="text-left bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/30 to-green-600/30 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl text-white mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    Digital Signatures
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                    Capture legally-binding signatures without the paperwork. Streamline your client onboarding.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-left">
-              <div className="text-2xl sm:text-3xl text-white font-light min-w-fit">4</div>
-              <div>
-                <h3 className="text-lg sm:text-xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>Get Paid</h3>
-                <p className="text-white/85 text-sm sm:text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
-                  Create matching invoices and get paid quickly through integrated payment systems.
-                </p>
+            <div className="text-left bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/30 to-yellow-600/30 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl text-white mb-2 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
+                    One-Click Invoicing
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+                    Generate matching invoices instantly. Keep your cash flow smooth and your business professional.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -166,7 +206,7 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Generate invoice PDFs</li>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Secure client access</li>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Digital signature capture</li>
-                <li className="flex items-center gap-2"><span className="text-white">✓</span> Payment links</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Activity tracking</li>
                 <li className="flex items-center gap-2 text-white/40"><span>✗</span> Max 3 proposals/month</li>
                 <li className="flex items-center gap-2 text-white/40"><span>✗</span> "Powered by Axiom" branding</li>
               </ul>
@@ -186,7 +226,7 @@ export default function Home() {
                   Most Popular
                 </span>
               </div>
-              <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>Get Paid Faster</p>
+              <p className="text-white/50 text-xs uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-inter)' }}>Most Popular</p>
               <h3 className="text-2xl text-white font-light mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
                 Pro
               </h3>
@@ -200,8 +240,8 @@ export default function Home() {
               <ul className="text-white/90 space-y-2 text-left text-sm mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Unlimited proposals & invoices</li>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Email delivery</li>
-                <li className="flex items-center gap-2"><span className="text-white">✓</span> "Viewed by client" status</li>
-                <li className="flex items-center gap-2"><span className="text-white">✓</span> Partial payments & milestones</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> "Viewed by client" tracking</li>
+                <li className="flex items-center gap-2"><span className="text-white">✓</span> Activity timeline</li>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Remove "Powered by Axiom"</li>
                 <li className="flex items-center gap-2"><span className="text-white">✓</span> Custom logo & branding</li>
               </ul>
@@ -210,7 +250,7 @@ export default function Home() {
                 className="block w-full px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300 text-sm font-light text-center"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
-                Learn More
+                See How It Works
               </Link>
             </div>
           </div>
