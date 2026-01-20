@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
     await prisma.activity.create({
       data: {
         proposalId: proposal.id,
-        type: 'created',
+        type: 'CREATED',
         description: 'Proposal created',
         metadata: JSON.stringify({
           userId: user.id,

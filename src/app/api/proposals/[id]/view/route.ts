@@ -37,7 +37,7 @@ export async function POST(
     const existingViewActivity = await prisma.activity.findFirst({
       where: {
         proposalId: id,
-        type: 'viewed',
+        type: 'VIEWED',
       },
       orderBy: {
         createdAt: 'desc',
@@ -66,7 +66,7 @@ export async function POST(
       await prisma.activity.create({
         data: {
           proposalId: id,
-          type: 'viewed',
+          type: 'VIEWED',
           description: `Proposal viewed ${viewCount} ${viewCount === 1 ? 'time' : 'times'}`,
           metadata: JSON.stringify({
             viewCount,

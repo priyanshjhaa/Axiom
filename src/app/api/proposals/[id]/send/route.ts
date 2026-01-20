@@ -62,7 +62,7 @@ export async function POST(
     await prisma.activity.create({
       data: {
         proposalId: id,
-        type: 'shared',
+        type: 'SHARED',
         description: 'Proposal shared with client',
         metadata: JSON.stringify({
           clientEmail: proposal.clientEmail,

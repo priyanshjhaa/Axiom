@@ -166,13 +166,9 @@ export default function SharedInvoicePage() {
               <p className="text-gray-600">{invoice.clientEmail}</p>
             </div>
             <div className="text-right">
-              <div className="mb-2">
+              <div>
                 <span className="text-sm text-gray-600">Issue Date:</span>
                 <span className="ml-2 font-semibold">{new Date(invoice.issueDate).toLocaleDateString()}</span>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Due Date:</span>
-                <span className="ml-2 font-semibold">{new Date(invoice.dueDate).toLocaleDateString()}</span>
               </div>
             </div>
           </div>

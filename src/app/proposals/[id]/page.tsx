@@ -419,7 +419,7 @@ export default function ProposalPage() {
           ? `\n\n✨ Payment link created automatically!\nYour client can now pay directly via the "Pay Now" button.`
           : '';
 
-        alert(`✅ Invoice generated successfully!\n\nInvoice Number: ${data.invoice.invoiceNumber}\nTotal: $${data.invoice.total.toFixed(2)}${paymentLinkMessage}\n\nYou can view it anytime from the dashboard.`);
+        alert(`✅ Invoice generated successfully!\n\nInvoice Number: ${data.invoice.invoiceNumber}\nTotal: ${getCurrencySymbol(proposal.currency)}${data.invoice.total.toFixed(2)}${paymentLinkMessage}\n\nYou can view it anytime from the dashboard.`);
       } else {
         alert(`❌ Failed to generate invoice: ${data.error || 'Unknown error'}`);
       }
@@ -954,7 +954,7 @@ export default function ProposalPage() {
                 {timeline.map((activity, index) => {
                   const getActivityIcon = (type: string) => {
                     switch (type) {
-                      case 'created':
+                      case 'CREATED':
                         return (
                           <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -962,7 +962,7 @@ export default function ProposalPage() {
                             </svg>
                           </div>
                         );
-                      case 'shared':
+                      case 'SHARED':
                         return (
                           <div className="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -970,7 +970,7 @@ export default function ProposalPage() {
                             </svg>
                           </div>
                         );
-                      case 'viewed':
+                      case 'VIEWED':
                         return (
                           <div className="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -979,7 +979,7 @@ export default function ProposalPage() {
                             </svg>
                           </div>
                         );
-                      case 'signed':
+                      case 'SIGNED':
                         return (
                           <div className="w-10 h-10 bg-indigo-500/30 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -987,7 +987,7 @@ export default function ProposalPage() {
                             </svg>
                           </div>
                         );
-                      case 'invoice_generated':
+                      case 'INVOICE_GENERATED':
                         return (
                           <div className="w-10 h-10 bg-yellow-500/30 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

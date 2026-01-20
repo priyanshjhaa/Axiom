@@ -129,7 +129,6 @@ export default function Dashboard() {
 
   const totalProposals = proposals.length;
   const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
-  const conversionRate = totalProposals > 0 ? Math.round((sentProposals / totalProposals) * 100) : 0;
 
   // Invoice statistics
   const totalInvoices = invoices.length;
@@ -193,21 +192,6 @@ export default function Dashboard() {
                 {sentProposals}
               </p>
               <p className="text-white/50 text-xs">Proposals Sent</p>
-            </div>
-
-            {/* Win Rate */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {conversionRate}%
-              </p>
-              <p className="text-white/50 text-xs">Win Rate</p>
             </div>
 
             {/* Total Invoices */}
@@ -417,27 +401,6 @@ export default function Dashboard() {
 
             {/* Right Column - Minimal */}
             <div className="space-y-4">
-              {/* Win Rate - Minimal */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-white text-sm font-medium">Win Rate</h3>
-                </div>
-                <div className="flex items-end gap-2 mb-2">
-                  <span className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    {conversionRate}%
-                  </span>
-                </div>
-                <div className="w-full bg-white/10 rounded-full h-1.5">
-                  <div
-                    className="bg-white/30 h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${conversionRate}%` }}
-                  />
-                </div>
-                <p className="text-white/50 text-xs mt-2">
-                  {sentProposals} of {totalProposals} sent
-                </p>
-              </div>
-
               {/* Tips - Minimal */}
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <h3 className="text-white text-sm font-medium mb-3">Pro Tips</h3>

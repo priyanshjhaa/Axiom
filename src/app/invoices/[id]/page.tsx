@@ -348,8 +348,6 @@ export default function InvoicePage() {
                 <div className="text-right">
                   <p className="text-white/60 text-sm">Issue Date</p>
                   <p className="text-white font-medium">{new Date(invoice.issueDate).toLocaleDateString()}</p>
-                  <p className="text-white/60 text-sm mt-2">Due Date</p>
-                  <p className="text-white font-medium">{new Date(invoice.dueDate).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>

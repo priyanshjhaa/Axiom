@@ -95,17 +95,25 @@ model ProposalView {
   @@index([proposalId])
 }
 
+enum ActivityType {
+  CREATED
+  SHARED
+  VIEWED
+  SIGNED
+  INVOICE_GENERATED
+}
+
 model Activity {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   proposalId  String
-  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  proposal    Proposal     @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
   // Activity details
-  type        String   // 'created' | 'shared' | 'viewed' | 'signed' | 'invoice_generated'
-  description String?  // Human-readable description
-  metadata    String?  // JSON string for additional data (e.g., view count, signature details)
+  type        ActivityType
+  description String?      // Human-readable description
+  metadata    String?      // JSON string for additional data (e.g., view count, signature details)
 
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
 
   @@index([proposalId])
   @@index([createdAt])

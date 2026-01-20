@@ -137,7 +137,7 @@ export async function POST(
       await prisma.activity.create({
         data: {
           proposalId: id,
-          type: 'signed',
+          type: 'SIGNED',
           description: 'Proposal signed by both parties',
           metadata: JSON.stringify({
             clientSignedAt: updateData.clientSignedAt,

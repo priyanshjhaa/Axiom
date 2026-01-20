@@ -118,7 +118,7 @@ export async function POST(
     await prisma.activity.create({
       data: {
         proposalId: proposal.id,
-        type: 'invoice_generated',
+        type: 'INVOICE_GENERATED',
         description: `Invoice generated: ${invoiceNumber}`,
         metadata: JSON.stringify({
           invoiceId: invoice.id,
