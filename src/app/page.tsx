@@ -16,15 +16,15 @@ export default function Home() {
       {/* Hero Section */}
       <section id="hero" className="min-h-screen flex items-center justify-center px-4 pt-20 md:pt-24">
         <div className="text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-4 sm:mb-6 leading-tight font-light px-2" style={{ fontFamily: 'var(--font-playfair)', letterSpacing: '0.05em' }}>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-4 sm:mb-6 leading-tight font-light px-2" style={{ fontFamily: 'var(--font-playfair)', letterSpacing: '0.05em', textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(0,0,0,0.3)' }}>
             Transform Job Descriptions
             <br className="hidden sm:block" />
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mt-2 sm:mt-4 block">
+            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mt-2 sm:mt-4 block" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(0,0,0,0.3)' }}>
               Into Professional Documents
             </span>
           </h2>
 
-          <p className="text-base sm:text-lg md:text-xl text-white mb-8 sm:mb-12 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+          <p className="text-base sm:text-lg md:text-xl text-white mb-8 sm:mb-12 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
             Describe your project in simple terms and instantly generate professional proposals and invoices — ready to share, track, and get approved.
           </p>
 
@@ -38,7 +38,7 @@ export default function Home() {
             </Link>
             <button
               onClick={() => scrollToSection('why-axiom')}
-              className="px-8 py-3 sm:px-10 border border-white text-white font-light rounded-full hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
+              className="px-8 py-3 sm:px-10 border-2 border-white text-white font-light rounded-full hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               See Why Axiom
@@ -46,7 +46,7 @@ export default function Home() {
           </div>
 
           {/* Micro-trust line */}
-          <p className="text-white/40 text-xs sm:text-sm mt-6 max-w-md mx-auto" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300 }}>
+          <p className="text-white/70 text-xs sm:text-sm mt-6 max-w-md mx-auto" style={{ fontFamily: 'var(--font-inter)', fontWeight: 300, textShadow: '0 1px 5px rgba(0,0,0,0.5)' }}>
             No setup. No accounting tools. Just clean proposals and invoices.
           </p>
         </div>
