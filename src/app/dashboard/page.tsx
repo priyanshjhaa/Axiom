@@ -128,7 +128,6 @@ export default function Dashboard() {
   };
 
   const totalProposals = proposals.length;
-  const sentProposals = proposals.filter((p: any) => p.status === 'sent').length;
 
   // Invoice statistics
   const totalInvoices = invoices.length;
@@ -163,7 +162,7 @@ export default function Dashboard() {
           </div>
 
           {/* Stats Grid - Smaller, minimal, monochromatic */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {/* Total Proposals */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
               <div className="flex items-center justify-between mb-2">
@@ -177,21 +176,6 @@ export default function Dashboard() {
                 {totalProposals}
               </p>
               <p className="text-white/50 text-xs">Total Proposals</p>
-            </div>
-
-            {/* Sent Proposals */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                {sentProposals}
-              </p>
-              <p className="text-white/50 text-xs">Proposals Sent</p>
             </div>
 
             {/* Total Invoices */}
