@@ -36,6 +36,9 @@ const herrVonMuellerhoff = Herr_Von_Muellerhoff({
 export const metadata: Metadata = {
   title: "AXIOM - Transform Job Descriptions Into Professional Documents",
   description: "Describe your project in simple terms and generate professional proposals and invoices with payment links in seconds.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export const viewport: Viewport = {
