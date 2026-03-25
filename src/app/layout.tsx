@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display, Dancing_Script, Great_Vibes, Herr_Von_Muellerhoff } from "next/font/google";
+import { Outfit, Playfair_Display, Dancing_Script, Great_Vibes, Herr_Von_Muellerhoff } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
 
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const playfair = Playfair_Display({
@@ -60,7 +61,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${playfair.variable} ${dancingScript.variable} ${greatVibes.variable} ${herrVonMuellerhoff.variable} antialiased`}
+        className={`${outfit.variable} ${playfair.variable} ${dancingScript.variable} ${greatVibes.variable} ${herrVonMuellerhoff.variable} antialiased`}
       >
         <SessionProvider>
           <QueryProvider>

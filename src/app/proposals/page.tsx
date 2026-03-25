@@ -103,7 +103,7 @@ export default function AllProposalsPage() {
               </div>
               <Link
                 href="/create-proposal"
-                className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300 text-sm font-light"
+                className="px-6 py-3 bg-black/40 hover:bg-black/50 border border-white/20 rounded-full transition-all duration-300 text-sm font-light text-white"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Create New
@@ -119,7 +119,7 @@ export default function AllProposalsPage() {
               </p>
               <Link
                 href="/create-proposal"
-                className="inline-block px-8 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all duration-300"
+                className="inline-block px-8 py-3 bg-black/40 hover:bg-black/50 border border-white/20 rounded-full transition-all duration-300 text-white"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Create Proposal
@@ -131,7 +131,7 @@ export default function AllProposalsPage() {
                 <Link
                   key={proposal.id}
                   href={`/proposals/${proposal.id}`}
-                  className="block px-6 py-5 border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-300"
+                  className="block px-6 py-5 border border-white/20 rounded-xl hover:bg-black/40 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -147,7 +147,7 @@ export default function AllProposalsPage() {
                               ? 'bg-blue-500/20 text-blue-300'
                               : proposal.status === 'rejected'
                               ? 'bg-red-500/20 text-red-300'
-                              : 'bg-white/15 text-white/70'
+                              : 'bg-black/40 text-white/70'
                           }`}
                           style={{ fontFamily: 'var(--font-inter)' }}
                         >

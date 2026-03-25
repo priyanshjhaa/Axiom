@@ -301,7 +301,7 @@ export default function InvoicePage() {
               <button
                 onClick={downloadPDF}
                 disabled={downloading}
-                className="px-4 py-2 border border-white/20 text-white text-xs font-medium rounded hover:bg-white/5 transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 border border-white/20 text-white text-xs font-medium rounded hover:bg-black/40 transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -323,7 +323,7 @@ export default function InvoicePage() {
           {/* Invoice Document - Space Themed */}
           <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
             {/* Document Header */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
+            <div className="bg-black/40 backdrop-blur-sm p-8 border-b border-white/20">
               <div className="flex justify-between items-start">
                 <div>
                   <h2 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
@@ -342,7 +342,7 @@ export default function InvoicePage() {
             <div className="p-8 text-white">
               {/* Client & Project Info */}
               <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Bill To
                   </h3>
@@ -352,7 +352,7 @@ export default function InvoicePage() {
                   )}
                   <p className="text-white/70 text-sm">{invoice.clientEmail}</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Project Details
                   </h3>
@@ -427,7 +427,7 @@ export default function InvoicePage() {
             </div>
 
             {/* Document Footer */}
-            <div className="bg-white/5 backdrop-blur-sm p-6 border-t border-white/10">
+            <div className="bg-black/40 backdrop-blur-sm p-6 border-t border-white/10">
               <div className="text-center text-sm text-white/60">
                 Powered by <span className="font-light text-white/80" style={{ fontFamily: 'var(--font-playfair)' }}>AXIOM</span>
               </div>

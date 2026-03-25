@@ -5,7 +5,7 @@ import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 
-export const authOptions = {
+export const authOptions: any = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -77,7 +77,19 @@ export const authOptions = {
     signUp: '/signup',
   },
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt",
+  },
+  debug: process.env.NODE_ENV === 'development',
+  logger: {
+    error(code: string, metadata: any) {
+      console.error('NextAuth error:', code, metadata);
+    },
+    warn(code: string) {
+      console.warn('NextAuth warning:', code);
+    },
+    debug(code: string, metadata: any) {
+      console.debug('NextAuth debug:', code, metadata);
+    },
   },
   callbacks: {
     async signIn({ user, account, profile }: any) {

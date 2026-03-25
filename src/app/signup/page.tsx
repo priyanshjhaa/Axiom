@@ -116,19 +116,17 @@ export default function Signup() {
       <div className="min-h-screen flex items-center justify-center px-4 py-20">
         <div className="max-w-md w-full space-y-8">
           {/* Sign Up Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+          <div className="card-elevated">
             <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
-                Join AXIOM
-              </h2>
-              <p className="text-white/80 text-sm sm:text-base" style={{ fontFamily: 'var(--font-inter)' }}>
+              <h2 className="text-3xl mb-2">Join Axiom</h2>
+              <p className="text-secondary">
                 Create your account and start generating proposals
               </p>
             </div>
 
             {errors.general && (
-              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-                <p className="text-red-200 text-sm text-center" style={{ fontFamily: 'var(--font-inter)' }}>
+              <div className="mb-4 p-3 bg-error rounded-lg">
+                <p className="text-error text-sm text-center">
                   {errors.general}
                 </p>
               </div>
@@ -137,8 +135,8 @@ export default function Signup() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="form-group">
+                  <label htmlFor="firstName" className="form-label">
                     First Name
                   </label>
                   <input
@@ -148,21 +146,18 @@ export default function Signup() {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-300 ${
-                      errors.firstName ? 'border-red-500' : 'border-white/20'
-                    }`}
-                    style={{ fontFamily: 'var(--font-inter)' }}
+                    className={`form-input ${errors.firstName ? 'error' : ''}`}
                     placeholder="First name"
                   />
                   {errors.firstName && (
-                    <p className="mt-1 text-xs text-red-400" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="form-error">
                       {errors.firstName}
                     </p>
                   )}
                 </div>
 
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+                <div className="form-group">
+                  <label htmlFor="lastName" className="form-label">
                     Last Name
                   </label>
                   <input
@@ -172,14 +167,11 @@ export default function Signup() {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-300 ${
-                      errors.lastName ? 'border-red-500' : 'border-white/20'
-                    }`}
-                    style={{ fontFamily: 'var(--font-inter)' }}
+                    className={`form-input ${errors.lastName ? 'error' : ''}`}
                     placeholder="Last name"
                   />
                   {errors.lastName && (
-                    <p className="mt-1 text-xs text-red-400" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="form-error">
                       {errors.lastName}
                     </p>
                   )}
@@ -187,8 +179,8 @@ export default function Signup() {
               </div>
 
               {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
                   Email Address
                 </label>
                 <input
@@ -199,22 +191,19 @@ export default function Signup() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-300 ${
-                    errors.email ? 'border-red-500' : 'border-white/20'
-                  }`}
-                  style={{ fontFamily: 'var(--font-inter)' }}
+                  className={`form-input ${errors.email ? 'error' : ''}`}
                   placeholder="Enter your email"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-400" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="form-error">
                     {errors.email}
                   </p>
                 )}
               </div>
 
               {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">
                   Password
                 </label>
                 <input
@@ -224,22 +213,19 @@ export default function Signup() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-300 ${
-                    errors.password ? 'border-red-500' : 'border-white/20'
-                  }`}
-                  style={{ fontFamily: 'var(--font-inter)' }}
+                  className={`form-input ${errors.password ? 'error' : ''}`}
                   placeholder="Create a password"
                 />
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-400" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="form-error">
                     {errors.password}
                   </p>
                 )}
               </div>
 
               {/* Confirm Password Field */}
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-light text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+              <div className="form-group">
+                <label htmlFor="confirmPassword" className="form-label">
                   Confirm Password
                 </label>
                 <input
@@ -249,14 +235,11 @@ export default function Signup() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-300 ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-white/20'
-                  }`}
-                  style={{ fontFamily: 'var(--font-inter)' }}
+                  className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
                   placeholder="Confirm your password"
                 />
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-xs text-red-400" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <p className="form-error">
                     {errors.confirmPassword}
                   </p>
                 )}
@@ -268,15 +251,15 @@ export default function Signup() {
                   id="terms"
                   type="checkbox"
                   required
-                  className="mt-1 w-4 h-4 bg-white/10 border-white/20 rounded focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  className="mt-1 w-4 h-4 bg-elevated border-default rounded focus:ring-2 focus:ring-accent focus:border-transparent"
                 />
-                <label htmlFor="terms" className="ml-3 text-sm text-white/80" style={{ fontFamily: 'var(--font-inter)' }}>
+                <label htmlFor="terms" className="ml-3 text-sm text-secondary">
                   I agree to the{' '}
-                  <a href="/terms" className="text-white hover:text-white/80 underline">
+                  <a href="/terms" className="text-accent hover:underline">
                     Terms of Service
                   </a>
                   {' '}and{' '}
-                  <a href="/privacy" className="text-white hover:text-white/80 underline">
+                  <a href="/privacy" className="text-accent hover:underline">
                     Privacy Policy
                   </a>
                 </label>
@@ -286,8 +269,7 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-white text-black font-light rounded-lg hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ fontFamily: 'var(--font-inter)' }}
+                className="btn-primary w-full"
               >
                 {isLoading ? 'Creating account...' : 'Create Account'}
               </button>
@@ -296,10 +278,10 @@ export default function Signup() {
             {/* OAuth Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/20"></div>
+                <div className="w-full border-t border-default"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-transparent text-white/60" style={{ fontFamily: 'var(--font-inter)' }}>
+                <span className="px-4 bg-surface text-tertiary">
                   Or sign up with
                 </span>
               </div>
@@ -308,8 +290,7 @@ export default function Signup() {
             {/* Google OAuth Button */}
             <button
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-              className="w-full py-3 px-4 bg-white text-black font-light rounded-lg hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 flex items-center justify-center gap-3"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="btn-secondary w-full flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -323,8 +304,7 @@ export default function Signup() {
             {/* GitHub OAuth Button */}
             <button
               onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
-              className="w-full py-3 px-4 bg-white/10 text-white font-light rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 flex items-center justify-center gap-3 border border-white/20"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="btn-secondary w-full flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
@@ -334,9 +314,9 @@ export default function Signup() {
 
             {/* Login Link */}
             <div className="mt-6 text-center">
-              <p className="text-white/80 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+              <p className="text-secondary text-sm">
                 Already have an account?{' '}
-                <Link href="/login" className="text-white hover:text-white/80 font-light transition-colors duration-300">
+                <Link href="/login" className="text-accent hover:underline font-medium">
                   Sign in
                 </Link>
               </p>
@@ -347,8 +327,7 @@ export default function Signup() {
           <div className="text-center">
             <Link
               href="/"
-              className="inline-flex items-center text-white/80 hover:text-white transition-colors duration-300 text-sm font-light"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="inline-flex items-center text-secondary hover:text-primary transition-colors text-sm"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

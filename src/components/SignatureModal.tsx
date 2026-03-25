@@ -58,14 +58,14 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 max-w-lg w-full border border-white/30 shadow-2xl">
+      <div className="bg-black/40 backdrop-blur-2xl rounded-3xl p-8 max-w-lg w-full border border-white/30 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-3xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
             {title}
           </h3>
           <button
             onClick={handleClose}
-            className="text-white/60 hover:text-white transition-colors bg-white/10 rounded-full p-2 hover:bg-white/20"
+            className="text-white/60 hover:text-white transition-colors bg-black/40 rounded-full p-2 hover:bg-black/50"
             aria-label="Close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,13 +75,13 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
         </div>
 
         {/* Mode Toggle */}
-        <div className="flex gap-2 mb-8 bg-white/5 p-1.5 rounded-2xl border border-white/10">
+        <div className="flex gap-2 mb-8 bg-black/40 p-1.5 rounded-2xl border border-white/10">
           <button
             onClick={() => setMode('draw')}
             className={`flex-1 py-3 px-4 rounded-xl text-sm font-light transition-all ${
               mode === 'draw'
                 ? 'bg-white text-black shadow-lg'
-                : 'text-white/70 hover:text-white hover:bg-white/10'
+                : 'text-white/70 hover:text-white hover:bg-black/40'
             }`}
             style={{ fontFamily: 'var(--font-inter)' }}
           >
@@ -95,7 +95,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
             className={`flex-1 py-3 px-4 rounded-xl text-sm font-light transition-all ${
               mode === 'type'
                 ? 'bg-white text-black shadow-lg'
-                : 'text-white/70 hover:text-white hover:bg-white/10'
+                : 'text-white/70 hover:text-white hover:bg-black/40'
             }`}
             style={{ fontFamily: 'var(--font-inter)' }}
           >
@@ -126,7 +126,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
 
             <button
               onClick={() => sigCanvas.current?.clear()}
-              className="w-full py-3 text-white/70 hover:text-white transition-colors flex items-center justify-center gap-2 hover:bg-white/5 rounded-xl"
+              className="w-full py-3 text-white/70 hover:text-white transition-colors flex items-center justify-center gap-2 hover:bg-black/40 rounded-xl"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,7 +139,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="flex-1 px-6 py-3 border-2 border-white/30 text-white rounded-xl hover:bg-white/10 transition-all text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 border-2 border-white/30 text-white rounded-xl hover:bg-black/40 transition-all text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Cancel
@@ -165,7 +165,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
                 value={typedName}
                 onChange={(e) => setTypedName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full px-4 py-3 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/30 bg-white/10 text-white placeholder-white/40"
+                className="w-full px-4 py-3 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/30 bg-black/40 text-white placeholder-white/40"
                 style={{ fontFamily: 'var(--font-inter)' }}
               />
             </div>
@@ -181,8 +181,8 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
                     onClick={() => setSelectedFont(font.name)}
                     className={`p-4 border-2 rounded-xl transition-all ${
                       selectedFont === font.name
-                        ? 'border-white bg-white/20 shadow-lg'
-                        : 'border-white/20 hover:border-white/40 bg-white/5'
+                        ? 'border-white bg-black/50 shadow-lg'
+                        : 'border-white/20 hover:border-white/40 bg-black/40'
                     }`}
                   >
                     <p className="text-xs text-white/60 mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
@@ -205,7 +205,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
 
             {/* Live Preview */}
             {typedName && (
-              <div className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="p-6 bg-black/40 backdrop-blur-sm rounded-xl border border-white/20">
                 <p className="text-xs text-white/60 mb-3 uppercase tracking-wider" style={{ fontFamily: 'var(--font-inter)' }}>
                   Live Preview
                 </p>
@@ -226,7 +226,7 @@ export default function SignatureModal({ isOpen, onClose, onSubmit, title = 'Add
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="flex-1 px-6 py-3 border-2 border-white/30 text-white rounded-xl hover:bg-white/10 transition-all text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 border-2 border-white/30 text-white rounded-xl hover:bg-black/40 transition-all text-sm font-light disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Cancel

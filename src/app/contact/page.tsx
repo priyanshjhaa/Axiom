@@ -33,7 +33,7 @@ export default function Contact() {
           <div className="mt-8">
             <a
               href="/"
-              className="inline-block px-8 py-3 border border-white text-white font-light rounded-full hover:bg-white/10 transition-all duration-300"
+              className="inline-block px-8 py-3 border border-white text-white font-light rounded-full hover:bg-black/40 transition-all duration-300"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               Back to Home

@@ -1,11 +1,19 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
+import { ReactNode } from 'react';
 
 interface SessionProviderWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function SessionProviderWrapper({ children }: SessionProviderWrapperProps) {
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider
+      refetchInterval={5 * 60}
+      refetchOnWindowFocus
+    >
+      {children}
+    </SessionProvider>
+  );
 }

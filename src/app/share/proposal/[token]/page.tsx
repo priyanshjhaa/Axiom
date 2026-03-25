@@ -184,7 +184,12 @@ export default function SharedProposalPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 flex items-center justify-center px-4">
+      <div className="min-h-screen relative flex items-center justify-center px-4">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+        />
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-gray-400">Loading proposal...</p>
@@ -195,7 +200,12 @@ export default function SharedProposalPage() {
 
   if (error || !proposal) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 flex items-center justify-center px-4">
+      <div className="min-h-screen relative flex items-center justify-center px-4">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+        />
         <div className="text-center max-w-md">
           <div className="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 border border-red-500/30">
             <svg className="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -216,7 +226,13 @@ export default function SharedProposalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900">
+    <div className="min-h-screen relative">
+      {/* Background Image */}
+      <div
+        className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+      />
+
       {/* Success Message */}
       {signSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
@@ -260,7 +276,7 @@ export default function SharedProposalPage() {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-32">
         {/* Title Card */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 mb-8">
+        <div className="bg-black/40 backdrop-blur-md rounded-2xl p-8 border border-white/20 mb-8">
           <div className="flex justify-between items-start mb-6">
             <div>
               <p className="text-gray-400 text-sm mb-2">Project Proposal</p>
@@ -298,7 +314,7 @@ export default function SharedProposalPage() {
         {/* Document Card - Matching Axiom Design */}
         <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
           {/* Document Header */}
-          <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
+          <div className="bg-black/40 backdrop-blur-sm p-8 border-b border-white/20">
             <h3 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
               Project Proposal
             </h3>
@@ -315,7 +331,7 @@ export default function SharedProposalPage() {
           <div className="p-8 text-white">
             {/* Client & Project Info */}
             <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h4 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                   Client Information
                 </h4>
@@ -325,7 +341,7 @@ export default function SharedProposalPage() {
                   <p className="text-sm text-white"><strong className="text-white">Company:</strong> {proposal.clientCompany}</p>
                 )}
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h4 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                   Project Information
                 </h4>
@@ -412,7 +428,7 @@ export default function SharedProposalPage() {
           </div>
 
           {/* Document Footer */}
-          <div className="bg-white/5 backdrop-blur-sm p-6 border-t border-white/10">
+          <div className="bg-black/40 backdrop-blur-sm p-6 border-t border-white/10">
             <div className="flex justify-between items-center text-sm text-white/70">
               <div>
                 Created on {new Date(proposal.createdAt).toLocaleDateString('en-US', {
@@ -430,14 +446,14 @@ export default function SharedProposalPage() {
 
         {/* Signatures Section - Matching Axiom Design */}
         {(proposal.freelancerSignatureData || proposal.clientSignatureData) && (
-          <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+          <div className="mt-8 bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
             <h3 className="text-2xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
               Digital Signatures
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               {/* User Signature */}
               {proposal.freelancerSignatureData && (
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-lg text-white font-light">
                       {proposal.user.firstName && proposal.user.lastName ? `${proposal.user.firstName} ${proposal.user.lastName}` : proposal.user.email} (User)
@@ -462,7 +478,7 @@ export default function SharedProposalPage() {
 
               {/* Client Signature */}
               {proposal.clientSignatureData && (
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-lg text-white font-light">{proposal.clientName} (Client)</h4>
                     <span className="flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">
@@ -487,7 +503,7 @@ export default function SharedProposalPage() {
         )}
 
         {/* Call to Action - Get Started with Axiom */}
-        <div className="mt-12 text-center bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <div className="mt-12 text-center bg-black/40 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
           <h3 className="text-2xl text-white font-light mb-3" style={{ fontFamily: 'var(--font-playfair)' }}>
             Create Professional Proposals
           </h3>

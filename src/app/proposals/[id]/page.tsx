@@ -524,7 +524,7 @@ export default function ProposalPage() {
 
             <button
               onClick={() => setShowActionMenu(!showActionMenu)}
-              className="h-10 w-10 flex items-center justify-center bg-white/10 rounded-full text-white"
+              className="h-10 w-10 flex items-center justify-center bg-black/40 rounded-full text-white"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -539,9 +539,9 @@ export default function ProposalPage() {
             <div className="pt-4 space-y-2">
               <button
                 onClick={() => { handleDownloadPDF(); setShowActionMenu(false); }}
-                className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
+                className="w-full h-14 flex items-center gap-4 px-4 bg-black/40 rounded-2xl text-white hover:bg-black/50"
               >
-                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-black/40 rounded-xl flex items-center justify-center">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -556,9 +556,9 @@ export default function ProposalPage() {
                 <Link
                   href={`/invoices/${invoiceId}`}
                   onClick={() => setShowActionMenu(false)}
-                  className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20"
+                  className="w-full h-14 flex items-center gap-4 px-4 bg-black/40 rounded-2xl text-white hover:bg-black/50"
                 >
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-black/40 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
@@ -572,9 +572,9 @@ export default function ProposalPage() {
                 <button
                   onClick={() => { handleGenerateInvoice(); setShowActionMenu(false); }}
                   disabled={isGeneratingInvoice}
-                  className="w-full h-14 flex items-center gap-4 px-4 bg-white/10 rounded-2xl text-white hover:bg-white/20 disabled:opacity-50"
+                  className="w-full h-14 flex items-center gap-4 px-4 bg-black/40 rounded-2xl text-white hover:bg-black/50 disabled:opacity-50"
                 >
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-black/40 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
@@ -615,7 +615,7 @@ export default function ProposalPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleDownloadPDF}
-                className="px-6 py-3 border border-white/30 text-white font-light rounded-lg hover:bg-white/10 transition-all flex items-center gap-2"
+                className="px-6 py-3 border border-white/30 text-white font-light rounded-lg hover:bg-black/40 transition-all flex items-center gap-2"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -685,7 +685,7 @@ export default function ProposalPage() {
           {/* Proposal Document - Space Themed */}
           <div id="proposal-document" className="bg-black/70 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
             {/* Document Header */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-b border-white/20">
+            <div className="bg-black/40 backdrop-blur-sm p-8 border-b border-white/20">
               <h2 className="text-4xl text-white mb-2 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                 Project Proposal
               </h2>
@@ -699,7 +699,7 @@ export default function ProposalPage() {
             <div className="p-8 text-white">
               {/* Client & Project Info */}
               <div className="grid md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/20">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Client Information
                   </h3>
@@ -709,7 +709,7 @@ export default function ProposalPage() {
                     <p className="text-sm text-white"><strong className="text-white">Company:</strong> {proposal.clientCompany}</p>
                   )}
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <h3 className="text-lg font-light mb-4 text-white/90" style={{ fontFamily: 'var(--font-playfair)' }}>
                     Project Information
                   </h3>
@@ -796,7 +796,7 @@ export default function ProposalPage() {
             </div>
 
             {/* Document Footer */}
-            <div className="bg-white/5 backdrop-blur-sm p-6 border-t border-white/10">
+            <div className="bg-black/40 backdrop-blur-sm p-6 border-t border-white/10">
               <div className="flex justify-between items-center text-sm text-white/70">
                 <div style={{ fontFamily: 'var(--font-inter)' }}>
                   Created on {new Date(proposal.createdAt).toLocaleDateString('en-US', {
@@ -813,14 +813,14 @@ export default function ProposalPage() {
           </div>
 
           {/* Signature Section */}
-          <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+          <div className="mt-8 bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
             <h3 className="text-2xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
               Digital Signatures
             </h3>
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Freelancer Signature */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg text-white font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                     Your Signature
@@ -870,7 +870,7 @@ export default function ProposalPage() {
               </div>
 
               {/* Client Signature */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg text-white font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                     Client Signature
@@ -934,13 +934,13 @@ export default function ProposalPage() {
 
           {/* Timeline Section */}
           {timeline.length > 0 && (
-            <div className="mt-8 bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
+            <div className="mt-8 bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl text-white font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
                   Activity Timeline
                 </h3>
                 {totalViews > 0 && (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-black/40 rounded-full">
                     <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -997,7 +997,7 @@ export default function ProposalPage() {
                         );
                       default:
                         return (
-                          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                          <div className="w-10 h-10 bg-black/40 rounded-xl flex items-center justify-center">
                             <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -1013,7 +1013,7 @@ export default function ProposalPage() {
                       </div>
                       <div className="flex-1 pb-4 border-l border-white/10 pl-6 relative">
                         {index !== timeline.length - 1 && (
-                          <div className="absolute left-0 top-10 w-0.5 h-full bg-white/10" />
+                          <div className="absolute left-0 top-10 w-0.5 h-full bg-black/40" />
                         )}
                         <div className="mb-1">
                           <p className="text-white font-medium">{activity.description}</p>

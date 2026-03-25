@@ -38,7 +38,7 @@ export default function DebugPage() {
     <Layout currentPage="debug">
       <div className="min-h-screen flex items-center justify-center px-4 py-20">
         <div className="max-w-2xl w-full">
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+          <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
             <h2 className="text-3xl text-white mb-6 font-light" style={{ fontFamily: 'var(--font-playfair)' }}>
               Debug: User Management
             </h2>
@@ -58,7 +58,7 @@ export default function DebugPage() {
                 </h3>
                 <div className="space-y-2">
                   {users.users.map((user: any, index: number) => (
-                    <div key={index} className="bg-white/5 p-3 rounded-lg">
+                    <div key={index} className="bg-black/40 p-3 rounded-lg">
                       <p className="text-white/90 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                         <strong>Email:</strong> {user.email}<br />
                         <strong>Name:</strong> {user.firstName} {user.lastName}<br />

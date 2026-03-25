@@ -168,7 +168,7 @@ export default function InvoicesPage() {
           </div>
 
           {/* Invoices List */}
-          <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+          <div className="bg-black/40 border border-white/10 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -179,7 +179,7 @@ export default function InvoicesPage() {
                 {selectedIds.size > 0 && (
                   <button
                     onClick={() => confirmDelete(Array.from(selectedIds))}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white/70 border border-white/30 rounded-lg hover:bg-white/20 transition-all text-sm"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-black/40 text-white/70 border border-white/30 rounded-lg hover:bg-black/50 transition-all text-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -192,7 +192,7 @@ export default function InvoicesPage() {
 
             {invoices.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-full bg-black/40 flex items-center justify-center mx-auto mb-3">
                   <svg className="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
@@ -209,7 +209,7 @@ export default function InvoicesPage() {
             ) : (
               <div className="divide-y divide-white/10">
                 {/* Header Row with Select All */}
-                <div className="px-4 py-2 bg-white/5 flex items-center gap-3">
+                <div className="px-4 py-2 bg-black/40 flex items-center gap-3">
                   <button
                     onClick={toggleSelectAll}
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
@@ -217,7 +217,7 @@ export default function InvoicesPage() {
                         ? 'bg-white border-white'
                         : someSelected
                         ? 'bg-white/60 border-white/60'
-                        : 'border-white/40 hover:border-white/60 bg-white/5'
+                        : 'border-white/40 hover:border-white/60 bg-black/40'
                     }`}
                   >
                     {allSelected || someSelected ? (
@@ -233,7 +233,7 @@ export default function InvoicesPage() {
                 {invoices.map((invoice) => (
                   <div
                     key={invoice.id}
-                    className={`flex items-center p-4 transition-all duration-200 ${selectedIds.has(invoice.id) ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                    className={`flex items-center p-4 transition-all duration-200 ${selectedIds.has(invoice.id) ? 'bg-black/40' : 'hover:bg-black/40'}`}
                   >
                     {/* Checkbox */}
                     <button
@@ -241,7 +241,7 @@ export default function InvoicesPage() {
                       className={`w-4 h-4 rounded border flex items-center justify-center transition-all mr-4 flex-shrink-0 ${
                         selectedIds.has(invoice.id)
                           ? 'bg-white border-white'
-                          : 'border-white/40 hover:border-white/60 bg-white/5'
+                          : 'border-white/40 hover:border-white/60 bg-black/40'
                       }`}
                     >
                       {selectedIds.has(invoice.id) && (
@@ -257,7 +257,7 @@ export default function InvoicesPage() {
                       className="flex-1 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center">
                           <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
@@ -284,7 +284,7 @@ export default function InvoicesPage() {
                         e.stopPropagation();
                         confirmDelete(invoice.id);
                       }}
-                      className="ml-4 p-2 text-white/40 hover:text-white/70 hover:bg-white/10 rounded-lg transition-all"
+                      className="ml-4 p-2 text-white/40 hover:text-white/70 hover:bg-black/40 rounded-lg transition-all"
                       title="Delete invoice"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,10 +301,10 @@ export default function InvoicesPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-black border border-white/20 rounded-xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-black/40 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
@@ -320,7 +320,7 @@ export default function InvoicesPage() {
               <button
                 onClick={() => setShowDeleteModal(false)}
                 disabled={isDeleting}
-                className="flex-1 px-4 py-2.5 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-all text-sm font-medium disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 border border-white/20 text-white rounded-lg hover:bg-black/40 transition-all text-sm font-medium disabled:opacity-50"
               >
                 Cancel
               </button>

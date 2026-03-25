@@ -138,8 +138,13 @@ export default function ClientSignPage() {
 
   if (error && step === 'verify' && !proposal) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
+      <div className="min-h-screen relative flex items-center justify-center p-4">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+        />
+        <div className="max-w-md w-full bg-black/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
           <div className="text-center">
             <div className="text-red-500 text-6xl mb-4">✕</div>
             <h1 className="text-white text-2xl font-bold mb-2">Invalid Link</h1>
@@ -152,14 +157,24 @@ export default function ClientSignPage() {
 
   if (!proposal) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen relative flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+        />
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen relative">
+      {/* Background Image */}
+      <div
+        className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+      />
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -184,12 +199,12 @@ export default function ClientSignPage() {
             <div className="text-sm font-medium mb-1">Step 1</div>
             <div className="text-xs">Verify Email</div>
           </div>
-          <div className="flex-1 h-px bg-white/20" />
+          <div className="flex-1 h-px bg-black/50" />
           <div className={`flex-1 text-center ${step === 'terms' ? 'text-white' : 'text-white/40'}`}>
             <div className="text-sm font-medium mb-1">Step 2</div>
             <div className="text-xs">Accept Terms</div>
           </div>
-          <div className="flex-1 h-px bg-white/20" />
+          <div className="flex-1 h-px bg-black/50" />
           <div className={`flex-1 text-center ${step === 'sign' || step === 'success' ? 'text-white' : 'text-white/40'}`}>
             <div className="text-sm font-medium mb-1">Step 3</div>
             <div className="text-xs">Sign</div>
@@ -198,9 +213,9 @@ export default function ClientSignPage() {
 
         {/* Step Content */}
         {step === 'verify' && (
-          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
+          <div className="bg-black/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black/40 mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
@@ -217,7 +232,7 @@ export default function ClientSignPage() {
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="Enter 6-digit code"
-                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-xl text-white text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-white/50"
                   maxLength={6}
                   required
                 />
@@ -250,9 +265,9 @@ export default function ClientSignPage() {
         )}
 
         {step === 'terms' && (
-          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
+          <div className="bg-black/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/30">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black/40 mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -263,7 +278,7 @@ export default function ClientSignPage() {
 
             <div className="space-y-6">
               {/* Legal Disclaimer */}
-              <div className="bg-white/5 rounded-xl p-6 space-y-4 text-white/80 text-sm">
+              <div className="bg-black/40 rounded-xl p-6 space-y-4 text-white/80 text-sm">
                 <h3 className="font-semibold text-white mb-3">Electronic Signature Disclosure</h3>
 
                 <p>
@@ -293,7 +308,7 @@ export default function ClientSignPage() {
               </div>
 
               {/* Proposal Summary */}
-              <div className="bg-white/5 rounded-xl p-6">
+              <div className="bg-black/40 rounded-xl p-6">
                 <h3 className="font-semibold text-white mb-3">Proposal Summary</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -317,7 +332,7 @@ export default function ClientSignPage() {
                   type="checkbox"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-white focus:ring-white focus:ring-offset-0"
+                  className="mt-1 w-5 h-5 rounded border-white/30 bg-black/40 text-white focus:ring-white focus:ring-offset-0"
                   required
                 />
                 <span className="text-white/80 text-sm">
@@ -367,7 +382,7 @@ export default function ClientSignPage() {
         )}
 
         {step === 'success' && (
-          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/30 text-center">
+          <div className="bg-black/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/30 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/20 mb-6">
               <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -379,7 +394,7 @@ export default function ClientSignPage() {
               Thank you for signing. Both parties have now signed this proposal.
             </p>
 
-            <div className="bg-white/5 rounded-xl p-6 mb-8 text-left">
+            <div className="bg-black/40 rounded-xl p-6 mb-8 text-left">
               <h3 className="font-semibold text-white mb-4">Signed Proposal Details</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">

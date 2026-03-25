@@ -72,7 +72,7 @@ export default function Pricing() {
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative bg-white/15 backdrop-blur-xl rounded-2xl p-8 border transition-all duration-300 ${
+                className={`relative bg-black/40 backdrop-blur-xl rounded-2xl p-8 border transition-all duration-300 ${
                   plan.popular
                     ? 'border-white/30 scale-105'
                     : 'border-white/20 hover:border-white/30'
@@ -135,7 +135,7 @@ export default function Pricing() {
                   {plan.name === 'Basic' && session ? (
                     <button
                       disabled
-                      className="w-full px-6 py-3 bg-white/10 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
+                      className="w-full px-6 py-3 bg-black/40 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       Current Plan
@@ -143,7 +143,7 @@ export default function Pricing() {
                   ) : plan.name === 'Pro' ? (
                     <button
                       disabled
-                      className="w-full px-6 py-3 bg-white/10 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
+                      className="w-full px-6 py-3 bg-black/40 text-white/60 rounded-lg cursor-not-allowed text-sm font-light"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       Coming Soon
@@ -178,7 +178,7 @@ export default function Pricing() {
               Frequently Asked Questions
             </h3>
             <div className="space-y-4">
-              <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                 <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                   What payment methods do you accept?
                 </h4>
@@ -186,7 +186,7 @@ export default function Pricing() {
                   We accept all major credit cards and UPI payments. Pricing is ₹299/month in India or $4.99/month internationally.
                 </p>
               </div>
-              <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                 <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                   Can I upgrade from Basic to Pro?
                 </h4>
@@ -194,7 +194,7 @@ export default function Pricing() {
                   Yes! You can upgrade anytime. Your existing proposals and invoices will remain intact.
                 </p>
               </div>
-              <div className="bg-white/15 backdrop-blur-xl rounded-xl p-6 border border-white/20">
+              <div className="bg-black/40 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                 <h4 className="text-white text-lg mb-2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
                   Can I cancel anytime?
                 </h4>
@@ -209,7 +209,7 @@ export default function Pricing() {
           <div className="mt-16 text-center">
             <Link
               href="/"
-              className="inline-block px-8 py-3 border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 text-sm font-light"
+              className="inline-block px-8 py-3 border border-white text-white rounded-full hover:bg-black/40 transition-all duration-300 text-sm font-light"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               Back to Home
