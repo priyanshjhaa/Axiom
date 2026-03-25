@@ -212,7 +212,7 @@ function generateTemplateBasedContent(formData: any): ProposalContent {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -346,7 +346,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(

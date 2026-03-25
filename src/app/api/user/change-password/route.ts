@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(

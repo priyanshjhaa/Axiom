@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db';
 
 export async function PATCH(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session: any = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(
