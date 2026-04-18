@@ -46,7 +46,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
       {/* Background Image */}
       <div
         className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/ahmetyuksek-winding-path-9840681.jpg')" }}
+        style={{ backgroundImage: "url('/images/converted_image.webp')" }}
       />
 
       {/* Navigation - Hide for create-proposal and proposal-detail pages */}
